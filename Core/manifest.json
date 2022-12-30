@@ -1,0 +1,10 @@
+﻿{
+  "Name": "Ferngill Supply And Demand",
+  "Author": "Paul Steele",
+  "Version": "1.0.0",
+  "Description": "Add a simplistic economy to Stardew Valley",
+  "UniqueID": "paulsteele.fsd",
+  "EntryDll": "ferngillSupplyAndDemand.dll",
+  "MinimumApiVersion": "3.0.0",
+  "UpdateKeys": []
+}
