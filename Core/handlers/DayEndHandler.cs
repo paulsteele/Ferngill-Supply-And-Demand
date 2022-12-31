@@ -4,20 +4,32 @@ using StardewValley;
 
 namespace fsd.core.handlers
 {
-    public class DayEndHandler : SelfRegisteringHandler
+    public class DayEndHandler : IHandler
     {
-        public override void Register(IModHelper helper)
+        private readonly IModHelper _helper;
+        private readonly IMonitor _monitor;
+
+        public DayEndHandler(
+            IModHelper helper,
+            IMonitor monitor
+        )
         {
-            helper.Events.GameLoop.DayEnding += (_, _) => SafeAction.Run(GameLoopOnDayEnding, Monitor, nameof(GameLoopOnDayEnding));
+            _helper = helper;
+            _monitor = monitor;
+        }
+
+        public void Register()
+        {
+            _helper.Events.GameLoop.DayEnding += (_, _) => SafeAction.Run(GameLoopOnDayEnding, _monitor, nameof(GameLoopOnDayEnding));
         }
 
         private void GameLoopOnDayEnding()
         {
             foreach (var farmer in Game1.getAllFarmers())
             {
-                foreach (Item item in Game1.getFarm().getShippingBin(farmer))
+                foreach (var item in Game1.getFarm().getShippingBin(farmer))
                 {
-                    Monitor.Log($"sold {item.Name} at {item.salePrice()} {item.Stack}x via shipping", LogLevel.Error);
+                    _monitor.Log($"sold {item.Name} at {item.salePrice()} {item.Stack}x via shipping", LogLevel.Error);
                 }
             }
         }

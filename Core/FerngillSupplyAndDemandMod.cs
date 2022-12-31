@@ -1,5 +1,6 @@
 ﻿using fsd.core.handlers;
 using fsd.core.patches;
+using fsd.core.services;
 using HarmonyLib;
 using StardewModdingAPI;
 
@@ -8,8 +9,10 @@ namespace fsd.core
     // ReSharper disable once UnusedType.Global
     public class FerngillSupplyAndDemandMod : Mod
     {
+        private EconomyService _economyService;
         public override void Entry(IModHelper helper)
         {
+            _economyService = new EconomyService(helper);
             RegisterPatches();
             RegisterHandlers(helper);
         }
@@ -25,9 +28,8 @@ namespace fsd.core
 
         private void RegisterHandlers(IModHelper helper)
         {
-            SelfRegisteringHandler.Initialize(Monitor);
-            new DayEndHandler().Register(helper);
-            new SaveLoadedHandler().Register(helper);
+            new DayEndHandler(helper, Monitor).Register();
+            new SaveLoadedHandler(helper, Monitor, _economyService).Register();
         }
     }
 }
