@@ -29,8 +29,6 @@ namespace fsd.core.handlers
         private void GameLoopOnSaveLoaded()
         {
             _economyService.OnLoaded();
-            /*
-            */
         }
     }
 }

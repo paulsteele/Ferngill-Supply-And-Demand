@@ -52,27 +52,25 @@ namespace fsd.core.services
         private static void RandomizeEconomy(EconomyModel model, bool updateSupply, bool updateDelta)
         {
             var rand = new Random();
-            var supplyNormal = new Normal(mean: 500, stddev: 150, randomSource: rand);
-            var deltaNormal = new Normal(mean: 0, stddev: 15, randomSource: rand);
+            var supplyNormal = new Normal(mean: ItemModel.MeanSupply, stddev: ItemModel.StdDevSupply, randomSource: rand);
+            var deltaNormal = new Normal(mean: ItemModel.MeanDelta, stddev: ItemModel.StdDevDelta, randomSource: rand);
 
             foreach (var item in model.CategoryEconomies.Values.SelectMany(categories => categories.Values))
             {
                 if (updateSupply)
                 {
-                    item.Supply = EnsureBounds(supplyNormal.Sample(), min: 0, max: 1000);
+                    item.Supply = RoundDouble(supplyNormal.Sample());
                 }
                 if (updateDelta)
                 {
-                    item.DailyDelta = EnsureBounds(deltaNormal.Sample(), min: -50, max: 50);
+                    item.DailyDelta = RoundDouble(deltaNormal.Sample());
                 }
             }
         }
 
-        private static int EnsureBounds(double input, int min, int max)
+        private static int RoundDouble(double d)
         {
-            var rounded = (int) Math.Round(input, 0, MidpointRounding.ToZero);
-
-            return Math.Min(Math.Max(rounded, min), max);
+            return (int)Math.Round(d, 0, MidpointRounding.ToEven);
         }
     }
 }
