@@ -1,8 +1,9 @@
 ﻿using fsd.core.actions;
+using HarmonyLib;
 
 namespace fsd.core.patches
 {
-    public class ObjectPatches : Patches
+    public class ObjectPatches : SelfRegisteringPatches
     {
         public static void SellToStoreSalePricePostFix(StardewValley.Object __instance, ref int __result)
         {
@@ -14,6 +15,14 @@ namespace fsd.core.patches
             }, __result, Monitor);
 
             __result = newResult;
+        }
+
+        public override void Register(Harmony harmony)
+        {
+            harmony.Patch(
+                original: AccessTools.Method(typeof(StardewValley.Object), nameof(StardewValley.Object.sellToStorePrice)),
+                postfix: new HarmonyMethod(typeof(ObjectPatches), nameof(SellToStoreSalePricePostFix))
+            );
         }
     }
 }

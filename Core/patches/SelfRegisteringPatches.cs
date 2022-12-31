@@ -1,8 +1,9 @@
-﻿using StardewModdingAPI;
+﻿using HarmonyLib;
+using StardewModdingAPI;
 
 namespace fsd.core.patches
 {
-    public abstract class Patches
+    public abstract class SelfRegisteringPatches
     {
         protected static IMonitor Monitor;
 
@@ -10,5 +11,7 @@ namespace fsd.core.patches
         {
             Monitor = monitor;
         }
+
+        public abstract void Register(Harmony harmony);
     }
 }
