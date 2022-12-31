@@ -27,6 +27,7 @@ namespace fsd.core
         {
             SelfRegisteringHandler.Initialize(Monitor);
             new DayEndHandler().Register(helper);
+            new SaveLoadedHandler().Register(helper);
         }
     }
 }
