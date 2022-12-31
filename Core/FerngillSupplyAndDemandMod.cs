@@ -1,5 +1,7 @@
-﻿using StardewModdingAPI;
-using StardewValley;
+﻿using fsd.core.patches;
+using HarmonyLib;
+using StardewModdingAPI;
+using Patches = fsd.core.patches.Patches;
 
 namespace fsd.core
 {
@@ -7,15 +9,24 @@ namespace fsd.core
     {
         public override void Entry(IModHelper helper)
         {
-            helper.Events.Input.ButtonPressed += (sender, args) =>
-            {
-                if (!Context.IsWorldReady)
-                {
-                    return;
-                }
+            Patches.Initialize(Monitor);
+            
+            var harmony = new Harmony(ModManifest.UniqueID);
+            
+            harmony.Patch(
+                original: AccessTools.Method(typeof(StardewValley.Object), nameof(StardewValley.Object.sellToStorePrice)),
+                postfix: new HarmonyMethod(typeof(ObjectPatches), nameof(ObjectPatches.SellToStoreSalePricePostFix))
+            );
 
-                Monitor.Log(Game1.player.Name);
-            };
+            harmony.Patch(
+                original: AccessTools.Method(typeof(StardewValley.Menus.ShopMenu), nameof(StardewValley.Menus.ShopMenu.AddBuybackItem)),
+                prefix: new HarmonyMethod(typeof(ShopMenuPatches), nameof(ShopMenuPatches.AddBuyBackItemPreFix))
+            );
+            
+            harmony.Patch(
+                original: AccessTools.Method(typeof(StardewValley.Menus.ShopMenu), nameof(StardewValley.Menus.ShopMenu.BuyBuybackItem)),
+                postfix: new HarmonyMethod(typeof(ShopMenuPatches), nameof(ShopMenuPatches.BuyBuybackItemPostFix))
+            );
         }
     }
 }

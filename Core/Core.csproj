@@ -4,6 +4,7 @@
         <TargetFramework>net5.0</TargetFramework>
         <AssemblyName>ferngillSupplyAndDemand</AssemblyName>
         <RootNamespace>fsd.core</RootNamespace>
+        <EnableHarmony>true</EnableHarmony>
     </PropertyGroup>
 
     <ItemGroup>
