@@ -5,6 +5,7 @@
         <AssemblyName>ferngillSupplyAndDemand</AssemblyName>
         <RootNamespace>fsd.core</RootNamespace>
         <EnableHarmony>true</EnableHarmony>
+        <BundleExtraAssemblies>ThirdParty</BundleExtraAssemblies>
     </PropertyGroup>
 
     <ItemGroup>
