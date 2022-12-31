@@ -1,6 +1,5 @@
 ﻿using fsd.core.actions;
 using StardewModdingAPI;
-using StardewModdingAPI.Events;
 using StardewValley;
 
 namespace fsd.core.handlers
@@ -9,21 +8,18 @@ namespace fsd.core.handlers
     {
         public override void Register(IModHelper helper)
         {
-            helper.Events.GameLoop.DayEnding += GameLoopOnDayEnding;
+            helper.Events.GameLoop.DayEnding += (_, _) => SafeAction.Run(GameLoopOnDayEnding, Monitor, nameof(GameLoopOnDayEnding));
         }
 
-        private void GameLoopOnDayEnding(object sender, DayEndingEventArgs e)
+        private void GameLoopOnDayEnding()
         {
-            SafeAction.Run(() =>
+            foreach (var farmer in Game1.getAllFarmers())
             {
-                foreach (var farmer in Game1.getAllFarmers())
+                foreach (Item item in Game1.getFarm().getShippingBin(farmer))
                 {
-                    foreach (Item item in Game1.getFarm().getShippingBin(farmer))
-                    {
-                        Monitor.Log($"sold {item.Name} at {item.salePrice()} {item.Stack}x via shipping", LogLevel.Error);
-                    }
+                    Monitor.Log($"sold {item.Name} at {item.salePrice()} {item.Stack}x via shipping", LogLevel.Error);
                 }
-            }, Monitor);
+            }
         }
     }
 }
