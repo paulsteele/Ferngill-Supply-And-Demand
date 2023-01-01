@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.Json.Serialization;
 
 namespace fsd.core.models
 {
@@ -14,9 +15,11 @@ namespace fsd.core.models
         public static int MeanSupply => (MinSupply + MaxSupply) / 2;
         public static int MeanDelta => (MinDelta + MaxDelta) / 2;
         
+        [JsonInclude]
         public int ObjectId { get; set; }
         private int _supply;
 
+        [JsonInclude]
         public int Supply
         {
             get => _supply;
@@ -25,11 +28,17 @@ namespace fsd.core.models
 
         private int _dailyDelta;
 
+        [JsonInclude]
         public int DailyDelta
         {
             get => _dailyDelta;
             set => _dailyDelta = EnsureBounds(value, MinDelta, MaxDelta);
-        } 
+        }
+
+        public void AdvanceOneDay()
+        {
+            Supply += DailyDelta;
+        }
 
         private static int EnsureBounds(int input, int min, int max)
         {

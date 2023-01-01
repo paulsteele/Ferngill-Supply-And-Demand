@@ -27,11 +27,11 @@ namespace fsd.core.actions
             }
             catch (Exception e)
             {
-                monitor.Log(callerName);
-                monitor.Log(e.Message);
+                monitor.Log(callerName, LogLevel.Error);
+                monitor.Log(e.Message, LogLevel.Error);
                 if (e.StackTrace != null)
                 {
-                    monitor.Log(e.StackTrace);
+                    monitor.Log(e.StackTrace, LogLevel.Error);
                 }
 
                 return defaultValue;

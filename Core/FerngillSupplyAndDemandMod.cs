@@ -28,7 +28,7 @@ namespace fsd.core
 
         private void RegisterHandlers(IModHelper helper)
         {
-            new DayEndHandler(helper, Monitor).Register();
+            new DayEndHandler(helper, Monitor, _economyService).Register();
             new SaveLoadedHandler(helper, Monitor, _economyService).Register();
         }
     }

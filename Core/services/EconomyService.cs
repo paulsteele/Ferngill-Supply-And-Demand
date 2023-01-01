@@ -32,7 +32,12 @@ namespace fsd.core.services
             RandomizeEconomy(newModel, true, true);
 
             Economy = newModel;
-            _modHelper.Data.WriteSaveData(EconomyModel.ModelKey, newModel);
+            QueueSave();
+        }
+
+        private void QueueSave()
+        {
+            _modHelper.Data.WriteSaveData(EconomyModel.ModelKey, Economy);
         }
 
         private static EconomyModel GenerateBlankEconomy()
@@ -55,7 +60,7 @@ namespace fsd.core.services
             var supplyNormal = new Normal(mean: ItemModel.MeanSupply, stddev: ItemModel.StdDevSupply, randomSource: rand);
             var deltaNormal = new Normal(mean: ItemModel.MeanDelta, stddev: ItemModel.StdDevDelta, randomSource: rand);
 
-            foreach (var item in model.CategoryEconomies.Values.SelectMany(categories => categories.Values))
+            model.ForAllItems(item =>
             {
                 if (updateSupply)
                 {
@@ -65,7 +70,17 @@ namespace fsd.core.services
                 {
                     item.DailyDelta = RoundDouble(deltaNormal.Sample());
                 }
+            });
+        }
+
+        public void AdvanceOneDay()
+        {
+            if (Economy == null)
+            {
+                return;
             }
+            Economy.AdvanceOneDay();
+            QueueSave();
         }
 
         private static int RoundDouble(double d)

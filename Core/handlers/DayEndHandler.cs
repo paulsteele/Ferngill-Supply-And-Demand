@@ -1,4 +1,5 @@
 ﻿using fsd.core.actions;
+using fsd.core.services;
 using StardewModdingAPI;
 using StardewValley;
 
@@ -8,14 +9,17 @@ namespace fsd.core.handlers
     {
         private readonly IModHelper _helper;
         private readonly IMonitor _monitor;
+        private readonly EconomyService _economyService;
 
         public DayEndHandler(
             IModHelper helper,
-            IMonitor monitor
+            IMonitor monitor,
+            EconomyService economyService
         )
         {
             _helper = helper;
             _monitor = monitor;
+            _economyService = economyService;
         }
 
         public void Register()
@@ -32,6 +36,8 @@ namespace fsd.core.handlers
                     _monitor.Log($"sold {item.Name} at {item.salePrice()} {item.Stack}x via shipping", LogLevel.Error);
                 }
             }
+            
+            _economyService.AdvanceOneDay();
         }
     }
 }

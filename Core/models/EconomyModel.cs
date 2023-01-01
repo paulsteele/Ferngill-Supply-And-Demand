@@ -1,12 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 
 namespace fsd.core.models
 {
     public class EconomyModel
     {
         public static readonly string ModelKey = "fsd.economy.model";
-        public Dictionary<int, Dictionary<int, ItemModel>> CategoryEconomies { get; set;}
+        
+        [JsonInclude]
+        public Dictionary<int, Dictionary<int, ItemModel>> CategoryEconomies { get; set; }
 
         public bool HasSameItems(EconomyModel other)
         {
@@ -16,17 +20,30 @@ namespace fsd.core.models
             }
 
             return !(
-                from key in CategoryEconomies.Keys 
-                let category = CategoryEconomies[key] 
-                let otherCategory = other.CategoryEconomies[key] 
-                where !DictionariesContainSameKeys(category, otherCategory) 
-                select category)
-            .Any();
+                    from key in CategoryEconomies.Keys 
+                    let category = CategoryEconomies[key] 
+                    let otherCategory = other.CategoryEconomies[key] 
+                    where !DictionariesContainSameKeys(category, otherCategory) 
+                    select category)
+                .Any();
         }
 
         private static bool DictionariesContainSameKeys<TKey, TVal>(Dictionary<TKey, TVal> first, Dictionary<TKey, TVal> second)
         {
             return first.Count == second.Count && first.Keys.All(second.ContainsKey);
+        }
+
+        public void ForAllItems(Action<ItemModel> action)
+        {
+            foreach (var item in CategoryEconomies.Values.SelectMany(categories => categories.Values))
+            {
+                action(item);
+            }
+        }
+
+        public void AdvanceOneDay()
+        {
+            ForAllItems(model => model.AdvanceOneDay());
         }
     }
 }
