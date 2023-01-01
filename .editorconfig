@@ -1,0 +1,35 @@
+root = true
+
+[*]
+indent_style = tab
+indent_size = 1
+tab_width = 2
+
+# Most frequently used .NET-coding-convention properties are supported
+csharp_space_between_parentheses = false
+csharp_style_var_for_built_in_types = true
+
+# JetBrains Rider custom properties for code formatting styles
+resharper_csharp_brace_style = next_line
+
+# Microsoft .NET properties
+csharp_prefer_braces = true:suggestion
+
+# ReSharper properties
+resharper_align_multiline_binary_expressions_chain = false
+resharper_align_multiline_statement_conditions = false
+resharper_braces_redundant = true
+resharper_constructor_or_destructor_body = expression_body
+resharper_csharp_empty_block_style = together_same_line
+resharper_csharp_indent_size = 1
+resharper_indent_preprocessor_if = usual_indent
+resharper_indent_preprocessor_other = usual_indent
+resharper_local_function_body = expression_body
+resharper_method_or_operator_body = expression_body
+resharper_trailing_comma_in_multiline_lists = true
+resharper_wrap_before_linq_expression = true
+
+# ReSharper inspection severities
+resharper_arrange_constructor_or_destructor_body_highlighting = suggestion
+resharper_arrange_local_function_body_highlighting = suggestion
+resharper_arrange_method_or_operator_body_highlighting = suggestion

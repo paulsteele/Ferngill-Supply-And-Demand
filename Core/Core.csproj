@@ -1,16 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <TargetFramework>net5.0</TargetFramework>
-        <AssemblyName>ferngillSupplyAndDemand</AssemblyName>
-        <RootNamespace>fsd.core</RootNamespace>
-        <EnableHarmony>true</EnableHarmony>
-        <BundleExtraAssemblies>ThirdParty</BundleExtraAssemblies>
-    </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net5.0</TargetFramework>
+		<AssemblyName>ferngillSupplyAndDemand</AssemblyName>
+		<RootNamespace>fsd.core</RootNamespace>
+		<EnableHarmony>true</EnableHarmony>
+		<BundleExtraAssemblies>ThirdParty</BundleExtraAssemblies>
+	</PropertyGroup>
 
-    <ItemGroup>
-      <PackageReference Include="MathNet.Numerics" Version="5.0.0" />
-      <PackageReference Include="Pathoschild.Stardew.ModBuildConfig" Version="4.0.2" />
-    </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="MathNet.Numerics" Version="5.0.0"/>
+		<PackageReference Include="Pathoschild.Stardew.ModBuildConfig" Version="4.0.2"/>
+	</ItemGroup>
 
 </Project>
