@@ -59,6 +59,13 @@ namespace fsd.core.services
 			};
 		}
 
+		public void SetupForNewSeason()
+		{
+			RandomizeEconomy(Economy, false, true);
+			Economy.ForAllItems(model => model.CapSupply());
+			QueueSave();
+		}
+
 		private static void RandomizeEconomy(EconomyModel model, bool updateSupply, bool updateDelta)
 		{
 			var rand = new Random();

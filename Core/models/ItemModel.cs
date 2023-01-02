@@ -64,5 +64,10 @@ namespace fsd.core.models
 			
 			return _cachedPrices[basePrice];
 		}
+
+		public void CapSupply()
+		{
+			Supply = MaxCalculatedSupply;
+		}
 	}
 }

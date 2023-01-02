@@ -7,6 +7,7 @@ namespace fsd.core.handlers
 {
 	public class DayEndHandler : IHandler
 	{
+		private const int LastDayOfMonth = 28;
 		private readonly EconomyService _economyService;
 		private readonly IModHelper _helper;
 		private readonly IMonitor _monitor;
@@ -38,6 +39,11 @@ namespace fsd.core.handlers
 				{
 					_economyService.AdjustSupply(item as Object, item.Stack);
 				}
+			}
+
+			if (Game1.dayOfMonth >= LastDayOfMonth)
+			{
+				_economyService.SetupForNewSeason();
 			}
 		}
 	}
