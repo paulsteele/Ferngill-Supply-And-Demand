@@ -28,6 +28,13 @@ namespace fsd.core.menu
 			_testItem = new ItemModel{ObjectId = 24, Supply = 300, DailyDelta = 22};
 		}
 
+		public override void gameWindowSizeChanged(Rectangle oldBounds, Rectangle newBounds)
+		{
+			base.gameWindowSizeChanged(oldBounds, newBounds);
+			_barBackgroundTexture = null;
+			_barForegroundTexture = null;
+		}
+
 		public override void draw(SpriteBatch batch)
 		{
 			SetupPositionAndSize();
@@ -42,13 +49,13 @@ namespace fsd.core.menu
 
 		private void SetupPositionAndSize()
 		{
-			var xPadding = 300;
-			var yPadding = 300;
-			width = Game1.uiViewport.Width - 2 * xPadding;
-			height = Game1.uiViewport.Height - 2 * yPadding;
+			const int xPadding = 100;
+			const int yPadding = 50;
+			width = Math.Min(Game1.uiViewport.Width - 2 * xPadding, 1920);
+			height = Math.Min(Game1.uiViewport.Height - 2 * yPadding, 1080);
 
-			xPositionOnScreen = xPadding;
-			yPositionOnScreen = yPadding;
+			xPositionOnScreen = (Game1.uiViewport.Width - width) / 2;
+			yPositionOnScreen = (Game1.uiViewport.Height - height) / 2;
 		}
 		private void DrawBackground(SpriteBatch batch)
 		{
