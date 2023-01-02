@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
+using fsd.core.helpers;
 
 namespace fsd.core.models
 {
@@ -31,14 +32,14 @@ namespace fsd.core.models
 		public int Supply
 		{
 			get => _supply;
-			set => _supply = EnsureBounds(value, MinSupply, MaxSupply);
+			set => _supply = BoundsHelper.EnsureBounds(value, MinSupply, MaxSupply);
 		}
 
 		[JsonInclude]
 		public int DailyDelta
 		{
 			get => _dailyDelta;
-			set => _dailyDelta = EnsureBounds(value, MinDelta, MaxDelta);
+			set => _dailyDelta = BoundsHelper.EnsureBounds(value, MinDelta, MaxDelta);
 		}
 
 		public void AdvanceOneDay()
@@ -47,7 +48,6 @@ namespace fsd.core.models
 			_cachedPrices.Clear();
 		}
 
-		private static int EnsureBounds(int input, int min, int max) => Math.Min(Math.Max(input, min), max);
 
 		public int GetPrice(int basePrice)
 		{

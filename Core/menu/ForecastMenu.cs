@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using fsd.core.helpers;
 using fsd.core.models;
 using fsd.core.services;
 using Microsoft.Xna.Framework;
@@ -14,9 +16,17 @@ namespace fsd.core.menu
 	{
 		private readonly EconomyService _economyService;
 		private readonly IMonitor _monitor;
-		private ItemModel _testItem;
+		private ItemModel[] _allItems;
+		private int _itemIndex;
+		private int _maxNumberOfRows = 0;
+		private bool _isScrolling;
 		private Texture2D _barBackgroundTexture;
 		private Texture2D _barForegroundTexture;
+		private ClickableTextureComponent _upArrow;
+		private ClickableTextureComponent _downArrow;
+		private ClickableTextureComponent _scrollbar;
+		private Rectangle? _scrollbarRunner;
+		private int _bottomIndex;
 
 		public ForecastMenu(
 			EconomyService economyService,
@@ -25,7 +35,15 @@ namespace fsd.core.menu
 			_economyService = economyService;
 			_monitor = monitor;
 
-			_testItem = new ItemModel{ObjectId = 24, Supply = 200, DailyDelta = 30};
+			var items = new List<ItemModel>();
+
+			for (var i = 0; i < 20; i++)
+			{
+				items.Add(new ItemModel { ObjectId = 24 + i, Supply = 200, DailyDelta = 30 });
+			}
+
+			_allItems = items.ToArray();
+			_itemIndex = 4;
 		}
 
 		public override void gameWindowSizeChanged(Rectangle oldBounds, Rectangle newBounds)
@@ -33,6 +51,76 @@ namespace fsd.core.menu
 			base.gameWindowSizeChanged(oldBounds, newBounds);
 			_barBackgroundTexture = null;
 			_barForegroundTexture = null;
+			_upArrow = null;
+			_downArrow = null;
+			_scrollbar = null;
+			_scrollbarRunner = null;
+		}
+
+		public override void receiveScrollWheelAction(int direction)
+		{
+			base.receiveScrollWheelAction(direction);
+			_itemIndex = BoundsHelper.EnsureBounds(_itemIndex + (direction < 0 ? 1 : -1), 0, _bottomIndex);
+			Game1.playSound("shwip");
+		}
+
+		public override void receiveLeftClick(int x, int y, bool playSound = true)
+		{
+			base.receiveLeftClick(x, y, playSound);
+
+			if (_upArrow.containsPoint(x, y))
+			{
+				_itemIndex = BoundsHelper.EnsureBounds(_itemIndex - 1, 0, _bottomIndex);
+				Game1.playSound("shwip");
+			}
+			
+			if (_downArrow.containsPoint(x, y))
+			{
+				_itemIndex = BoundsHelper.EnsureBounds(_itemIndex + 1, 0, _bottomIndex);
+				Game1.playSound("shwip");
+			}
+
+			if (_scrollbar.containsPoint(x, y))
+			{
+				_isScrolling = true;
+			}
+		}
+
+		public override void releaseLeftClick(int x, int y)
+		{
+			base.releaseLeftClick(x, y);
+			_isScrolling = false;
+		}
+
+		public override void leftClickHeld(int x, int y)
+		{
+			base.leftClickHeld(x, y);
+			if (!_isScrolling)
+			{
+				return;
+			}
+
+			if (!_scrollbarRunner.HasValue)
+			{
+				return;
+			}
+
+			var startingIndex = _itemIndex;
+
+			if (y < _scrollbarRunner.Value.Y)
+			{
+				_itemIndex = 0;
+			}
+
+			if (y > _scrollbarRunner.Value.Y + _scrollbarRunner.Value.Height)
+			{
+				_itemIndex = _bottomIndex;
+			}
+
+			if (_itemIndex != startingIndex)
+			{
+				Game1.playSound("shwip");
+			}
 		}
 
 		public override void draw(SpriteBatch batch)
@@ -41,9 +129,14 @@ namespace fsd.core.menu
 			DrawBackground(batch);
 			DrawTitle(batch);
 			DrawScrollBar(batch);
-			DrawRow(batch, _testItem, 0);
-			DrawRow(batch, _testItem, 1);
-			DrawRow(batch, _testItem, 2);
+
+			for (var i = 0; i < _maxNumberOfRows; i++)
+			{
+				if (_itemIndex + i < _allItems.Length)
+				{
+					DrawRow(batch, _allItems[_itemIndex + i], i);
+				}
+			}
 			DrawMouse(batch);
 		}
 
@@ -52,7 +145,10 @@ namespace fsd.core.menu
 			const int xPadding = 100;
 			const int yPadding = 50;
 			width = Math.Min(Game1.uiViewport.Width - 2 * xPadding, 1920);
-			height = Math.Min(Game1.uiViewport.Height - 2 * yPadding, 1080);
+			height = Math.Min(Game1.uiViewport.Height - 2 * yPadding, 2000);
+
+			_maxNumberOfRows = (height - 140) / 140;
+			_bottomIndex = _allItems.Length - _maxNumberOfRows;
 
 			xPositionOnScreen = (Game1.uiViewport.Width - width) / 2;
 			yPositionOnScreen = (Game1.uiViewport.Height - height) / 2;
@@ -174,26 +270,42 @@ namespace fsd.core.menu
 		private void DrawScrollBar(SpriteBatch batch)
 		{
 			var padding = 15;
-			var upArrow = new ClickableTextureComponent("up-arrow", new Rectangle(xPositionOnScreen + width + padding, yPositionOnScreen + Game1.tileSize + padding, 11 * Game1.pixelZoom, 12 * Game1.pixelZoom), "", "", Game1.mouseCursors, new Rectangle(421, 459, 11, 12), Game1.pixelZoom);
-			var downArrow = new ClickableTextureComponent("down-arrow", new Rectangle(xPositionOnScreen + width + padding, yPositionOnScreen + height - Game1.tileSize, 11 * Game1.pixelZoom, 12 * Game1.pixelZoom), "", "", Game1.mouseCursors, new Rectangle(421, 472, 11, 12), Game1.pixelZoom);
-			var scrollbar = new ClickableTextureComponent("scrollbar", new Rectangle(upArrow.bounds.X + Game1.pixelZoom * 3, upArrow.bounds.Y + upArrow.bounds.Height + Game1.pixelZoom, 6 * Game1.pixelZoom, 10 * Game1.pixelZoom), "", "", Game1.mouseCursors, new Rectangle(435, 463, 6, 10), Game1.pixelZoom);
-			var scrollbarRunner = new Rectangle(scrollbar.bounds.X, upArrow.bounds.Y + upArrow.bounds.Height + Game1.pixelZoom, scrollbar.bounds.Width, height - Game1.tileSize * 2 - upArrow.bounds.Height - Game1.pixelZoom * 2 - padding - 3);
+			if (_upArrow == null || _downArrow == null || _scrollbar == null || _scrollbarRunner == null)
+			{
+				
+				_upArrow = new ClickableTextureComponent("up-arrow", new Rectangle(xPositionOnScreen + width + padding, yPositionOnScreen + Game1.tileSize + padding, 11 * Game1.pixelZoom, 12 * Game1.pixelZoom), "", "", Game1.mouseCursors, new Rectangle(421, 459, 11, 12), Game1.pixelZoom);
+				_downArrow = new ClickableTextureComponent("down-arrow", new Rectangle(xPositionOnScreen + width + padding, yPositionOnScreen + height - Game1.tileSize, 11 * Game1.pixelZoom, 12 * Game1.pixelZoom), "", "", Game1.mouseCursors, new Rectangle(421, 472, 11, 12), Game1.pixelZoom);
+				_scrollbar = new ClickableTextureComponent("scrollbar", new Rectangle(_upArrow.bounds.X + Game1.pixelZoom * 3, _upArrow.bounds.Y + _upArrow.bounds.Height + Game1.pixelZoom, 6 * Game1.pixelZoom, 10 * Game1.pixelZoom), "", "", Game1.mouseCursors, new Rectangle(435, 463, 6, 10), Game1.pixelZoom);
+				_scrollbarRunner = new Rectangle(_scrollbar.bounds.X, _upArrow.bounds.Y + _upArrow.bounds.Height + Game1.pixelZoom, _scrollbar.bounds.Width, height - Game1.tileSize * 2 - _upArrow.bounds.Height - Game1.pixelZoom * 2 - padding - 3);
+			}
+			
+			var totalBarLength = _scrollbarRunner.Value.Height - _scrollbar.bounds.Height;
+			var step = totalBarLength / _bottomIndex;
+
+			if (_itemIndex == _bottomIndex)
+			{
+				_scrollbar.bounds.Y = _scrollbarRunner.Value.Y + _scrollbarRunner.Value.Height - _scrollbar.bounds.Height;
+			}
+			else
+			{
+				_scrollbar.bounds.Y = _upArrow.bounds.Y + _upArrow.bounds.Height + Game1.pixelZoom + (step * _itemIndex);
+			}
 			
 			drawTextureBox(
 				batch, 
 				Game1.mouseCursors, 
 				new Rectangle(403, 383, 6, 6), 
-				scrollbarRunner.X, 
-				scrollbarRunner.Y, 
-				scrollbarRunner.Width, 
-				scrollbarRunner.Height, 
+				_scrollbarRunner.Value.X, 
+				_scrollbarRunner.Value.Y, 
+				_scrollbarRunner.Value.Width, 
+				_scrollbarRunner.Value.Height, 
 				Color.White, 
 				Game1.pixelZoom, 
 				false
 			);
-			upArrow.draw(batch);
-			downArrow.draw(batch);
-			scrollbar.draw(batch);
+			_upArrow.draw(batch);
+			_downArrow.draw(batch);
+			_scrollbar.draw(batch);
 			//this.SetScrollBarToCurrentIndex();
 			
 		}
