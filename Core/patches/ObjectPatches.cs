@@ -8,14 +8,8 @@ namespace fsd.core.patches
 	{
 		public static void SellToStoreSalePricePostFix(Object __instance, ref int __result)
 		{
-			var res = __result;
-			var newResult = SafeAction.Run(() =>
-			{
-				var newRes = res + 1000;
-				return newRes;
-			}, __result, Monitor);
-
-			__result = newResult;
+			var basePrice = __result;
+			__result = SafeAction.Run(() => EconomyService.GetPrice(__instance, basePrice), __result, Monitor);
 		}
 
 		public override void Register(Harmony harmony)

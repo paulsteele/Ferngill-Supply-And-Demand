@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
 namespace fsd.core.models
@@ -12,8 +13,13 @@ namespace fsd.core.models
 		private const int MaxDelta = 50;
 		public const int StdDevDelta = 15;
 
+		private const float MaxPercentage = 1.3f;
+		private const float MinPercentage = 0.2f;
+
 		private int _dailyDelta;
 		private int _supply;
+		// there are a variety of factors that can influence sell price. Cache the calculation for each input
+		private readonly Dictionary<int, int> _cachedPrices = new(); 
 
 		public static int MeanSupply => (MinSupply + MaxSupply) / 2;
 		public static int MeanDelta => (MinDelta + MaxDelta) / 2;
@@ -40,5 +46,21 @@ namespace fsd.core.models
 		}
 
 		private static int EnsureBounds(int input, int min, int max) => Math.Min(Math.Max(input, min), max);
+
+		public int GetPrice(int basePrice)
+		{
+			// ReSharper disable once InvertIf
+			if (!_cachedPrices.ContainsKey(basePrice))
+			{
+				var ratio = 1 - (Supply / (float)MaxSupply);
+				const float percentageRange = MaxPercentage - MinPercentage;
+
+				var multiplier = ratio * percentageRange;
+
+				_cachedPrices.Add(basePrice, (int)(basePrice * multiplier));
+			}
+			
+			return _cachedPrices[basePrice];
+		}
 	}
 }

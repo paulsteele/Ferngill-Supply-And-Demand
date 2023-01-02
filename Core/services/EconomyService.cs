@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Linq;
+using System.Threading;
 using fsd.core.models;
 using MathNet.Numerics.Distributions;
 using StardewModdingAPI;
 using StardewValley;
+using StardewValley.Locations;
 using Object = StardewValley.Object;
 
 namespace fsd.core.services
@@ -11,8 +13,13 @@ namespace fsd.core.services
 	public class EconomyService
 	{
 		private readonly IModHelper _modHelper;
+		private readonly IMonitor _monitor;
 
-		public EconomyService(IModHelper modHelper) => _modHelper = modHelper;
+		public EconomyService(IModHelper modHelper, IMonitor monitor)
+		{
+			_modHelper = modHelper;
+			_monitor = monitor;
+		}
 
 		private EconomyModel Economy { get; set; }
 
@@ -41,9 +48,9 @@ namespace fsd.core.services
 		private static EconomyModel GenerateBlankEconomy()
 		{
 			var validItems = Game1.objectInformation.Keys
-				.Select(id => (id, obj: new Object(id, 1)))
-				.Where(tuple => EconomyValidCategories.Categories.Contains(tuple.obj.Category))
-				.GroupBy(tuple => tuple.obj.Category, tuple => new ItemModel { ObjectId = tuple.id })
+				.Select(id => new Object(id, 1))
+				.Where(obj => EconomyValidCategories.Categories.Contains(obj.Category))
+				.GroupBy(obj => obj.Category, obj => new ItemModel { ObjectId = obj.ParentSheetIndex })
 				.ToDictionary(grouping => grouping.Key, grouping => grouping.ToDictionary(item => item.ObjectId));
 
 			return new EconomyModel
@@ -81,6 +88,26 @@ namespace fsd.core.services
 
 			Economy.AdvanceOneDay();
 			QueueSave();
+		}
+
+		public int GetPrice(Object obj, int basePrice)
+		{
+			if (Economy == null)
+			{
+				_monitor.Log($"Economy not generated to determine item model for {obj.name}", LogLevel.Error);
+				return basePrice;
+			}
+			var itemModel = Economy.GetItem(obj);
+			if (itemModel == null)
+			{
+				_monitor.Log($"Could not find item model for {obj.name}", LogLevel.Error);
+				return basePrice;
+			}
+			var adjustedPrice = itemModel.GetPrice(basePrice);
+			
+			_monitor.Log($"Altered {obj.name} from {basePrice} to {adjustedPrice}", LogLevel.Error);
+
+			return adjustedPrice;
 		}
 
 		private static int RoundDouble(double d) => (int)Math.Round(d, 0, MidpointRounding.ToEven);

@@ -1,4 +1,5 @@
-﻿using HarmonyLib;
+﻿using fsd.core.services;
+using HarmonyLib;
 using StardewModdingAPI;
 
 namespace fsd.core.patches
@@ -6,9 +7,11 @@ namespace fsd.core.patches
 	public abstract class SelfRegisteringPatches
 	{
 		protected static IMonitor Monitor;
+		protected static EconomyService EconomyService;
 
-		public static void Initialize(IMonitor monitor)
+		public static void Initialize(EconomyService economyService, IMonitor monitor)
 		{
+			EconomyService = economyService;
 			Monitor = monitor;
 		}
 

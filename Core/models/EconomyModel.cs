@@ -38,6 +38,18 @@ namespace fsd.core.models
 			}
 		}
 
+		public ItemModel GetItem(StardewValley.Object obj)
+		{
+			if (!CategoryEconomies.ContainsKey(obj.Category))
+			{
+				return null;
+			}
+
+			var category = CategoryEconomies[obj.Category];
+			
+			return !category.ContainsKey(obj.ParentSheetIndex) ? null : category[obj.ParentSheetIndex];
+		}
+
 		public void AdvanceOneDay()
 		{
 			ForAllItems(model => model.AdvanceOneDay());

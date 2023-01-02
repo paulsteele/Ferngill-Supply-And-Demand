@@ -13,7 +13,7 @@ namespace fsd.core
 
 		public override void Entry(IModHelper helper)
 		{
-			_economyService = new EconomyService(helper);
+			_economyService = new EconomyService(helper, Monitor);
 			RegisterPatches();
 			RegisterHandlers(helper);
 		}
@@ -22,7 +22,7 @@ namespace fsd.core
 		{
 			var harmony = new Harmony(ModManifest.UniqueID);
 
-			SelfRegisteringPatches.Initialize(Monitor);
+			SelfRegisteringPatches.Initialize(_economyService, Monitor);
 			new ObjectPatches().Register(harmony);
 			new ShopMenuPatches().Register(harmony);
 		}
