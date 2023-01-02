@@ -7,7 +7,8 @@ namespace fsd.core.models
 	public class ItemModel
 	{
 		private const int MinSupply = 0;
-		private const int MaxSupply = 1000;
+		private const int MaxCalculatedSupply = 1000;
+		private const int MaxSupply = int.MaxValue;
 		public const int StdDevSupply = 150;
 		private const int MinDelta = -50;
 		private const int MaxDelta = 50;
@@ -21,7 +22,7 @@ namespace fsd.core.models
 		// there are a variety of factors that can influence sell price. Cache the calculation for each input
 		private readonly Dictionary<int, int> _cachedPrices = new(); 
 
-		public static int MeanSupply => (MinSupply + MaxSupply) / 2;
+		public static int MeanSupply => (MinSupply + MaxCalculatedSupply) / 2;
 		public static int MeanDelta => (MinDelta + MaxDelta) / 2;
 
 		[JsonInclude] public int ObjectId { get; set; }
@@ -43,6 +44,7 @@ namespace fsd.core.models
 		public void AdvanceOneDay()
 		{
 			Supply += DailyDelta;
+			_cachedPrices.Clear();
 		}
 
 		private static int EnsureBounds(int input, int min, int max) => Math.Min(Math.Max(input, min), max);
@@ -52,10 +54,10 @@ namespace fsd.core.models
 			// ReSharper disable once InvertIf
 			if (!_cachedPrices.ContainsKey(basePrice))
 			{
-				var ratio = 1 - (Supply / (float)MaxSupply);
+				var ratio = 1 - (Math.Min(Supply, MaxCalculatedSupply) / (float)MaxCalculatedSupply);
 				const float percentageRange = MaxPercentage - MinPercentage;
 
-				var multiplier = ratio * percentageRange;
+				var multiplier = (ratio * percentageRange) + MinPercentage;
 
 				_cachedPrices.Add(basePrice, (int)(basePrice * multiplier));
 			}

@@ -100,14 +100,35 @@ namespace fsd.core.services
 			var itemModel = Economy.GetItem(obj);
 			if (itemModel == null)
 			{
-				_monitor.Log($"Could not find item model for {obj.name}", LogLevel.Error);
+				_monitor.Log($"Could not find item model for {obj.name}", LogLevel.Trace);
 				return basePrice;
 			}
 			var adjustedPrice = itemModel.GetPrice(basePrice);
 			
-			_monitor.Log($"Altered {obj.name} from {basePrice} to {adjustedPrice}", LogLevel.Error);
+			_monitor.Log($"Altered {obj.name} from {basePrice} to {adjustedPrice}", LogLevel.Trace);
 
 			return adjustedPrice;
+		}
+
+		public void AdjustSupply(Object obj, int amount)
+		{
+			if (Economy == null)
+			{
+				_monitor.Log($"Economy not generated to determine item model for {obj.name}", LogLevel.Error);
+				return;
+			}
+			var itemModel = Economy.GetItem(obj);
+			if (itemModel == null)
+			{
+				_monitor.Log($"Could not find item model for {obj.name}", LogLevel.Trace);
+				return;
+			}
+
+			var prev = itemModel.Supply;
+			itemModel.Supply += amount;
+
+			_monitor.Log($"Adjusted {obj.name} supply from {prev} to {itemModel.Supply}", LogLevel.Trace);
+			QueueSave();
 		}
 
 		private static int RoundDouble(double d) => (int)Math.Round(d, 0, MidpointRounding.ToEven);

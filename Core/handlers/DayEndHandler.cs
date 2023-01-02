@@ -24,8 +24,10 @@ namespace fsd.core.handlers
 
 		public void Register()
 		{
-			_helper.Events.GameLoop.DayEnding +=
-				(_, _) => SafeAction.Run(GameLoopOnDayEnding, _monitor, nameof(GameLoopOnDayEnding));
+			_helper.Events.GameLoop.DayEnding += (_, _) => 
+				SafeAction.Run(GameLoopOnDayEnding, _monitor, nameof(GameLoopOnDayEnding));
+			_helper.Events.GameLoop.DayStarted += (_, _) =>
+				SafeAction.Run(_economyService.AdvanceOneDay, _monitor, nameof(_economyService.AdvanceOneDay));
 		}
 
 		private void GameLoopOnDayEnding()
@@ -34,11 +36,9 @@ namespace fsd.core.handlers
 			{
 				foreach (var item in Game1.getFarm().getShippingBin(farmer))
 				{
-					_monitor.Log($"sold {item.Name} at {item.salePrice()} {item.Stack}x via shipping", LogLevel.Error);
+					_economyService.AdjustSupply(item as Object, item.Stack);
 				}
 			}
-
-			_economyService.AdvanceOneDay();
 		}
 	}
 }

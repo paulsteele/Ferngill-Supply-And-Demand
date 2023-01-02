@@ -1,5 +1,4 @@
 ﻿using HarmonyLib;
-using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Menus;
 
@@ -10,13 +9,19 @@ namespace fsd.core.patches
 		//Prefix as the number of sold stacks is modified in the original function
 		public static bool AddBuyBackItemPreFix(ISalable sold_item, int sell_unit_price, int stack)
 		{
-			Monitor.Log($"sold {sold_item.Name} at {sell_unit_price} {stack}x", LogLevel.Error);
+			if (sold_item is Object soldObject)
+			{
+				EconomyService.AdjustSupply(soldObject, stack);
+			}
 			return true;
 		}
 
 		public static void BuyBuybackItemPostFix(ISalable bought_item, int price, int stack)
 		{
-			Monitor.Log($"buyback {bought_item.Name} at {price} {stack}x", LogLevel.Error);
+			if (bought_item is Object boughtObject)
+			{
+				EconomyService.AdjustSupply(boughtObject, -stack);
+			}
 		}
 
 		public override void Register(Harmony harmony)
