@@ -7,7 +7,7 @@ namespace fsd.core.models
 	public class ItemModel
 	{
 		private const int MinSupply = 0;
-		private const int MaxCalculatedSupply = 1000;
+		public const int MaxCalculatedSupply = 1000;
 		private const int MaxSupply = int.MaxValue;
 		public const int StdDevSupply = 150;
 		private const int MinDelta = -50;
