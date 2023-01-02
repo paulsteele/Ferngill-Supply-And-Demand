@@ -1,8 +1,10 @@
 ﻿using fsd.core.handlers;
+using fsd.core.menu;
 using fsd.core.patches;
 using fsd.core.services;
 using HarmonyLib;
 using StardewModdingAPI;
+using StardewValley;
 
 namespace fsd.core
 {
@@ -31,6 +33,13 @@ namespace fsd.core
 		{
 			new DayEndHandler(helper, Monitor, _economyService).Register();
 			new SaveLoadedHandler(helper, Monitor, _economyService).Register();
+			helper.Events.Input.ButtonPressed += (sender, args) =>
+			{
+				if (args.Button == SButton.I)
+				{
+					Game1.activeClickableMenu = new ForecastMenu(_economyService, Monitor);
+				}
+			};
 		}
 	}
 }
