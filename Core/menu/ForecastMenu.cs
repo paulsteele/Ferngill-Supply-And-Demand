@@ -60,29 +60,37 @@ namespace fsd.core.menu
 		public override void receiveScrollWheelAction(int direction)
 		{
 			base.receiveScrollWheelAction(direction);
+			var startingIndex = _itemIndex;
 			_itemIndex = BoundsHelper.EnsureBounds(_itemIndex + (direction < 0 ? 1 : -1), 0, _bottomIndex);
-			Game1.playSound("shwip");
+			if (startingIndex != _itemIndex)
+			{
+				Game1.playSound("shwip");
+			}
 		}
 
 		public override void receiveLeftClick(int x, int y, bool playSound = true)
 		{
 			base.receiveLeftClick(x, y, playSound);
+			var startingIndex = _itemIndex;
 
 			if (_upArrow.containsPoint(x, y))
 			{
 				_itemIndex = BoundsHelper.EnsureBounds(_itemIndex - 1, 0, _bottomIndex);
-				Game1.playSound("shwip");
 			}
 			
 			if (_downArrow.containsPoint(x, y))
 			{
 				_itemIndex = BoundsHelper.EnsureBounds(_itemIndex + 1, 0, _bottomIndex);
-				Game1.playSound("shwip");
 			}
 
 			if (_scrollbar.containsPoint(x, y))
 			{
 				_isScrolling = true;
+			}
+
+			if (startingIndex != _itemIndex)
+			{
+				Game1.playSound("shwip");
 			}
 		}
 
@@ -116,6 +124,13 @@ namespace fsd.core.menu
 			{
 				_itemIndex = _bottomIndex;
 			}
+			
+			var totalBarLength = _scrollbarRunner.Value.Height - _scrollbar.bounds.Height;
+			var step = totalBarLength / _bottomIndex;
+
+			var relativeMousePos = y - _scrollbarRunner.Value.Y;
+
+			_itemIndex = relativeMousePos / step;
 
 			if (_itemIndex != startingIndex)
 			{
