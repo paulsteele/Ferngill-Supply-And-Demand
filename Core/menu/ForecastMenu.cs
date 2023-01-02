@@ -25,7 +25,7 @@ namespace fsd.core.menu
 			_economyService = economyService;
 			_monitor = monitor;
 
-			_testItem = new ItemModel{ObjectId = 24, Supply = 300, DailyDelta = 22};
+			_testItem = new ItemModel{ObjectId = 24, Supply = 200, DailyDelta = 30};
 		}
 
 		public override void gameWindowSizeChanged(Rectangle oldBounds, Rectangle newBounds)
@@ -75,12 +75,14 @@ namespace fsd.core.menu
 			var rowHeight = 100;
 			var x = xPositionOnScreen + padding;
 			var y = yPositionOnScreen + 80 + padding + (rowHeight + padding) * rowNumber;
-			
+
 			obj.drawInMenu(batch, new Vector2(x, y), 1);
-			DrawSupplyBar(batch, x + Game1.tileSize, y, xPositionOnScreen + width - padding * 2, Math.Min(model.Supply / (float) ItemModel.MaxCalculatedSupply, 1));
+			
+			DrawSupplyBar(batch, x + (int) (Game1.tileSize * 1.2), y, xPositionOnScreen + width - padding * 2, Math.Min(model.Supply / (float)ItemModel.MaxCalculatedSupply, 1), model.DailyDelta);
+			Utility.drawTextWithShadow(batch, obj.Name, Game1.dialogueFont, new Vector2(x, y + Game1.tileSize), Game1.textColor);
 		}
 
-		private void DrawSupplyBar(SpriteBatch batch, int startingX, int startingY, int endingX, float percentage)
+		private void DrawSupplyBar(SpriteBatch batch, int startingX, int startingY, int endingX, float percentage, int delta)
 		{
 			var barWidth = ((endingX - startingX) / 10) * 10;
 			var barHeight = Game1.tileSize / 2;
@@ -133,6 +135,40 @@ namespace fsd.core.menu
 			var percentageRect = new Rectangle(startingX, startingY + Game1.tileSize / 2, (int) (barWidth * percentage), barHeight);
 			batch.Draw(_barBackgroundTexture, fullRect, new Rectangle(0, 0, barWidth, barHeight), Color.White);
 			batch.Draw(_barForegroundTexture, percentageRect, new Rectangle(0, 0, percentageRect.Width, barHeight), barColor);
+			
+			//delta arrows
+			var location = new Rectangle(percentageRect.X + percentageRect.Width - (int)(Game1.tileSize * .3), percentageRect.Y - barHeight, 5 * Game1.pixelZoom, 5 * Game1.pixelZoom);
+
+			if (delta < 0)
+			{
+				var leftArrow = new ClickableTextureComponent("up-arrow", location, "", "", Game1.mouseCursors, new Rectangle(352, 495, 12, 11), Game1.pixelZoom * .75f);
+				leftArrow.draw(batch);
+				if (delta < -20)
+				{
+					leftArrow.bounds.X -= 10;
+					leftArrow.draw(batch);
+				}
+				if (delta < -40)
+				{
+					leftArrow.bounds.X -= 10;
+					leftArrow.draw(batch);
+				}
+			}
+			else
+			{
+				var rightArrow = new ClickableTextureComponent("down-arrow", location, "", "", Game1.mouseCursors, new Rectangle(365, 495, 12, 11), Game1.pixelZoom * .75f);
+				rightArrow.draw(batch);
+				if (delta > 20)
+				{
+					rightArrow.bounds.X += 10;
+					rightArrow.draw(batch);
+				}
+				if (delta > 40)
+				{
+					rightArrow.bounds.X += 10;
+					rightArrow.draw(batch);
+				}
+			}
 		}
 
 		private void DrawScrollBar(SpriteBatch batch)
