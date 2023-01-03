@@ -33,6 +33,7 @@ namespace fse.core.services
 			if (existingModel != null && existingModel.HasSameItems(newModel))
 			{
 				Economy = existingModel;
+				Loaded = true;
 				return;
 			}
 

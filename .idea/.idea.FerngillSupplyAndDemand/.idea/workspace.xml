@@ -4,32 +4,8 @@
     <projectFile>Core/Core.csproj</projectFile>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="dfaddaba-653d-4a25-a8d0-3cf43d6cf534" name="Changes" comment="add phone mod integration">
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.FerngillSupplyAndDemand/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.FerngillSupplyAndDemand/.idea/encodings.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.FerngillSupplyAndDemand/.idea/indexLayout.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.FerngillSupplyAndDemand/.idea/vcs.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Core/Core.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Core.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Core/FerngillSupplyAndDemandMod.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Core/FerngillSimpleEconomy.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Core/actions/SafeAction.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Core/actions/SafeAction.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Core/handlers/DayEndHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Core/handlers/DayEndHandler.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Core/handlers/GameLoadedHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Core/handlers/GameLoadedHandler.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Core/handlers/IHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Core/handlers/IHandler.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Core/handlers/SaveLoadedHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Core/handlers/SaveLoadedHandler.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Core/helpers/BoundsHelper.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Core/helpers/BoundsHelper.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Core/integrations/IMobilePhoneApi.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Core/integrations/IMobilePhoneApi.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Core/manifest.json" beforeDir="false" afterPath="$PROJECT_DIR$/Core/manifest.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Core/menu/ForecastMenu.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Core/menu/ForecastMenu.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Core/menu/Readme.md" beforeDir="false" afterPath="$PROJECT_DIR$/Core/menu/Readme.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Core/models/EconomyModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Core/models/EconomyModel.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Core/models/EconomyValidCategories.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Core/models/EconomyValidCategories.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Core/models/ItemModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Core/models/ItemModel.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Core/patches/ObjectPatches.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Core/patches/ObjectPatches.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Core/patches/SelfRegisteringPatches.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Core/patches/SelfRegisteringPatches.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Core/patches/ShopMenuPatches.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Core/patches/ShopMenuPatches.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Core/services/EconomyIgnoreList.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Core/services/EconomyIgnoreList.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Core/services/EconomyService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Core/services/EconomyService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FerngillSupplyAndDemand.sln" beforeDir="false" afterPath="$PROJECT_DIR$/FerngillSimpleEconomy.sln" afterDir="false" />
+    <list default="true" id="dfaddaba-653d-4a25-a8d0-3cf43d6cf534" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.FerngillSupplyAndDemand/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.FerngillSupplyAndDemand/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -107,14 +83,19 @@
     <setting file="mock://C:/Users/Paul_/Documents/FerngillSupplyAndDemand/Core/models/ItemModel.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/Paul_/Documents/FerngillSupplyAndDemand/Core/models/ItemModel.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/Paul_/Documents/FerngillSupplyAndDemand/Core/models/ItemModel.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Core/patches/ObjectPatches.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Core/patches/SelfRegisteringPatches.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="mock://C:/Users/Paul_/Documents/FerngillSupplyAndDemand/Core/services/EconomyService.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/Paul_/Documents/FerngillSupplyAndDemand/Core/services/EconomyService.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/Paul_/Documents/FerngillSupplyAndDemand/Core/services/EconomyService.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/Paul_/Documents/FerngillSupplyAndDemand/Core/services/EconomyService.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/Paul_/Documents/FerngillSupplyAndDemand/Core/services/EconomyService.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/Paul_/Documents/FerngillSupplyAndDemand/Core/services/EconomyService.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/FerngillSimpleEconomy/FerngillSimpleEconomy.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/FerngillSimpleEconomy/manifest.json" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/FerngillSimpleEconomy/patches/ObjectPatches.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/FerngillSimpleEconomy/patches/SelfRegisteringPatches.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/FerngillSimpleEconomy/patches/ShopMenuPatches.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/FerngillSimpleEconomy/services/EconomyIgnoreList.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/FerngillSimpleEconomy/services/EconomyService.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -154,7 +135,7 @@
       <option name="USE_EXTERNAL_CONSOLE" value="0" />
       <option name="USE_MONO" value="0" />
       <option name="RUNTIME_ARGUMENTS" value="" />
-      <option name="PROJECT_PATH" value="$PROJECT_DIR$/Core/Core.csproj" />
+      <option name="PROJECT_PATH" value="$PROJECT_DIR$/FerngillSimpleEconomy/FerngillSimpleEconomy.csproj" />
       <option name="PROJECT_EXE_PATH_TRACKING" value="1" />
       <option name="PROJECT_ARGUMENTS_TRACKING" value="1" />
       <option name="PROJECT_WORKING_DIRECTORY_TRACKING" value="1" />
@@ -181,7 +162,7 @@
       <workItem from="1672498015789" duration="21450000" />
       <workItem from="1672613991684" duration="4406000" />
       <workItem from="1672618468263" duration="5535000" />
-      <workItem from="1672629933612" duration="43236000" />
+      <workItem from="1672629933612" duration="43431000" />
     </task>
     <task id="LOCAL-00001" summary="first commit">
       <created>1672438196538</created>
@@ -393,7 +374,21 @@
       <option name="project" value="LOCAL" />
       <updated>1672720121549</updated>
     </task>
-    <option name="localTasksCounter" value="31" />
+    <task id="LOCAL-00031" summary="update mod name">
+      <created>1672720463848</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1672720463848</updated>
+    </task>
+    <task id="LOCAL-00032" summary="update project folder">
+      <created>1672720557860</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1672720557860</updated>
+    </task>
+    <option name="localTasksCounter" value="33" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -403,8 +398,6 @@
   <component name="UnityUnitTestConfiguration" currentTestLauncher="NUnit" />
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-    <MESSAGE value="refactor base entry point logic. added day end handler to capture shipping bins" />
-    <MESSAGE value="add save loader to get all valid items" />
     <MESSAGE value="update economy model to validate all items are equivalent on startup" />
     <MESSAGE value="randomize economy" />
     <MESSAGE value="bundle assemblies (mathnet)" />
@@ -428,13 +421,15 @@
     <MESSAGE value="don't show duplicated categories" />
     <MESSAGE value="add ignore list + prevent breaking on holding scroll" />
     <MESSAGE value="add phone mod integration" />
-    <option name="LAST_COMMIT_MESSAGE" value="add phone mod integration" />
+    <MESSAGE value="update mod name" />
+    <MESSAGE value="update project folder" />
+    <option name="LAST_COMMIT_MESSAGE" value="update project folder" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/Core/handlers/DayEndHandler.cs</url>
+          <url>file://$PROJECT_DIR$/FerngillSimpleEconomy/handlers/DayEndHandler.cs</url>
           <line>45</line>
           <properties documentPath="C:\Users\Paul_\Documents\FerngillSupplyAndDemand\Core\handlers\DayEndHandler.cs" initialLine="45" containingFunctionPresentation="method 'GameLoopOnDayEnding'">
             <startOffsets>
