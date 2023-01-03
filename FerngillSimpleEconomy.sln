@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "Core\Core.csproj", "{EF206A28-797A-4B3A-87DF-682FDA9A78E8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FerngillSimpleEconomy", "FerngillSimpleEconomy\FerngillSimpleEconomy.csproj", "{EF206A28-797A-4B3A-87DF-682FDA9A78E8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
