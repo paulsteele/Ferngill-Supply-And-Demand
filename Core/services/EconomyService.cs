@@ -68,6 +68,7 @@ namespace fsd.core.services
 		private static EconomyModel GenerateBlankEconomy()
 		{
 			var validItems = Game1.objectInformation.Keys
+				.Where(key => !EconomyIgnoreList.IgnoreList.Contains(key))
 				.Select(id => new Object(id, 1))
 				.Where(obj => EconomyValidCategories.Categories.Contains(obj.Category))
 				.GroupBy(obj => obj.Category, obj => new ItemModel { ObjectId = obj.ParentSheetIndex })

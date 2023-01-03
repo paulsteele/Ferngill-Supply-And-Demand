@@ -165,7 +165,7 @@ namespace fsd.core.menu
 
 			var relativeMousePos = y - _scrollbarRunner.Value.Y;
 
-			_itemIndex = relativeMousePos / step;
+			_itemIndex = BoundsHelper.EnsureBounds(relativeMousePos / step, 0, _bottomIndex);
 
 			if (_itemIndex != startingIndex)
 			{
