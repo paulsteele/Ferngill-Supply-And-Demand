@@ -33,13 +33,7 @@ namespace fsd.core
 		{
 			new DayEndHandler(helper, Monitor, _economyService).Register();
 			new SaveLoadedHandler(helper, Monitor, _economyService).Register();
-			helper.Events.Input.ButtonPressed += (sender, args) =>
-			{
-				if (args.Button == SButton.I)
-				{
-					Game1.activeClickableMenu = new ForecastMenu(_economyService, Monitor);
-				}
-			};
+			new GameLoadedHandler(_economyService, helper, Monitor).Register();
 		}
 	}
 }
