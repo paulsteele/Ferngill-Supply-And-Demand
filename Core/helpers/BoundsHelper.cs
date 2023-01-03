@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace fsd.core.helpers
+namespace fse.core.helpers
 {
 	public static class BoundsHelper
 	{

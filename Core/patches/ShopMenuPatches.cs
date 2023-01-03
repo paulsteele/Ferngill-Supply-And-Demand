@@ -2,7 +2,7 @@
 using StardewValley;
 using StardewValley.Menus;
 
-namespace fsd.core.patches
+namespace fse.core.patches
 {
 	public class ShopMenuPatches : SelfRegisteringPatches
 	{

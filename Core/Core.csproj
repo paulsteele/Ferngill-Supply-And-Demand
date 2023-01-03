@@ -2,8 +2,8 @@
 
 	<PropertyGroup>
 		<TargetFramework>net5.0</TargetFramework>
-		<AssemblyName>ferngillSupplyAndDemand</AssemblyName>
-		<RootNamespace>fsd.core</RootNamespace>
+		<AssemblyName>ferngillSimpleEconomy</AssemblyName>
+		<RootNamespace>fse.core</RootNamespace>
 		<EnableHarmony>true</EnableHarmony>
 		<BundleExtraAssemblies>ThirdParty</BundleExtraAssemblies>
 	</PropertyGroup>
@@ -14,7 +14,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="assets" />
+		<Folder Include="assets" />
 	</ItemGroup>
 
 </Project>

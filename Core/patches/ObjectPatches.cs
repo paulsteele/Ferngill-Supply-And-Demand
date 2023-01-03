@@ -1,8 +1,8 @@
-﻿using fsd.core.actions;
+﻿using fse.core.actions;
 using HarmonyLib;
 using StardewValley;
 
-namespace fsd.core.patches
+namespace fse.core.patches
 {
 	public class ObjectPatches : SelfRegisteringPatches
 	{

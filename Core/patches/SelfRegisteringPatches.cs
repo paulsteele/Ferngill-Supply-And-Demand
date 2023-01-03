@@ -1,8 +1,8 @@
-﻿using fsd.core.services;
+﻿using fse.core.services;
 using HarmonyLib;
 using StardewModdingAPI;
 
-namespace fsd.core.patches
+namespace fse.core.patches
 {
 	public abstract class SelfRegisteringPatches
 	{

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using fsd.core.helpers;
-using fsd.core.models;
-using fsd.core.services;
+using fse.core.helpers;
+using fse.core.models;
+using fse.core.services;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI;
@@ -11,7 +11,7 @@ using StardewValley;
 using StardewValley.Menus;
 using Object = StardewValley.Object;
 
-namespace fsd.core.menu
+namespace fse.core.menu
 {
 	public class ForecastMenu : IClickableMenu
 	{

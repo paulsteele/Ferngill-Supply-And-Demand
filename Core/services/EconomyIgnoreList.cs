@@ -1,4 +1,4 @@
-﻿namespace fsd.core.services
+﻿namespace fse.core.services
 {
 	public static class EconomyIgnoreList
 	{

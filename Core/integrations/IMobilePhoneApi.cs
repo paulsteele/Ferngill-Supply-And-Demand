@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewValley;
 
-namespace fsd.core.integrations
+namespace fse.core.integrations
 {
 	public interface IMobilePhoneApi
 	{

@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using fsd.core.models;
+using fse.core.models;
 using MathNet.Numerics.Distributions;
 using StardewModdingAPI;
 using StardewValley;
 using Object = StardewValley.Object;
 
-namespace fsd.core.services
+namespace fse.core.services
 {
 	public class EconomyService
 	{

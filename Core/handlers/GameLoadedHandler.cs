@@ -1,14 +1,13 @@
 ﻿using System.IO;
-using System.Threading;
-using fsd.core.actions;
-using fsd.core.integrations;
-using fsd.core.menu;
-using fsd.core.services;
+using fse.core.actions;
+using fse.core.integrations;
+using fse.core.menu;
+using fse.core.services;
 using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI;
 using StardewValley;
 
-namespace fsd.core.handlers
+namespace fse.core.handlers
 {
 	public class GameLoadedHandler : IHandler
 	{

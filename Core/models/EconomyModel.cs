@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json.Serialization;
 
-namespace fsd.core.models
+namespace fse.core.models
 {
 	public class EconomyModel
 	{

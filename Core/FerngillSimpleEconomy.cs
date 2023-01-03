@@ -1,15 +1,13 @@
-﻿using fsd.core.handlers;
-using fsd.core.menu;
-using fsd.core.patches;
-using fsd.core.services;
+﻿using fse.core.handlers;
+using fse.core.patches;
+using fse.core.services;
 using HarmonyLib;
 using StardewModdingAPI;
-using StardewValley;
 
-namespace fsd.core
+namespace fse.core
 {
 	// ReSharper disable once UnusedType.Global
-	public class FerngillSupplyAndDemandMod : Mod
+	public class FerngillSimpleEconomy : Mod
 	{
 		private EconomyService _economyService;
 

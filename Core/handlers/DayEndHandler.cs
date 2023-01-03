@@ -1,9 +1,9 @@
-﻿using fsd.core.actions;
-using fsd.core.services;
+﻿using fse.core.actions;
+using fse.core.services;
 using StardewModdingAPI;
 using StardewValley;
 
-namespace fsd.core.handlers
+namespace fse.core.handlers
 {
 	public class DayEndHandler : IHandler
 	{

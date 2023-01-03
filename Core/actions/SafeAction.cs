@@ -2,7 +2,7 @@
 using System.Runtime.CompilerServices;
 using StardewModdingAPI;
 
-namespace fsd.core.actions
+namespace fse.core.actions
 {
 	public static class SafeAction
 	{

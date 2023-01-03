@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
-using fsd.core.helpers;
+using fse.core.helpers;
 
-namespace fsd.core.models
+namespace fse.core.models
 {
 	public class ItemModel
 	{

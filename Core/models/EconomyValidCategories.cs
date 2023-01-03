@@ -1,6 +1,6 @@
 ﻿using StardewValley;
 
-namespace fsd.core.models
+namespace fse.core.models
 {
 	public static class EconomyValidCategories
 	{

@@ -1,8 +1,8 @@
-﻿using fsd.core.actions;
-using fsd.core.services;
+﻿using fse.core.actions;
+using fse.core.services;
 using StardewModdingAPI;
 
-namespace fsd.core.handlers
+namespace fse.core.handlers
 {
 	public class SaveLoadedHandler : IHandler
 	{
