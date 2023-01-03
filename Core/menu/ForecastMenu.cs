@@ -20,6 +20,7 @@ namespace fsd.core.menu
 		private int _itemIndex;
 		private int _maxNumberOfRows = 0;
 		private bool _isScrolling;
+		private bool _isInDropdown;
 		private Texture2D _barBackgroundTexture;
 		private Texture2D _barForegroundTexture;
 		private ClickableTextureComponent _upArrow;
@@ -27,6 +28,7 @@ namespace fsd.core.menu
 		private ClickableTextureComponent _scrollbar;
 		private Rectangle? _scrollbarRunner;
 		private int _bottomIndex;
+		private OptionsDropDown _categoryDropdown;
 
 		public ForecastMenu(
 			EconomyService economyService,
@@ -55,6 +57,7 @@ namespace fsd.core.menu
 			_downArrow = null;
 			_scrollbar = null;
 			_scrollbarRunner = null;
+			_categoryDropdown = null;
 		}
 
 		public override void receiveScrollWheelAction(int direction)
@@ -72,6 +75,12 @@ namespace fsd.core.menu
 		{
 			base.receiveLeftClick(x, y, playSound);
 			var startingIndex = _itemIndex;
+			
+			if (_categoryDropdown.bounds.Contains(x, y))
+			{
+				_categoryDropdown.receiveLeftClick(x, y);
+				_isInDropdown = true;
+			}
 
 			if (_upArrow.containsPoint(x, y))
 			{
@@ -87,7 +96,7 @@ namespace fsd.core.menu
 			{
 				_isScrolling = true;
 			}
-
+			
 			if (startingIndex != _itemIndex)
 			{
 				Game1.playSound("shwip");
@@ -98,11 +107,24 @@ namespace fsd.core.menu
 		{
 			base.releaseLeftClick(x, y);
 			_isScrolling = false;
+
+			// ReSharper disable once InvertIf
+			if (_isInDropdown)
+			{
+				_categoryDropdown.leftClickReleased(x, y);
+				_isInDropdown = false;
+			}
 		}
 
 		public override void leftClickHeld(int x, int y)
 		{
 			base.leftClickHeld(x, y);
+			if (_isInDropdown)
+			{
+				_categoryDropdown.leftClickHeld(x, y);
+				return;
+			}
+			
 			if (!_isScrolling)
 			{
 				return;
@@ -152,6 +174,7 @@ namespace fsd.core.menu
 					DrawRow(batch, _allItems[_itemIndex + i], i);
 				}
 			}
+			DrawDropdown(batch);
 			DrawMouse(batch);
 		}
 
@@ -162,7 +185,7 @@ namespace fsd.core.menu
 			width = Math.Min(Game1.uiViewport.Width - 2 * xPadding, 1920);
 			height = Math.Min(Game1.uiViewport.Height - 2 * yPadding, 2000);
 
-			_maxNumberOfRows = (height - 140) / 140;
+			_maxNumberOfRows = (height - 170) / 140;
 			_bottomIndex = _allItems.Length - _maxNumberOfRows;
 
 			xPositionOnScreen = (Game1.uiViewport.Width - width) / 2;
@@ -178,6 +201,41 @@ namespace fsd.core.menu
 			DrawBoxWithAlignedText(xPositionOnScreen + width / 2, yPositionOnScreen, "Ferngill Economic Forecast", Alignment.Middle, Alignment.End, batch);
 		}
 
+		private void DrawDropdown(SpriteBatch batch)
+		{
+			if (_categoryDropdown == null)
+			{
+				var label = "Select Category";
+				var textBounds = Game1.dialogueFont.MeasureString(label);
+				_categoryDropdown = new OptionsDropDown(
+					label, 
+					-999, 
+					(xPositionOnScreen + width / 2) - (int)(textBounds.X / 2), 
+					yPositionOnScreen + 115
+				)
+				{
+					dropDownOptions =
+					{
+						"a",
+						"b",
+						"c",
+					},
+					dropDownDisplayOptions = 
+					{
+						"apple",
+						"banana",
+						"curry",
+					},
+				};
+
+				_categoryDropdown.bounds.X -= _categoryDropdown.bounds.Width / 2;
+				_categoryDropdown.dropDownBounds.X -= _categoryDropdown.bounds.Width / 2;
+				_categoryDropdown.RecalculateBounds();
+			}
+			
+			_categoryDropdown.draw(batch, 0, 0);
+		}
+
 		private void DrawRow(SpriteBatch batch, ItemModel model, int rowNumber)
 		{
 			var obj = new Object(model.ObjectId, 1);
@@ -185,7 +243,7 @@ namespace fsd.core.menu
 			var padding = 40;
 			var rowHeight = 100;
 			var x = xPositionOnScreen + padding;
-			var y = yPositionOnScreen + 80 + padding + (rowHeight + padding) * rowNumber;
+			var y = yPositionOnScreen + 130 + padding + (rowHeight + padding) * rowNumber;
 
 			obj.drawInMenu(batch, new Vector2(x, y), 1);
 			
