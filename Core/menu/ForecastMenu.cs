@@ -246,14 +246,16 @@ namespace fsd.core.menu
 
 			obj.drawInMenu(batch, new Vector2(x, y), 1);
 			
-			DrawSupplyBar(batch, x + (int) (Game1.tileSize * 1.2), y, xPositionOnScreen + width - padding * 2, Math.Min(model.Supply / (float)ItemModel.MaxCalculatedSupply, 1), model.DailyDelta);
-			Utility.drawTextWithShadow(batch, obj.Name, Game1.dialogueFont, new Vector2(x, y + Game1.tileSize), Game1.textColor);
+			DrawSupplyBar(batch, x + (int) (Game1.tileSize * 1.2), y, xPositionOnScreen + width - padding * 2, model);
+			var text = $"{obj.Name} - {model.GetMultiplier():F2}x";
+			Utility.drawTextWithShadow(batch, text, Game1.dialogueFont, new Vector2(x, y + Game1.tileSize), Game1.textColor);
 		}
 
-		private void DrawSupplyBar(SpriteBatch batch, int startingX, int startingY, int endingX, float percentage, int delta)
+		private void DrawSupplyBar(SpriteBatch batch, int startingX, int startingY, int endingX, ItemModel model)
 		{
 			var barWidth = ((endingX - startingX) / 10) * 10;
 			var barHeight = Game1.tileSize / 2;
+			var percentage = Math.Min(model.Supply / (float)ItemModel.MaxCalculatedSupply, 1);
 
 			if (_barBackgroundTexture == null || _barForegroundTexture == null)
 			{
@@ -304,39 +306,50 @@ namespace fsd.core.menu
 			batch.Draw(_barBackgroundTexture, fullRect, new Rectangle(0, 0, barWidth, barHeight), Color.White);
 			batch.Draw(_barForegroundTexture, percentageRect, new Rectangle(0, 0, percentageRect.Width, barHeight), barColor);
 			
-			//delta arrows
-			var location = new Rectangle(percentageRect.X + percentageRect.Width - (int)(Game1.tileSize * .3) + 15, percentageRect.Y - barHeight, 5 * Game1.pixelZoom, 5 * Game1.pixelZoom);
+			DrawDeltaArrows(batch, model, percentageRect, barHeight);
+		}
 
-			if (delta < 0)
+		private static void DrawDeltaArrows(SpriteBatch batch, ItemModel model, Rectangle percentageRect, int barHeight)
+		{
+			var location = new Rectangle(percentageRect.X + percentageRect.Width - (int)(Game1.tileSize * .3) + 15,
+				percentageRect.Y - barHeight, 5 * Game1.pixelZoom, 5 * Game1.pixelZoom);
+
+			if (model.DailyDelta < 0)
 			{
-				var leftArrow = new ClickableTextureComponent("up-arrow", location, "", "", Game1.mouseCursors, new Rectangle(352, 495, 12, 11), Game1.pixelZoom * .75f);
+				var leftArrow = new ClickableTextureComponent("up-arrow", location, "", "", Game1.mouseCursors,
+					new Rectangle(352, 495, 12, 11), Game1.pixelZoom * .75f);
 				leftArrow.bounds.X -= 30;
-				if (delta < -40)
+				if (model.DailyDelta < -40)
 				{
 					leftArrow.bounds.X += 10;
 					leftArrow.draw(batch);
 				}
-				if (delta < -20)
+
+				if (model.DailyDelta < -20)
 				{
 					leftArrow.bounds.X += 10;
 					leftArrow.draw(batch);
 				}
+
 				leftArrow.bounds.X += 10;
 				leftArrow.draw(batch);
 			}
 			else
 			{
-				var rightArrow = new ClickableTextureComponent("down-arrow", location, "", "", Game1.mouseCursors, new Rectangle(365, 495, 12, 11), Game1.pixelZoom * .75f);
-				if (delta > 40)
+				var rightArrow = new ClickableTextureComponent("down-arrow", location, "", "", Game1.mouseCursors,
+					new Rectangle(365, 495, 12, 11), Game1.pixelZoom * .75f);
+				if (model.DailyDelta > 40)
 				{
 					rightArrow.bounds.X -= 10;
 					rightArrow.draw(batch);
 				}
-				if (delta > 20)
+
+				if (model.DailyDelta > 20)
 				{
 					rightArrow.bounds.X -= 10;
 					rightArrow.draw(batch);
 				}
+
 				rightArrow.bounds.X -= 10;
 				rightArrow.draw(batch);
 			}
@@ -428,7 +441,6 @@ namespace fsd.core.menu
 
 			var padding = 16;
 			
-			//drawTextureBox(batch, Game1.menuTexture, new Rectangle(0, 0, (int)textBounds.X, (int)textBounds.Y), (int)newX, (int)newY, (int)textBounds.X, (int)textBounds.Y, Game1.textColor);
 			Game1.drawDialogueBox(
 				newX - Game1.tileSize / 2 - padding / 2, 
 				(newY - (int) textBounds.Y / 1) - Game1.tileSize / 2 - padding, 

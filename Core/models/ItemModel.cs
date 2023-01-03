@@ -48,18 +48,22 @@ namespace fsd.core.models
 			_cachedPrices.Clear();
 		}
 
+		public float GetMultiplier()
+		{
+			var ratio = 1 - (Math.Min(Supply, MaxCalculatedSupply) / (float)MaxCalculatedSupply);
+			const float percentageRange = MaxPercentage - MinPercentage;
+
+			return (ratio * percentageRange) + MinPercentage;
+		}
+
 
 		public int GetPrice(int basePrice)
 		{
 			// ReSharper disable once InvertIf
 			if (!_cachedPrices.ContainsKey(basePrice))
 			{
-				var ratio = 1 - (Math.Min(Supply, MaxCalculatedSupply) / (float)MaxCalculatedSupply);
-				const float percentageRange = MaxPercentage - MinPercentage;
 
-				var multiplier = (ratio * percentageRange) + MinPercentage;
-
-				_cachedPrices.Add(basePrice, (int)(basePrice * multiplier));
+				_cachedPrices.Add(basePrice, (int)(basePrice * GetMultiplier()));
 			}
 			
 			return _cachedPrices[basePrice];
