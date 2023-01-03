@@ -41,11 +41,10 @@ namespace fsd.core.menu
 
 			for (var i = 0; i < 20; i++)
 			{
-				items.Add(new ItemModel { ObjectId = 24 + i, Supply = 200, DailyDelta = 30 });
+				items.Add(new ItemModel { ObjectId = 24 + i, Supply = 200, DailyDelta = 25 });
 			}
 
 			_allItems = items.ToArray();
-			_itemIndex = 4;
 		}
 
 		public override void gameWindowSizeChanged(Rectangle oldBounds, Rectangle newBounds)
@@ -306,37 +305,40 @@ namespace fsd.core.menu
 			batch.Draw(_barForegroundTexture, percentageRect, new Rectangle(0, 0, percentageRect.Width, barHeight), barColor);
 			
 			//delta arrows
-			var location = new Rectangle(percentageRect.X + percentageRect.Width - (int)(Game1.tileSize * .3), percentageRect.Y - barHeight, 5 * Game1.pixelZoom, 5 * Game1.pixelZoom);
+			var location = new Rectangle(percentageRect.X + percentageRect.Width - (int)(Game1.tileSize * .3) + 15, percentageRect.Y - barHeight, 5 * Game1.pixelZoom, 5 * Game1.pixelZoom);
 
 			if (delta < 0)
 			{
 				var leftArrow = new ClickableTextureComponent("up-arrow", location, "", "", Game1.mouseCursors, new Rectangle(352, 495, 12, 11), Game1.pixelZoom * .75f);
-				leftArrow.draw(batch);
-				if (delta < -20)
-				{
-					leftArrow.bounds.X -= 10;
-					leftArrow.draw(batch);
-				}
+				leftArrow.bounds.X -= 30;
 				if (delta < -40)
 				{
-					leftArrow.bounds.X -= 10;
+					leftArrow.bounds.X += 10;
 					leftArrow.draw(batch);
 				}
+				if (delta < -20)
+				{
+					leftArrow.bounds.X += 10;
+					leftArrow.draw(batch);
+				}
+				leftArrow.bounds.X += 10;
+				leftArrow.draw(batch);
 			}
 			else
 			{
 				var rightArrow = new ClickableTextureComponent("down-arrow", location, "", "", Game1.mouseCursors, new Rectangle(365, 495, 12, 11), Game1.pixelZoom * .75f);
-				rightArrow.draw(batch);
-				if (delta > 20)
-				{
-					rightArrow.bounds.X += 10;
-					rightArrow.draw(batch);
-				}
 				if (delta > 40)
 				{
-					rightArrow.bounds.X += 10;
+					rightArrow.bounds.X -= 10;
 					rightArrow.draw(batch);
 				}
+				if (delta > 20)
+				{
+					rightArrow.bounds.X -= 10;
+					rightArrow.draw(batch);
+				}
+				rightArrow.bounds.X -= 10;
+				rightArrow.draw(batch);
 			}
 		}
 
