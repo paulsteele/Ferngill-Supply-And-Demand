@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using fsd.core.helpers;
 using fsd.core.models;
 using fsd.core.services;
@@ -17,6 +18,7 @@ namespace fsd.core.menu
 		private readonly EconomyService _economyService;
 		private readonly IMonitor _monitor;
 		private ItemModel[] _allItems;
+		private Dictionary<int, string> _categories;
 		private int _itemIndex;
 		private int _maxNumberOfRows = 0;
 		private bool _isScrolling;
@@ -36,15 +38,18 @@ namespace fsd.core.menu
 		{
 			_economyService = economyService;
 			_monitor = monitor;
+			
 
-			var items = new List<ItemModel>();
-
-			for (var i = 0; i < 20; i++)
+			if (economyService.Loaded)
 			{
-				items.Add(new ItemModel { ObjectId = 24 + i, Supply = 200, DailyDelta = 25 });
+				_categories = economyService.GetCategories();
+				_allItems = economyService.GetItemsForCategory(economyService.GetCategories().Keys.First());
 			}
-
-			_allItems = items.ToArray();
+			else
+			{
+				_categories = new Dictionary<int, string>();
+				_allItems = Array.Empty<ItemModel>();
+			}
 		}
 
 		public override void gameWindowSizeChanged(Rectangle oldBounds, Rectangle newBounds)
@@ -111,6 +116,15 @@ namespace fsd.core.menu
 			if (_isInDropdown)
 			{
 				_categoryDropdown.leftClickReleased(x, y);
+
+				if (_categoryDropdown.dropDownOptions.Count > _categoryDropdown.selectedOption)
+				{
+					if (int.TryParse(_categoryDropdown.dropDownOptions[_categoryDropdown.selectedOption], out var result))
+					{
+						_allItems = _economyService.GetItemsForCategory(result);
+						_itemIndex = 0;
+					}
+				}
 				_isInDropdown = false;
 			}
 		}
@@ -185,7 +199,7 @@ namespace fsd.core.menu
 			height = Math.Min(Game1.uiViewport.Height - 2 * yPadding, 2000);
 
 			_maxNumberOfRows = (height - 170) / 140;
-			_bottomIndex = _allItems.Length - _maxNumberOfRows;
+			_bottomIndex = Math.Max(_allItems.Length - _maxNumberOfRows, 1);
 
 			xPositionOnScreen = (Game1.uiViewport.Width - width) / 2;
 			yPositionOnScreen = (Game1.uiViewport.Height - height) / 2;
@@ -213,18 +227,8 @@ namespace fsd.core.menu
 					yPositionOnScreen + 115
 				)
 				{
-					dropDownOptions =
-					{
-						"a",
-						"b",
-						"c",
-					},
-					dropDownDisplayOptions = 
-					{
-						"apple",
-						"banana",
-						"curry",
-					},
+					dropDownOptions = _categories.Keys.Select(i => i.ToString()).ToList(),
+					dropDownDisplayOptions = _categories.Values.ToList(),
 				};
 
 				_categoryDropdown.bounds.X -= _categoryDropdown.bounds.Width / 2;

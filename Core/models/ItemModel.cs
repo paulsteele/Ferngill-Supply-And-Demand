@@ -71,7 +71,7 @@ namespace fsd.core.models
 
 		public void CapSupply()
 		{
-			Supply = MaxCalculatedSupply;
+			Supply = Math.Min(Supply, MaxCalculatedSupply);
 		}
 	}
 }

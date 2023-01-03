@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using fsd.core.models;
 using MathNet.Numerics.Distributions;
@@ -12,6 +13,8 @@ namespace fsd.core.services
 	{
 		private readonly IModHelper _modHelper;
 		private readonly IMonitor _monitor;
+		
+		public bool Loaded { get; private set; }
 
 		public EconomyService(IModHelper modHelper, IMonitor monitor)
 		{
@@ -25,6 +28,7 @@ namespace fsd.core.services
 		{
 			var existingModel = _modHelper.Data.ReadSaveData<EconomyModel>(EconomyModel.ModelKey);
 			var newModel = GenerateBlankEconomy();
+			Loaded = true;
 
 			if (existingModel != null && existingModel.HasSameItems(newModel))
 			{
@@ -94,6 +98,15 @@ namespace fsd.core.services
 			Economy.AdvanceOneDay();
 			QueueSave();
 		}
+
+		public Dictionary<int, string> GetCategories()
+		{
+			return Economy.CategoryEconomies
+				.Where(pair => pair.Value.Values.Count > 0)
+				.ToDictionary(pair => pair.Key, pair => new Object(pair.Value.Values.First().ObjectId, 1).getCategoryName());
+		}
+
+		public ItemModel[] GetItemsForCategory(int category) => Economy.CategoryEconomies.Keys.Contains(category) ? Economy.CategoryEconomies[category].Values.ToArray() : Array.Empty<ItemModel>();
 
 		public int GetPrice(Object obj, int basePrice)
 		{
