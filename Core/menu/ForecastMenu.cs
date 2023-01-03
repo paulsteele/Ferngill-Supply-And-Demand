@@ -42,7 +42,7 @@ namespace fsd.core.menu
 
 			if (economyService.Loaded)
 			{
-				_categories = economyService.GetCategories();
+				_categories = economyService.GetCategories().GroupBy(pair => pair.Value).ToDictionary(pairs => pairs.First().Key, pairs => pairs.First().Value);
 				_allItems = economyService.GetItemsForCategory(economyService.GetCategories().Keys.First());
 			}
 			else

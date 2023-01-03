@@ -13,7 +13,8 @@ namespace fsd.core.services
 	{
 		private readonly IModHelper _modHelper;
 		private readonly IMonitor _monitor;
-		
+		private readonly Dictionary<int, List<int>> CategoryMapping = new();
+
 		public bool Loaded { get; private set; }
 
 		public EconomyService(IModHelper modHelper, IMonitor monitor)
@@ -28,7 +29,6 @@ namespace fsd.core.services
 		{
 			var existingModel = _modHelper.Data.ReadSaveData<EconomyModel>(EconomyModel.ModelKey);
 			var newModel = GenerateBlankEconomy();
-			Loaded = true;
 
 			if (existingModel != null && existingModel.HasSameItems(newModel))
 			{
@@ -39,7 +39,25 @@ namespace fsd.core.services
 			RandomizeEconomy(newModel, true, true);
 
 			Economy = newModel;
+			ConsolidateEconomyCategories();
+			
 			QueueSave();
+			Loaded = true;
+		}
+
+		private void ConsolidateEconomyCategories()
+		{
+			foreach (var matchingCategories in GetCategories()
+				.GroupBy(pair => pair.Value)
+				.Where(pairs => pairs.Count() > 1)
+			)
+			{
+				var categories = matchingCategories.ToArray().Select(pair => pair.Key).ToArray();
+				var key = categories[0];
+				var remainingCategories = categories.Skip(1).ToList();
+				
+				CategoryMapping.Add(key, remainingCategories);
+			}
 		}
 
 		private void QueueSave()
@@ -106,7 +124,18 @@ namespace fsd.core.services
 				.ToDictionary(pair => pair.Key, pair => new Object(pair.Value.Values.First().ObjectId, 1).getCategoryName());
 		}
 
-		public ItemModel[] GetItemsForCategory(int category) => Economy.CategoryEconomies.Keys.Contains(category) ? Economy.CategoryEconomies[category].Values.ToArray() : Array.Empty<ItemModel>();
+		public ItemModel[] GetItemsForCategory(int category)
+		{
+			var items = Economy.CategoryEconomies.Keys.Contains(category)
+				? Economy.CategoryEconomies[category].Values.ToArray()
+				: Array.Empty<ItemModel>();
+
+			return 
+				!CategoryMapping.ContainsKey(category) 
+					? items 
+					: CategoryMapping[category]
+						.Aggregate(items, (current, adjacentCategory) => current.Concat(Economy.CategoryEconomies[adjacentCategory].Values).ToArray());
+		}
 
 		public int GetPrice(Object obj, int basePrice)
 		{
