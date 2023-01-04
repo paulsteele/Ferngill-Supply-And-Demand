@@ -1,4 +1,5 @@
-﻿using fse.core.actions;
+﻿using System.Linq;
+using fse.core.actions;
 using fse.core.services;
 using StardewModdingAPI;
 using StardewValley;
@@ -35,7 +36,7 @@ namespace fse.core.handlers
 		{
 			foreach (var farmer in Game1.getAllFarmers())
 			{
-				foreach (var item in Game1.getFarm().getShippingBin(farmer))
+				foreach (var item in Game1.getFarm().getShippingBin(farmer).Where(item => item is Object))
 				{
 					_economyService.AdjustSupply(item as Object, item.Stack);
 				}
