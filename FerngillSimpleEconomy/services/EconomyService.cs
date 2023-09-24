@@ -180,6 +180,8 @@ namespace fse.core.services
 			QueueSave();
 		}
 
+		public ItemModel GetItemModel(int id) => Economy.GetItem(new Object(id, 1));
+
 		private static int RoundDouble(double d) => (int)Math.Round(d, 0, MidpointRounding.ToEven);
 	}
 }
