@@ -69,7 +69,7 @@ namespace fse.core.patches
 				var startingY = __instance.yPositionOnScreen + 16 + tuple.visibleIndex * ((__instance.height - 256) / 4);
 				var width = 200;
 				
-				_forecastMenu.DrawRow(b, tuple.model, 0, startingX, startingY, width, 0, 0, false);
+				_forecastMenu.DrawRow(b, tuple.model, 0, startingX, startingY + 5, width, 0, 0, false);
 			}
 		}
 

@@ -253,9 +253,9 @@ namespace fse.core.menu
 
 			var barHeightModifier = drawSprite ? 1 : 2;
 			
-			DrawSupplyBar(batch, x + (int) (Game1.tileSize * 1.2), y, x + rowWidth - padding * 2, model, barHeightModifier);
+			DrawSupplyBar(batch, x + (int) (Game1.tileSize * 1.2), y + (drawSprite ? 0 : 10), x + rowWidth - padding * 2, model, barHeightModifier);
 			var text = drawSprite ? $"{obj.Name} - {model.GetMultiplier():F2}x" : $"{model.GetMultiplier():F2}x";
-			Utility.drawTextWithShadow(batch, text, Game1.dialogueFont, new Vector2(x, y + (Game1.tileSize / (barHeightModifier * 1f))), Game1.textColor);
+			Utility.drawTextWithShadow(batch, text, Game1.dialogueFont, new Vector2(x, y + Game1.tileSize + (drawSprite ? 0 : -20)), Game1.textColor);
 		}
 
 		private void DrawSupplyBar(SpriteBatch batch, int startingX, int startingY, int endingX, ItemModel model, int barHeightModifier = 1)
@@ -313,13 +313,13 @@ namespace fse.core.menu
 			batch.Draw(_barBackgroundTexture, fullRect, new Rectangle(0, 0, barWidth, barHeight), Color.White);
 			batch.Draw(_barForegroundTexture, percentageRect, new Rectangle(0, 0, percentageRect.Width, barHeight), barColor);
 			
-			DrawDeltaArrows(batch, model, percentageRect, barHeight);
+			DrawDeltaArrows(batch, model, percentageRect, barHeight, barHeightModifier);
 		}
 
-		private static void DrawDeltaArrows(SpriteBatch batch, ItemModel model, Rectangle percentageRect, int barHeight)
+		private static void DrawDeltaArrows(SpriteBatch batch, ItemModel model, Rectangle percentageRect, int barHeight, int barHeightModifier)
 		{
 			var location = new Rectangle(percentageRect.X + percentageRect.Width - (int)(Game1.tileSize * .3) + 15,
-				percentageRect.Y - barHeight, 5 * Game1.pixelZoom, 5 * Game1.pixelZoom);
+				percentageRect.Y - barHeight - (barHeightModifier == 2 ? 15 : 0), 5 * Game1.pixelZoom, 5 * Game1.pixelZoom);
 
 			if (model.DailyDelta < 0)
 			{
