@@ -184,7 +184,7 @@ namespace fse.core.menu
 			{
 				if (_itemIndex + i < _allItems.Length)
 				{
-					DrawRow(batch, _allItems[_itemIndex + i], i);
+					DrawRow(batch, _allItems[_itemIndex + i], i, xPositionOnScreen, yPositionOnScreen, width);
 				}
 			}
 			DrawDropdown(batch);
@@ -239,26 +239,29 @@ namespace fse.core.menu
 			_categoryDropdown.draw(batch, 0, 0);
 		}
 
-		private void DrawRow(SpriteBatch batch, ItemModel model, int rowNumber)
+		public void DrawRow(SpriteBatch batch, ItemModel model, int rowNumber, int startingX, int startingY, int rowWidth, int rowHeight = 100, int padding = 40, bool drawSprite = true)
 		{
 			var obj = new Object(model.ObjectId, 1);
 
-			var padding = 40;
-			var rowHeight = 100;
-			var x = xPositionOnScreen + padding;
-			var y = yPositionOnScreen + 130 + padding + (rowHeight + padding) * rowNumber;
+			var x = startingX + padding;
+			var y = startingY + (drawSprite ? 130 : 0) + padding + (rowHeight + padding) * rowNumber;
 
-			obj.drawInMenu(batch, new Vector2(x, y), 1);
+			if (drawSprite)
+			{
+				obj.drawInMenu(batch, new Vector2(x, y), 1);
+			}
+
+			var barHeightModifier = drawSprite ? 1 : 2;
 			
-			DrawSupplyBar(batch, x + (int) (Game1.tileSize * 1.2), y, xPositionOnScreen + width - padding * 2, model);
-			var text = $"{obj.Name} - {model.GetMultiplier():F2}x";
-			Utility.drawTextWithShadow(batch, text, Game1.dialogueFont, new Vector2(x, y + Game1.tileSize), Game1.textColor);
+			DrawSupplyBar(batch, x + (int) (Game1.tileSize * 1.2), y, x + rowWidth - padding * 2, model, barHeightModifier);
+			var text = drawSprite ? $"{obj.Name} - {model.GetMultiplier():F2}x" : $"{model.GetMultiplier():F2}x";
+			Utility.drawTextWithShadow(batch, text, Game1.dialogueFont, new Vector2(x, y + (Game1.tileSize / (barHeightModifier * 1f))), Game1.textColor);
 		}
 
-		private void DrawSupplyBar(SpriteBatch batch, int startingX, int startingY, int endingX, ItemModel model)
+		private void DrawSupplyBar(SpriteBatch batch, int startingX, int startingY, int endingX, ItemModel model, int barHeightModifier = 1)
 		{
 			var barWidth = ((endingX - startingX) / 10) * 10;
-			var barHeight = Game1.tileSize / 2;
+			var barHeight = (Game1.tileSize / 2) / barHeightModifier;
 			var percentage = Math.Min(model.Supply / (float)ItemModel.MaxCalculatedSupply, 1);
 
 			if (_barBackgroundTexture == null || _barForegroundTexture == null)
