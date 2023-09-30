@@ -59,7 +59,7 @@ namespace fse.core.services
 				var key = categories[0];
 				var remainingCategories = categories.Skip(1).ToList();
 				
-				CategoryMapping.Add(key, remainingCategories);
+				CategoryMapping.TryAdd(key, remainingCategories);
 			}
 		}
 
@@ -183,7 +183,22 @@ namespace fse.core.services
 			QueueSave();
 		}
 
-		public ItemModel GetItemModelFromSeed(int seed) => Economy.GetModelFromSeedId(seed);
+		public ItemModel GetItemModelFromSeed(int seed) => Economy.GetItemModelFromSeedId(seed);
+		public SeedModel GetSeedModelFromItem(int item) => Economy.GetSeedModelFromModelId(item);
+
+		public int GetPricePerDay(ItemModel model)
+		{
+			var seed = GetSeedModelFromItem(model.ObjectId);
+
+			var modelPrice = model.GetPrice(model.GetObjectInstance().Price);
+			
+			if (seed == null || seed.DaysToGrow < 1)
+			{
+				return modelPrice;
+			}
+
+			return modelPrice / seed.DaysToGrow;
+		}
 
 		private static int RoundDouble(double d) => (int)Math.Round(d, 0, MidpointRounding.ToEven);
 	}

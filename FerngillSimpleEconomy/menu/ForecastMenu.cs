@@ -34,10 +34,11 @@ namespace fse.core.menu
 		private OptionsDropDown _sortDropdown;
 
 		private const string Alphabetical = "Alphabetical";
-		private const string PricePerDay = "Price Per Day";
+		private const string MarketPrice = "Market Price";
+		private const string MarketPricePerDay = "Market Price Per Day";
 		private const string Supply = "Supply";
 		private const string DailyChange = "Daily Change";
-		private readonly List<string> _sortOptions = new() { "None", Alphabetical, Supply, DailyChange, PricePerDay };
+		private readonly List<string> _sortOptions = new() { "None", Alphabetical, Supply, DailyChange, MarketPrice, MarketPricePerDay };
 		private string _chosenSort = "None";
 		private int _chosenCategory;
 
@@ -314,7 +315,8 @@ namespace fse.core.menu
 			var barHeightModifier = drawSprite ? 1 : 2;
 			
 			DrawSupplyBar(batch, x + (int) (Game1.tileSize * 1.2), y + (drawSprite ? 0 : 10), x + rowWidth - padding * 2, model, barHeightModifier);
-			var text = drawSprite ? $"{obj.Name} - {model.GetMultiplier():F2}x" : $"{model.GetMultiplier():F2}x";
+			// var text = drawSprite ? $"{obj.Name} - {model.GetMultiplier():F2}x" : $"{model.GetMultiplier():F2}x";
+			var text = drawSprite ? $"{obj.Name} - {model.GetPrice(obj.Price)} - {_economyService.GetPricePerDay(model)}" : $"{model.GetPrice(obj.Price)} - {_economyService.GetPricePerDay(model)}";
 			Utility.drawTextWithShadow(batch, text, Game1.dialogueFont, new Vector2(x, y + Game1.tileSize + (drawSprite ? 0 : -20)), Game1.textColor);
 		}
 
@@ -538,8 +540,14 @@ namespace fse.core.menu
 					items.Sort((a, b) => a.DailyDelta - b.DailyDelta);
 					break;
 				}
-				case PricePerDay:
+				case MarketPrice:
 				{
+					items.Sort((a, b) => b.GetPrice(b.GetObjectInstance().Price) - a.GetPrice(a.GetObjectInstance().Price));
+					break;
+				}
+				case MarketPricePerDay:
+				{
+					items.Sort((a, b) => _economyService.GetPricePerDay(b) - _economyService.GetPricePerDay(a));
 					break;
 				}
 			}

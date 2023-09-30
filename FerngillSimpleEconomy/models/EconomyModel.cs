@@ -12,7 +12,8 @@ namespace fse.core.models
 		public static readonly string ModelKey = "fsd.economy.model";
 
 		[JsonInclude] public Dictionary<int, Dictionary<int, ItemModel>> CategoryEconomies { get; set; }
-		private Dictionary<int, ItemModel> SeedMap { get; set; } = new();
+		private Dictionary<int, ItemModel> SeedToItem { get; } = new();
+		private Dictionary<int, SeedModel> ItemToSeed { get; } = new();
 
 		public bool HasSameItems(EconomyModel other)
 		{
@@ -41,7 +42,7 @@ namespace fse.core.models
 			}
 		}
 
-		public ItemModel GetItem(StardewValley.Object obj)
+		public ItemModel GetItem(Object obj)
 		{
 			if (!CategoryEconomies.ContainsKey(obj.Category))
 			{
@@ -59,22 +60,24 @@ namespace fse.core.models
 
 			foreach (var seed in cropData.Keys)
 			{
-				var cropId = int.Parse(cropData[seed].Split('/')[3]);
-				var obj = new Object(cropId, 1);
+				var seedModel = new SeedModel(seed, cropData[seed]);
+				var obj = new Object(seedModel.CropId, 1);
 				if (!CategoryEconomies.TryGetValue(obj.Category, out var category))
 				{
 					continue;
 				}
-				if (!category.TryGetValue(cropId, out var model))
+				if (!category.TryGetValue(seedModel.CropId, out var model))
 				{
 					continue;
 				}
 
-				SeedMap.TryAdd(seed, model);
+				SeedToItem.TryAdd(seedModel.ObjectId, model);
+				ItemToSeed.TryAdd(model.ObjectId, seedModel);
 			}
 		}
 
-		public ItemModel GetModelFromSeedId(int seed) => SeedMap.TryGetValue(seed, out var model) ? model : default;
+		public ItemModel GetItemModelFromSeedId(int seed) => SeedToItem.TryGetValue(seed, out var model) ? model : default;
+		public SeedModel GetSeedModelFromModelId(int modelId) => ItemToSeed.TryGetValue(modelId, out var model) ? model : default;
 
 		public void AdvanceOneDay()
 		{
