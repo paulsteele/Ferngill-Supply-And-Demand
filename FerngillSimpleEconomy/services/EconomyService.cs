@@ -33,6 +33,7 @@ namespace fse.core.services
 			if (existingModel != null && existingModel.HasSameItems(newModel))
 			{
 				Economy = existingModel;
+				Economy.GenerateSeedMapping();
 				Loaded = true;
 				return;
 			}
@@ -41,6 +42,7 @@ namespace fse.core.services
 
 			Economy = newModel;
 			ConsolidateEconomyCategories();
+			Economy.GenerateSeedMapping();
 			
 			QueueSave();
 			Loaded = true;
@@ -65,6 +67,7 @@ namespace fse.core.services
 		{
 			_modHelper.Data.WriteSaveData(EconomyModel.ModelKey, Economy);
 		}
+
 
 		private static EconomyModel GenerateBlankEconomy()
 		{
@@ -180,7 +183,7 @@ namespace fse.core.services
 			QueueSave();
 		}
 
-		public ItemModel GetItemModel(int id) => Economy.GetItem(new Object(id, 1));
+		public ItemModel GetItemModelFromSeed(int seed) => Economy.GetModelFromSeedId(seed);
 
 		private static int RoundDouble(double d) => (int)Math.Round(d, 0, MidpointRounding.ToEven);
 	}

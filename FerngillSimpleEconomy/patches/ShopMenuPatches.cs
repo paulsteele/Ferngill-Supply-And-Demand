@@ -1,24 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using fse.core.menu;
-using fse.core.models;
 using HarmonyLib;
 using Microsoft.Xna.Framework.Graphics;
-using Netcode;
-using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Menus;
-using StardewValley.Network;
 using Object = StardewValley.Object;
 
 namespace fse.core.patches
 {
 	public class ShopMenuPatches : SelfRegisteringPatches
 	{
-		private static Dictionary<ISalable, ItemModel> _itemModels;
 		private static ForecastMenu _forecastMenu;
 
 		//Prefix as the number of sold stacks is modified in the original function
@@ -59,7 +53,7 @@ namespace fse.core.patches
 			var items = shopMenu.forSale
 				.Select((t, i) => (salable: t, visibleIndex: i - __instance.currentItemIndex))
 				.Where(t => t.salable is Object { Category: Object.SeedsCategory })
-				.Select(t => (model: _itemModels.TryGetValue(t.salable, out var model) ? model : null, t.visibleIndex))
+				.Select(t => (model: EconomyService.GetItemModelFromSeed(((Object) t.salable).ParentSheetIndex), t.visibleIndex))
 				.Where(t => t.model != null)
 				.Where(t => t.visibleIndex is >= 0 and < ShopMenu.itemsPerPage);
 
@@ -70,31 +64,6 @@ namespace fse.core.patches
 				var width = 200;
 				
 				_forecastMenu.DrawRow(b, tuple.model, 0, startingX, startingY + 5, width, 0, 0, false);
-			}
-		}
-
-		public static void SetupShop(
-			Dictionary<ISalable, int[]> itemPriceAndStock
-		)
-		{
-			_itemModels = new Dictionary<ISalable, ItemModel>();
-			var cropData = Game1.content.Load<Dictionary<int, string>>("Data\\Crops");
-
-			foreach (var item in itemPriceAndStock)
-			{
-				if (item.Key is not Object obj)
-				{
-					continue;
-				}
-
-				if (!cropData.ContainsKey(obj.parentSheetIndex.Value))
-				{
-					continue;
-				}
-
-				var cropId = int.Parse(cropData[obj.parentSheetIndex.Value].Split('/')[3]);
-
-				_itemModels.Add(item.Key, EconomyService.GetItemModel(cropId));
 			}
 		}
 
@@ -113,19 +82,6 @@ namespace fse.core.patches
 			harmony.Patch(
 				AccessTools.Method(typeof(ShopMenu), nameof(ShopMenu.draw), new []{typeof(SpriteBatch)}),
 				transpiler: new HarmonyMethod(typeof(ShopMenuPatches), nameof(ShopDrawingTranspiler))
-			);
-			
-			harmony.Patch(
-				AccessTools.Constructor(typeof(ShopMenu),  new []
-				{
-					typeof(Dictionary<ISalable, int[]>),
-					typeof(int),
-					typeof(string),
-					typeof(Func<ISalable, Farmer, int, bool>),
-					typeof(Func<ISalable, bool>),
-					typeof(string)
-				}),
-				postfix: new HarmonyMethod(typeof(ShopMenuPatches), nameof(SetupShop))
 			);
 
 			_forecastMenu = new ForecastMenu(EconomyService, Monitor);

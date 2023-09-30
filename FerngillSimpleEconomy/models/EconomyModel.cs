@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json.Serialization;
+using StardewValley;
+using Object = StardewValley.Object;
 
 namespace fse.core.models
 {
@@ -10,6 +12,7 @@ namespace fse.core.models
 		public static readonly string ModelKey = "fsd.economy.model";
 
 		[JsonInclude] public Dictionary<int, Dictionary<int, ItemModel>> CategoryEconomies { get; set; }
+		private Dictionary<int, ItemModel> SeedMap { get; set; } = new();
 
 		public bool HasSameItems(EconomyModel other)
 		{
@@ -49,6 +52,29 @@ namespace fse.core.models
 			
 			return !category.ContainsKey(obj.ParentSheetIndex) ? null : category[obj.ParentSheetIndex];
 		}
+		
+		public void GenerateSeedMapping()
+		{
+			var cropData = Game1.content.Load<Dictionary<int, string>>("Data\\Crops");
+
+			foreach (var seed in cropData.Keys)
+			{
+				var cropId = int.Parse(cropData[seed].Split('/')[3]);
+				var obj = new Object(cropId, 1);
+				if (!CategoryEconomies.TryGetValue(obj.Category, out var category))
+				{
+					continue;
+				}
+				if (!category.TryGetValue(cropId, out var model))
+				{
+					continue;
+				}
+
+				SeedMap.TryAdd(seed, model);
+			}
+		}
+
+		public ItemModel GetModelFromSeedId(int seed) => SeedMap.TryGetValue(seed, out var model) ? model : default;
 
 		public void AdvanceOneDay()
 		{
