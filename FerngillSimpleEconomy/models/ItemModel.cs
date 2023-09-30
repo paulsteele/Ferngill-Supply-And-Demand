@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using fse.core.helpers;
+using Object = StardewValley.Object;
 
 namespace fse.core.models
 {
@@ -19,9 +20,11 @@ namespace fse.core.models
 		private const float MinPercentage = 0.2f;
 
 		private int _dailyDelta;
+
 		private int _supply;
+
 		// there are a variety of factors that can influence sell price. Cache the calculation for each input
-		private readonly Dictionary<int, int> _cachedPrices = new(); 
+		private readonly Dictionary<int, int> _cachedPrices = new();
 
 		public static int MeanSupply => (MinSupply + MaxCalculatedSupply) / 2;
 		public static int MeanDelta => (MinDelta + MaxDelta) / 2;
@@ -65,7 +68,7 @@ namespace fse.core.models
 
 				_cachedPrices.Add(basePrice, (int)(basePrice * GetMultiplier()));
 			}
-			
+
 			return _cachedPrices[basePrice];
 		}
 
@@ -73,5 +76,8 @@ namespace fse.core.models
 		{
 			Supply = Math.Min(Supply, MaxCalculatedSupply);
 		}
+
+		private Object _objectInstance;
+		public Object ObjectInstance => _objectInstance ??= new Object(ObjectId, 1);
 	}
 }

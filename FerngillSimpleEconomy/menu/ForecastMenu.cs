@@ -241,7 +241,7 @@ namespace fse.core.menu
 
 		public void DrawRow(SpriteBatch batch, ItemModel model, int rowNumber, int startingX, int startingY, int rowWidth, int rowHeight = 100, int padding = 40, bool drawSprite = true)
 		{
-			var obj = new Object(model.ObjectId, 1);
+			var obj = model.ObjectInstance;
 
 			var x = startingX + padding;
 			var y = startingY + (drawSprite ? 130 : 0) + padding + (rowHeight + padding) * rowNumber;
