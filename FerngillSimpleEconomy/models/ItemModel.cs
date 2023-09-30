@@ -76,8 +76,8 @@ namespace fse.core.models
 		{
 			Supply = Math.Min(Supply, MaxCalculatedSupply);
 		}
-
+		
 		private Object _objectInstance;
-		public Object ObjectInstance => _objectInstance ??= new Object(ObjectId, 1);
+		public Object GetObjectInstance() => _objectInstance ??= new Object(ObjectId, 1);
 	}
 }
