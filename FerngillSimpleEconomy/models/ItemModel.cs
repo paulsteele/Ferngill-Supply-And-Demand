@@ -65,7 +65,6 @@ namespace fse.core.models
 			// ReSharper disable once InvertIf
 			if (!_cachedPrices.ContainsKey(basePrice))
 			{
-
 				_cachedPrices.Add(basePrice, (int)(basePrice * GetMultiplier()));
 			}
 

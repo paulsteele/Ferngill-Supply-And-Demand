@@ -9,7 +9,6 @@ using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Menus;
-using Object = StardewValley.Object;
 
 namespace fse.core.menu
 {
@@ -22,7 +21,8 @@ namespace fse.core.menu
 		private int _itemIndex;
 		private int _maxNumberOfRows = 0;
 		private bool _isScrolling;
-		private bool _isInDropdown;
+		private bool _isInCategoryDropdown;
+		private bool _isInSortDropdown;
 		private Texture2D _barBackgroundTexture;
 		private Texture2D _barForegroundTexture;
 		private ClickableTextureComponent _upArrow;
@@ -31,6 +31,15 @@ namespace fse.core.menu
 		private Rectangle? _scrollbarRunner;
 		private int _bottomIndex;
 		private OptionsDropDown _categoryDropdown;
+		private OptionsDropDown _sortDropdown;
+
+		private const string Alphabetical = "Alphabetical";
+		private const string PricePerDay = "Price Per Day";
+		private const string Supply = "Supply";
+		private const string DailyChange = "Daily Change";
+		private readonly List<string> _sortOptions = new() { "None", Alphabetical, Supply, DailyChange, PricePerDay };
+		private string _chosenSort = "None";
+		private int _chosenCategory;
 
 		public ForecastMenu(
 			EconomyService economyService,
@@ -43,7 +52,8 @@ namespace fse.core.menu
 			if (economyService.Loaded)
 			{
 				_categories = economyService.GetCategories().GroupBy(pair => pair.Value).ToDictionary(pairs => pairs.First().Key, pairs => pairs.First().Value);
-				_allItems = economyService.GetItemsForCategory(economyService.GetCategories().Keys.First());
+				_chosenCategory = economyService.GetCategories().Keys.First();
+				SetupItemsWithSort();
 			}
 			else
 			{
@@ -62,6 +72,7 @@ namespace fse.core.menu
 			_scrollbar = null;
 			_scrollbarRunner = null;
 			_categoryDropdown = null;
+			_sortDropdown = null;
 		}
 
 		public override void receiveScrollWheelAction(int direction)
@@ -83,7 +94,13 @@ namespace fse.core.menu
 			if (_categoryDropdown.bounds.Contains(x, y))
 			{
 				_categoryDropdown.receiveLeftClick(x, y);
-				_isInDropdown = true;
+				_isInCategoryDropdown = true;
+			}
+			
+			if (_sortDropdown.bounds.Contains(x, y))
+			{
+				_sortDropdown.receiveLeftClick(x, y);
+				_isInSortDropdown = true;
 			}
 
 			if (_upArrow.containsPoint(x, y))
@@ -113,7 +130,7 @@ namespace fse.core.menu
 			_isScrolling = false;
 
 			// ReSharper disable once InvertIf
-			if (_isInDropdown)
+			if (_isInCategoryDropdown)
 			{
 				_categoryDropdown.leftClickReleased(x, y);
 
@@ -121,20 +138,40 @@ namespace fse.core.menu
 				{
 					if (int.TryParse(_categoryDropdown.dropDownOptions[_categoryDropdown.selectedOption], out var result))
 					{
-						_allItems = _economyService.GetItemsForCategory(result);
+						_chosenCategory = result;
+						SetupItemsWithSort();
 						_itemIndex = 0;
 					}
 				}
-				_isInDropdown = false;
+				_isInCategoryDropdown = false;
+			}
+			
+			// ReSharper disable once InvertIf
+			if (_isInSortDropdown)
+			{
+				_sortDropdown.leftClickReleased(x, y);
+
+				if (_sortDropdown.dropDownOptions.Count > _sortDropdown.selectedOption)
+				{
+					_chosenSort = _sortDropdown.dropDownOptions[_sortDropdown.selectedOption];
+					SetupItemsWithSort();
+				}
+				_isInSortDropdown = false;
 			}
 		}
 
 		public override void leftClickHeld(int x, int y)
 		{
 			base.leftClickHeld(x, y);
-			if (_isInDropdown)
+			if (_isInCategoryDropdown)
 			{
 				_categoryDropdown.leftClickHeld(x, y);
+				return;
+			}
+			
+			if (_isInSortDropdown)
+			{
+				_sortDropdown.leftClickHeld(x, y);
 				return;
 			}
 			
@@ -188,6 +225,7 @@ namespace fse.core.menu
 				}
 			}
 			DrawDropdown(batch);
+			DrawSortingDropdown(batch);
 			DrawMouse(batch);
 		}
 
@@ -218,12 +256,11 @@ namespace fse.core.menu
 		{
 			if (_categoryDropdown == null)
 			{
-				var label = "Select Category";
-				var textBounds = Game1.dialogueFont.MeasureString(label);
+				const string label = "Select Category";
 				_categoryDropdown = new OptionsDropDown(
 					label, 
 					-999, 
-					(xPositionOnScreen + width / 2) - (int)(textBounds.X / 2), 
+					xPositionOnScreen + 50, 
 					yPositionOnScreen + 115
 				)
 				{
@@ -231,17 +268,40 @@ namespace fse.core.menu
 					dropDownDisplayOptions = _categories.Values.ToList(),
 				};
 
-				_categoryDropdown.bounds.X -= _categoryDropdown.bounds.Width / 2;
-				_categoryDropdown.dropDownBounds.X -= _categoryDropdown.bounds.Width / 2;
 				_categoryDropdown.RecalculateBounds();
 			}
 			
 			_categoryDropdown.draw(batch, 0, 0);
 		}
+		
+		private void DrawSortingDropdown(SpriteBatch batch)
+		{
+			if (_sortDropdown == null)
+			{
+				const string label = "Sort By";
+				var textBounds = Game1.dialogueFont.MeasureString(label);
+				_sortDropdown = new OptionsDropDown(
+					label, 
+					-999, 
+					xPositionOnScreen + width - (int)textBounds.X  - 50, 
+					yPositionOnScreen + 115
+				)
+				{
+					dropDownOptions = _sortOptions,
+					dropDownDisplayOptions = _sortOptions,
+				};
+
+				_sortDropdown.bounds.X -= _sortDropdown.bounds.Width;
+				_sortDropdown.dropDownBounds.X -= _sortDropdown.bounds.Width;
+				_sortDropdown.RecalculateBounds();
+			}
+			
+			_sortDropdown.draw(batch, 0, 0);
+		}
 
 		public void DrawRow(SpriteBatch batch, ItemModel model, int rowNumber, int startingX, int startingY, int rowWidth, int rowHeight = 100, int padding = 40, bool drawSprite = true)
 		{
-			var obj = model.ObjectInstance;
+			var obj = model.GetObjectInstance();
 
 			var x = startingX + padding;
 			var y = startingY + (drawSprite ? 130 : 0) + padding + (rowHeight + padding) * rowNumber;
@@ -401,8 +461,6 @@ namespace fse.core.menu
 			_upArrow.draw(batch);
 			_downArrow.draw(batch);
 			_scrollbar.draw(batch);
-			//this.SetScrollBarToCurrentIndex();
-			
 		}
 
 		private void DrawMouse(SpriteBatch batch)
@@ -455,6 +513,38 @@ namespace fse.core.menu
 				(int)((2 * Game1.tileSize) + textBounds.Y
 				), false, true);
 			Utility.drawTextWithShadow(batch, text, Game1.dialogueFont, new Vector2(newX, newY), Game1.textColor);
+		}
+
+		private void SetupItemsWithSort()
+		{
+			var items = _economyService.GetItemsForCategory(_chosenCategory).ToList();
+
+			switch (_chosenSort)
+			{
+				case Alphabetical:
+				{
+					items.Sort((a, b) =>
+						string.Compare(a.GetObjectInstance().Name, b.GetObjectInstance().Name, StringComparison.Ordinal)
+					);
+					break;
+				}
+				case Supply:
+				{
+					items.Sort((a, b) => a.Supply - b.Supply);
+					break;
+				}
+				case DailyChange:
+				{
+					items.Sort((a, b) => a.DailyDelta - b.DailyDelta);
+					break;
+				}
+				case PricePerDay:
+				{
+					break;
+				}
+			}
+
+			_allItems = items.ToArray();
 		}
 		
 		private enum Alignment
