@@ -32,6 +32,7 @@ namespace fse.core.menu
 		private int _bottomIndex;
 		private OptionsDropDown _categoryDropdown;
 		private OptionsDropDown _sortDropdown;
+		private OptionsCheckbox[] _seasonsCheckboxes;
 
 		private const string Alphabetical = "Alphabetical";
 		private const string MarketPrice = "Market Price";
@@ -41,6 +42,7 @@ namespace fse.core.menu
 		private readonly List<string> _sortOptions = new() { "None", Alphabetical, Supply, DailyChange, MarketPrice, MarketPricePerDay };
 		private string _chosenSort = "None";
 		private int _chosenCategory;
+		private Seasons _chosenSeasons = Seasons.Spring | Seasons.Summer | Seasons.Fall | Seasons.Winter;
 
 		public ForecastMenu(
 			EconomyService economyService,
@@ -74,6 +76,7 @@ namespace fse.core.menu
 			_scrollbarRunner = null;
 			_categoryDropdown = null;
 			_sortDropdown = null;
+			_seasonsCheckboxes = null;
 		}
 
 		public override void receiveScrollWheelAction(int direction)
@@ -118,7 +121,43 @@ namespace fse.core.menu
 			{
 				_isScrolling = true;
 			}
-			
+
+			var seasonsChanged = false;
+			for (var i = 0; i < _seasonsCheckboxes.Length; i++)
+			{
+				var checkbox = _seasonsCheckboxes[i];
+
+				if (!checkbox.bounds.Contains(x, y))
+				{
+					continue;
+				}
+
+				var flag = i switch
+				{
+					0 => Seasons.Spring,
+					1 => Seasons.Summer,
+					2 => Seasons.Fall,
+					3 => Seasons.Winter,
+					_ => Seasons.Spring | Seasons.Summer | Seasons.Fall | Seasons.Winter,
+				};
+
+				seasonsChanged = true;
+					
+				if (_chosenSeasons.HasFlag(flag))
+				{
+					_chosenSeasons -= flag;
+				}
+				else
+				{
+					_chosenSeasons |= flag;
+				}
+			}
+
+			if (seasonsChanged)
+			{
+				SetupItemsWithSort();
+			}
+
 			if (startingIndex != _itemIndex)
 			{
 				Game1.playSound("shwip");
@@ -230,6 +269,7 @@ namespace fse.core.menu
 			}
 			DrawCategoryDropdown(batch);
 			DrawSortingDropdown(batch);
+			DrawSeasonsCheckbox(batch);
 			DrawMouse(batch);
 		}
 
@@ -250,7 +290,6 @@ namespace fse.core.menu
 		{
 			Game1.drawDialogueBox(xPositionOnScreen, yPositionOnScreen, width, height, false, true);
 		}
-
 
 		private void DrawPartitions(SpriteBatch batch)
 		{
@@ -283,6 +322,54 @@ namespace fse.core.menu
 			DrawAlignedText(batch, xPositionOnScreen + width / 2, yPositionOnScreen, "Ferngill Economic Forecast", Alignment.Middle, Alignment.End, true);
 		}
 
+		private void DrawSeasonsCheckbox(SpriteBatch batch)
+		{
+			var yLoc = yPositionOnScreen + 153;
+			var xCenterLoc = xPositionOnScreen + width / 2;
+			
+			if (_seasonsCheckboxes == null)
+			{
+				_seasonsCheckboxes = new[]
+				{
+					new OptionsCheckbox(string.Empty, (int)Seasons.Spring, xCenterLoc, yLoc),
+					new OptionsCheckbox(string.Empty, (int)Seasons.Summer, xCenterLoc, yLoc),
+					new OptionsCheckbox(string.Empty, (int)Seasons.Fall, xCenterLoc, yLoc),
+					new OptionsCheckbox(string.Empty, (int)Seasons.Winter, xCenterLoc, yLoc),
+				};
+
+				var checkWidth = _seasonsCheckboxes[0].bounds.Width;
+
+				_seasonsCheckboxes[0].bounds.X -= checkWidth * 2 + 9;
+				_seasonsCheckboxes[1].bounds.X -= checkWidth * 1 + 1;
+				_seasonsCheckboxes[2].bounds.X += 3;
+				_seasonsCheckboxes[3].bounds.X += checkWidth * 1 + 9;
+			}
+			
+			_seasonsCheckboxes[0].isChecked = _chosenSeasons.HasFlag(Seasons.Spring);
+			_seasonsCheckboxes[1].isChecked = _chosenSeasons.HasFlag(Seasons.Summer);
+			_seasonsCheckboxes[2].isChecked = _chosenSeasons.HasFlag(Seasons.Fall);
+			_seasonsCheckboxes[3].isChecked = _chosenSeasons.HasFlag(Seasons.Winter);
+
+			for (var i = 0; i < _seasonsCheckboxes.Length; i++)
+			{
+				var checkbox = _seasonsCheckboxes[i];
+				checkbox.draw(batch, 0, 0);
+
+				var label = i switch
+				{
+					0 => "Sp.",
+					1 => "Su.",
+					2 => "Fa.",
+					3 => "Wi.",
+					_ => string.Empty
+				};
+
+				var xLoc = checkbox.bounds.X + checkbox.bounds.Width / 2;
+
+				DrawAlignedText(batch, xLoc, yPositionOnScreen + 105, label, Alignment.Middle, Alignment.Middle, false);
+			}
+		}
+
 		private void DrawCategoryDropdown(SpriteBatch batch)
 		{
 			if (_categoryDropdown == null)
@@ -299,7 +386,6 @@ namespace fse.core.menu
 				};
 
 				_categoryDropdown.RecalculateBounds();
-
 			}
 			
 			const string label = "Select Category";
@@ -593,6 +679,8 @@ namespace fse.core.menu
 					break;
 				}
 			}
+
+			items = items.Where(i => _economyService.ItemValidForSeason(i, _chosenSeasons)).ToList();
 
 			_allItems = items.ToArray();
 		}

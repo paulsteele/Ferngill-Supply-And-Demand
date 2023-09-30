@@ -184,7 +184,19 @@ namespace fse.core.services
 		}
 
 		public ItemModel GetItemModelFromSeed(int seed) => Economy.GetItemModelFromSeedId(seed);
-		public SeedModel GetSeedModelFromItem(int item) => Economy.GetSeedModelFromModelId(item);
+		private SeedModel GetSeedModelFromItem(int item) => Economy.GetSeedModelFromModelId(item);
+
+		public bool ItemValidForSeason(ItemModel model, Seasons seasonsFilter)
+		{
+			var seed = GetSeedModelFromItem(model.ObjectId);
+
+			if (seed == null)
+			{
+				return true;
+			}
+
+			return (seed.Seasons & seasonsFilter) != 0;
+		}
 
 		public int GetPricePerDay(ItemModel model)
 		{
