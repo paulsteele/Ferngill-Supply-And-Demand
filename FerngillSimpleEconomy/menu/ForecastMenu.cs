@@ -34,15 +34,20 @@ namespace fse.core.menu
 		private OptionsDropDown _sortDropdown;
 		private OptionsCheckbox[] _seasonsCheckboxes;
 
-		private const string Alphabetical = "Alphabetical";
+		private const string Name = "Name";
 		private const string MarketPrice = "Market Price";
 		private const string MarketPricePerDay = "Market Price Per Day";
 		private const string Supply = "Supply";
 		private const string DailyChange = "Daily Change";
-		private readonly List<string> _sortOptions = new() { "None", Alphabetical, Supply, DailyChange, MarketPrice, MarketPricePerDay };
+		private readonly List<string> _sortOptions = new() { "None", Name, Supply, DailyChange, MarketPrice, MarketPricePerDay };
 		private string _chosenSort = "None";
 		private int _chosenCategory;
 		private Seasons _chosenSeasons = Seasons.Spring | Seasons.Summer | Seasons.Fall | Seasons.Winter;
+
+		private const int Divider1 = 260;
+		private const int Divider2 = 520;
+		private const int Divider3 = 780;
+		private const int DividerWidth = 32;
 
 		public ForecastMenu(
 			EconomyService economyService,
@@ -293,28 +298,31 @@ namespace fse.core.menu
 
 		private void DrawPartitions(SpriteBatch batch)
 		{
-			const int offset = 200;
+			const int offset = 115;
 
 			height -= offset;
 			yPositionOnScreen += offset;
-			drawHorizontalPartition(batch, yPositionOnScreen + 54, true );
-			drawVerticalPartition(batch, xPositionOnScreen + 500, true);
-			drawVerticalPartition(batch, xPositionOnScreen + 700, true);
-			drawVerticalPartition(batch, xPositionOnScreen + 1000, true);
+			drawHorizontalPartition(batch, yPositionOnScreen + 60, true );
+			drawHorizontalPartition(batch, yPositionOnScreen + 150, true );
+			drawVerticalPartition(batch, xPositionOnScreen + Divider1, true);
+			drawVerticalPartition(batch, xPositionOnScreen + Divider2, true);
+			drawVerticalPartition(batch, xPositionOnScreen + Divider3, true);
 			height += offset;
 			yPositionOnScreen -= offset;
 		}
 			
 		private void DrawHeader(SpriteBatch batch)
 		{
-			// Game1.drawDialogueBox(
-			// 	xPositionOnScreen,
-			// 	yPositionOnScreen,
-			// 	width,
-			// 	300,
-			// 	false,
-			// 	true
-			// );
+			const int row1 = 257;
+			const int row2 = 292;
+			
+			DrawAlignedText(batch, xPositionOnScreen + DividerWidth + (Divider1 / 2), row1, "Item", Alignment.Middle, Alignment.Middle, false);
+			DrawAlignedText(batch, xPositionOnScreen + DividerWidth + Divider1 + ((Divider2 - Divider1) / 2), row1, "Market Price", Alignment.Middle, Alignment.Middle, false);
+			DrawAlignedText(batch, xPositionOnScreen + DividerWidth + Divider2 + ((Divider3 - Divider2) / 2), row1, "Market Price", Alignment.Middle, Alignment.Middle, false);
+			DrawAlignedText(batch, xPositionOnScreen + DividerWidth + Divider2 + ((Divider3 - Divider2) / 2), row2, "Per Day", Alignment.Middle, Alignment.Middle, false);
+			DrawAlignedText(batch, xPositionOnScreen + Divider3 + ((width - Divider3) / 2), row1, "Supply", Alignment.Middle, Alignment.Middle, false);
+			DrawAlignedText(batch, xPositionOnScreen + Divider3 + ((width - Divider3) / 2), row2, "(Low to High)", Alignment.Middle, Alignment.Middle, false);
+			
 		}
 
 		private void DrawTitle(SpriteBatch batch)
@@ -413,30 +421,24 @@ namespace fse.core.menu
 			_sortDropdown.draw(batch, 0, 0);
 		}
 
-		public void DrawRow(SpriteBatch batch, ItemModel model, int rowNumber, int startingX, int startingY, int rowWidth, int rowHeight = 100, int padding = 40, bool drawSprite = true)
+		private void DrawRow(SpriteBatch batch, ItemModel model, int rowNumber, int startingX, int startingY, int rowWidth, int rowHeight = 100, int padding = 40)
 		{
 			var obj = model.GetObjectInstance();
 
 			var x = startingX + padding;
-			var y = startingY + (drawSprite ? 270 : 0) + padding + (rowHeight + padding) * rowNumber;
+			var y = startingY + 270 + padding + (rowHeight + padding) * rowNumber;
 
-			if (drawSprite)
-			{
-				obj.drawInMenu(batch, new Vector2(x, y), 1);
-			}
+			obj.drawInMenu(batch, new Vector2(x, y), 1);
 
-			var barHeightModifier = drawSprite ? 1 : 2;
-			
-			DrawSupplyBar(batch, x + (int) (Game1.tileSize * 1.2), y + (drawSprite ? 0 : 10), x + rowWidth - padding * 2, model, barHeightModifier);
+			DrawSupplyBar(batch,x + Divider3 + 10, y + 0,  x + rowWidth - 10 - padding * 2, (Game1.tileSize / 2), model);
 			// var text = drawSprite ? $"{obj.Name} - {model.GetMultiplier():F2}x" : $"{model.GetMultiplier():F2}x";
-			var text = drawSprite ? $"{obj.Name} - {model.GetPrice(obj.Price)} - {_economyService.GetPricePerDay(model)}" : $"{model.GetPrice(obj.Price)} - {_economyService.GetPricePerDay(model)}";
-			Utility.drawTextWithShadow(batch, text, Game1.dialogueFont, new Vector2(x, y + Game1.tileSize + (drawSprite ? 0 : -20)), Game1.textColor);
+			// var text = drawSprite ? $"{obj.Name} - {model.GetPrice(obj.Price)} - {_economyService.GetPricePerDay(model)}" : $"{model.GetPrice(obj.Price)} - {_economyService.GetPricePerDay(model)}";
+			// Utility.drawTextWithShadow(batch, text, Game1.dialogueFont, new Vector2(x, y + Game1.tileSize + (drawSprite ? 0 : -20)), Game1.textColor);
 		}
 
-		private void DrawSupplyBar(SpriteBatch batch, int startingX, int startingY, int endingX, ItemModel model, int barHeightModifier = 1)
+		private void DrawSupplyBar(SpriteBatch batch, int startingX, int startingY, int endingX, int barHeight, ItemModel model)
 		{
 			var barWidth = ((endingX - startingX) / 10) * 10;
-			var barHeight = (Game1.tileSize / 2) / barHeightModifier;
 			var percentage = Math.Min(model.Supply / (float)ItemModel.MaxCalculatedSupply, 1);
 
 			if (_barBackgroundTexture == null || _barForegroundTexture == null)
@@ -488,13 +490,13 @@ namespace fse.core.menu
 			batch.Draw(_barBackgroundTexture, fullRect, new Rectangle(0, 0, barWidth, barHeight), Color.White);
 			batch.Draw(_barForegroundTexture, percentageRect, new Rectangle(0, 0, percentageRect.Width, barHeight), barColor);
 			
-			DrawDeltaArrows(batch, model, percentageRect, barHeight, barHeightModifier);
+			DrawDeltaArrows(batch, model, percentageRect, barHeight);
 		}
 
-		private static void DrawDeltaArrows(SpriteBatch batch, ItemModel model, Rectangle percentageRect, int barHeight, int barHeightModifier)
+		private static void DrawDeltaArrows(SpriteBatch batch, ItemModel model, Rectangle percentageRect, int barHeight)
 		{
 			var location = new Rectangle(percentageRect.X + percentageRect.Width - (int)(Game1.tileSize * .3) + 15,
-				percentageRect.Y - barHeight - (barHeightModifier == 2 ? 15 : 0), 5 * Game1.pixelZoom, 5 * Game1.pixelZoom);
+				percentageRect.Y - barHeight, 5 * Game1.pixelZoom, 5 * Game1.pixelZoom);
 
 			if (model.DailyDelta < 0)
 			{
@@ -642,7 +644,7 @@ namespace fse.core.menu
 
 			switch (_chosenSort)
 			{
-				case Alphabetical:
+				case Name:
 				{
 					items.Sort((a, b) =>
 						string.Compare(a.GetObjectInstance().Name, b.GetObjectInstance().Name, StringComparison.Ordinal)
