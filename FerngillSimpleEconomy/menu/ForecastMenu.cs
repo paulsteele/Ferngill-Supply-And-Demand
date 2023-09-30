@@ -19,7 +19,7 @@ namespace fse.core.menu
 		private ItemModel[] _allItems;
 		private Dictionary<int, string> _categories;
 		private int _itemIndex;
-		private int _maxNumberOfRows = 0;
+		private int _maxNumberOfRows;
 		private bool _isScrolling;
 		private bool _isInCategoryDropdown;
 		private bool _isInSortDropdown;
@@ -280,7 +280,7 @@ namespace fse.core.menu
 			width = Math.Min(Game1.uiViewport.Width - 2 * xPadding, 1920);
 			height = Math.Min(Game1.uiViewport.Height - 2 * yPadding, 2000);
 
-			_maxNumberOfRows = (height - 170) / 140;
+			_maxNumberOfRows = (height - 310) / 140;
 			_bottomIndex = Math.Max(_allItems.Length - _maxNumberOfRows, 1);
 
 			xPositionOnScreen = (Game1.uiViewport.Width - width) / 2;
@@ -418,7 +418,7 @@ namespace fse.core.menu
 			var obj = model.GetObjectInstance();
 
 			var x = startingX + padding;
-			var y = startingY + (drawSprite ? 130 : 0) + padding + (rowHeight + padding) * rowNumber;
+			var y = startingY + (drawSprite ? 270 : 0) + padding + (rowHeight + padding) * rowNumber;
 
 			if (drawSprite)
 			{
