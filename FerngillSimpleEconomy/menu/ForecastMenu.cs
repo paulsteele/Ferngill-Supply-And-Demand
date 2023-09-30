@@ -217,6 +217,9 @@ namespace fse.core.menu
 			DrawBackground(batch);
 			DrawTitle(batch);
 			DrawScrollBar(batch);
+			DrawPartitions(batch);
+
+			DrawHeader(batch);
 
 			for (var i = 0; i < _maxNumberOfRows; i++)
 			{
@@ -225,7 +228,7 @@ namespace fse.core.menu
 					DrawRow(batch, _allItems[_itemIndex + i], i, xPositionOnScreen, yPositionOnScreen, width);
 				}
 			}
-			DrawDropdown(batch);
+			DrawCategoryDropdown(batch);
 			DrawSortingDropdown(batch);
 			DrawMouse(batch);
 		}
@@ -248,21 +251,47 @@ namespace fse.core.menu
 			Game1.drawDialogueBox(xPositionOnScreen, yPositionOnScreen, width, height, false, true);
 		}
 
-		private void DrawTitle(SpriteBatch batch)
+
+		private void DrawPartitions(SpriteBatch batch)
 		{
-			DrawBoxWithAlignedText(xPositionOnScreen + width / 2, yPositionOnScreen, "Ferngill Economic Forecast", Alignment.Middle, Alignment.End, batch);
+			const int offset = 200;
+
+			height -= offset;
+			yPositionOnScreen += offset;
+			drawHorizontalPartition(batch, yPositionOnScreen + 54, true );
+			drawVerticalPartition(batch, xPositionOnScreen + 500, true);
+			drawVerticalPartition(batch, xPositionOnScreen + 700, true);
+			drawVerticalPartition(batch, xPositionOnScreen + 1000, true);
+			height += offset;
+			yPositionOnScreen -= offset;
+		}
+			
+		private void DrawHeader(SpriteBatch batch)
+		{
+			// Game1.drawDialogueBox(
+			// 	xPositionOnScreen,
+			// 	yPositionOnScreen,
+			// 	width,
+			// 	300,
+			// 	false,
+			// 	true
+			// );
 		}
 
-		private void DrawDropdown(SpriteBatch batch)
+		private void DrawTitle(SpriteBatch batch)
+		{
+			DrawAlignedText(batch, xPositionOnScreen + width / 2, yPositionOnScreen, "Ferngill Economic Forecast", Alignment.Middle, Alignment.End, true);
+		}
+
+		private void DrawCategoryDropdown(SpriteBatch batch)
 		{
 			if (_categoryDropdown == null)
 			{
-				const string label = "Select Category";
 				_categoryDropdown = new OptionsDropDown(
-					label, 
+					string.Empty, 
 					-999, 
 					xPositionOnScreen + 50, 
-					yPositionOnScreen + 115
+					yPositionOnScreen + 153
 				)
 				{
 					dropDownOptions = _categories.Keys.Select(i => i.ToString()).ToList(),
@@ -270,8 +299,13 @@ namespace fse.core.menu
 				};
 
 				_categoryDropdown.RecalculateBounds();
+
 			}
 			
+			const string label = "Select Category";
+			var xLoc = _categoryDropdown.bounds.X + (_categoryDropdown.bounds.Width / 2);
+			
+			DrawAlignedText(batch, xLoc, yPositionOnScreen + 105, label, Alignment.Middle, Alignment.Middle, false);
 			_categoryDropdown.draw(batch, 0, 0);
 		}
 		
@@ -279,13 +313,11 @@ namespace fse.core.menu
 		{
 			if (_sortDropdown == null)
 			{
-				const string label = "Sort By";
-				var textBounds = Game1.dialogueFont.MeasureString(label);
 				_sortDropdown = new OptionsDropDown(
-					label, 
+					string.Empty, 
 					-999, 
-					xPositionOnScreen + width - (int)textBounds.X  - 50, 
-					yPositionOnScreen + 115
+					xPositionOnScreen + width - 50, 
+					yPositionOnScreen + 153
 				)
 				{
 					dropDownOptions = _sortOptions,
@@ -295,8 +327,12 @@ namespace fse.core.menu
 				_sortDropdown.bounds.X -= _sortDropdown.bounds.Width;
 				_sortDropdown.dropDownBounds.X -= _sortDropdown.bounds.Width;
 				_sortDropdown.RecalculateBounds();
+				
 			}
+			const string label = "Sort By";
+			var xLoc = _sortDropdown.bounds.X + (_sortDropdown.bounds.Width / 2);
 			
+			DrawAlignedText(batch, xLoc, yPositionOnScreen + 105, label, Alignment.Middle, Alignment.Middle, false);
 			_sortDropdown.draw(batch, 0, 0);
 		}
 
@@ -482,14 +518,16 @@ namespace fse.core.menu
 				);
 			}
 		}
+
 		
-		private void DrawBoxWithAlignedText(
+		private void DrawAlignedText(
+			SpriteBatch batch,
 			int x, 
 			int y, 
 			string text, 
 			Alignment horizontalAlignment,
 			Alignment verticalAlignment,
-			SpriteBatch batch
+			bool addBox
 		)
 		{
 			var textBounds = Game1.dialogueFont.MeasureString(text);
@@ -507,13 +545,17 @@ namespace fse.core.menu
 			};
 
 			var padding = 16;
+
+			if (addBox)
+			{
+				Game1.drawDialogueBox(
+					newX - Game1.tileSize / 2 - padding / 2, 
+					(newY - (int) textBounds.Y / 1) - Game1.tileSize / 2 - padding, 
+					(int)textBounds.X + Game1.tileSize + padding, 
+					(int)((2 * Game1.tileSize) + textBounds.Y
+					), false, true);
+			}
 			
-			Game1.drawDialogueBox(
-				newX - Game1.tileSize / 2 - padding / 2, 
-				(newY - (int) textBounds.Y / 1) - Game1.tileSize / 2 - padding, 
-				(int)textBounds.X + Game1.tileSize + padding, 
-				(int)((2 * Game1.tileSize) + textBounds.Y
-				), false, true);
 			Utility.drawTextWithShadow(batch, text, Game1.dialogueFont, new Vector2(newX, newY), Game1.textColor);
 		}
 
