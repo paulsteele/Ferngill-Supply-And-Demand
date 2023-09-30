@@ -355,18 +355,9 @@ namespace fse.core.menu
 				var checkbox = _seasonsCheckboxes[i];
 				checkbox.draw(batch, 0, 0);
 
-				var label = i switch
-				{
-					0 => "Sp.",
-					1 => "Su.",
-					2 => "Fa.",
-					3 => "Wi.",
-					_ => string.Empty
-				};
+				var xLoc = checkbox.bounds.X + (checkbox.bounds.Width / 2) - 18;
 
-				var xLoc = checkbox.bounds.X + checkbox.bounds.Width / 2;
-
-				DrawAlignedText(batch, xLoc, yPositionOnScreen + 105, label, Alignment.Middle, Alignment.Middle, false);
+				batch.Draw(Game1.mouseCursors, new Vector2(xLoc, yPositionOnScreen + 115), new Rectangle(406, 441 + i * 8, 12, 8), Color.White, 0.0f, Vector2.Zero, 3f, SpriteEffects.None, 0.9f);
 			}
 		}
 
