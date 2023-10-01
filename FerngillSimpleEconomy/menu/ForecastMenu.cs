@@ -421,7 +421,7 @@ namespace fse.core.menu
 			}
 			var xLoc = _sortDropdown.bounds.X + (_sortDropdown.bounds.Width / 2);
 			
-			DrawAlignedText(batch, xLoc, yPositionOnScreen + 105, _helper.Translation.Get("fse.forecast.menu.sortBy"), Alignment.Middle, Alignment.End, false);
+			DrawAlignedText(batch, xLoc, yPositionOnScreen + 105, _helper.Translation.Get("fse.forecast.menu.header.sortBy"), Alignment.Middle, Alignment.End, false);
 			_sortDropdown.draw(batch, 0, 0);
 		}
 
