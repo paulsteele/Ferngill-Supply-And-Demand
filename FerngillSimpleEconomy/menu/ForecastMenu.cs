@@ -528,13 +528,13 @@ namespace fse.core.menu
 				var leftArrow = new ClickableTextureComponent("up-arrow", location, "", "", Game1.mouseCursors,
 					new Rectangle(352, 495, 12, 11), Game1.pixelZoom * .75f);
 				leftArrow.bounds.X -= 30;
-				if (model.DailyDelta < -40)
+				if (model.DailyDelta < -20)
 				{
 					leftArrow.bounds.X += 10;
 					leftArrow.draw(batch);
 				}
 
-				if (model.DailyDelta < -20)
+				if (model.DailyDelta < -10)
 				{
 					leftArrow.bounds.X += 10;
 					leftArrow.draw(batch);
@@ -547,13 +547,13 @@ namespace fse.core.menu
 			{
 				var rightArrow = new ClickableTextureComponent("down-arrow", location, "", "", Game1.mouseCursors,
 					new Rectangle(365, 495, 12, 11), Game1.pixelZoom * .75f);
-				if (model.DailyDelta > 40)
+				if (model.DailyDelta > 20)
 				{
 					rightArrow.bounds.X -= 10;
 					rightArrow.draw(batch);
 				}
 
-				if (model.DailyDelta > 20)
+				if (model.DailyDelta > 10)
 				{
 					rightArrow.bounds.X -= 10;
 					rightArrow.draw(batch);

@@ -12,9 +12,9 @@ namespace fse.core.models
 		public const int MaxCalculatedSupply = 1000;
 		private const int MaxSupply = int.MaxValue;
 		public const int StdDevSupply = 150;
-		private const int MinDelta = -50;
-		private const int MaxDelta = 50;
-		public const int StdDevDelta = 15;
+		private const int MinDelta = -30;
+		private const int MaxDelta = 30;
+		public const int StdDevDelta = 5;
 
 		private const float MaxPercentage = 1.3f;
 		private const float MinPercentage = 0.2f;
