@@ -14,6 +14,7 @@ namespace fse.core.menu
 {
 	public class ForecastMenu : IClickableMenu
 	{
+		private readonly IModHelper _helper;
 		private readonly EconomyService _economyService;
 		private readonly IMonitor _monitor;
 		private ItemModel[] _allItems;
@@ -34,12 +35,15 @@ namespace fse.core.menu
 		private OptionsDropDown _sortDropdown;
 		private OptionsCheckbox[] _seasonsCheckboxes;
 
-		private const string Name = "Name";
-		private const string MarketPrice = "Market Price";
-		private const string MarketPricePerDay = "Market Price Per Day";
-		private const string Supply = "Supply";
-		private const string DailyChange = "Daily Change";
-		private readonly List<string> _sortOptions = new() { "None", Name, Supply, DailyChange, MarketPrice, MarketPricePerDay };
+		private string None => _helper.Translation.Get("fse.forecast.menu.sort.none");
+		private string Name => _helper.Translation.Get("fse.forecast.menu.sort.name");
+		private string MarketPrice => _helper.Translation.Get("fse.forecast.menu.sort.marketPrice");
+		private string MarketPricePerDay => _helper.Translation.Get("fse.forecast.menu.sort.marketPricePerDay");
+		private string Supply => _helper.Translation.Get("fse.forecast.menu.sort.supply");
+		private string DailyChange => _helper.Translation.Get("fse.forecast.menu.sort.delta");
+		
+		private readonly List<string> _sortOptions = new() { "None", nameof(Name), nameof(Supply), nameof(DailyChange), nameof(MarketPrice), nameof(MarketPricePerDay) };
+		private readonly List<string> _sortDisplayOptions;
 		private string _chosenSort = "None";
 		private int _chosenCategory;
 		private Seasons _chosenSeasons = Seasons.Spring | Seasons.Summer | Seasons.Fall | Seasons.Winter;
@@ -50,12 +54,15 @@ namespace fse.core.menu
 		private const int DividerWidth = 32;
 
 		public ForecastMenu(
+			IModHelper helper,
 			EconomyService economyService,
 			IMonitor monitor)
 		{
+			_helper = helper;
 			_economyService = economyService;
 			_monitor = monitor;
 			
+			_sortDisplayOptions = new List<string> { None, Name, Supply, DailyChange, MarketPrice, MarketPricePerDay };
 
 			if (economyService.Loaded)
 			{
@@ -316,17 +323,17 @@ namespace fse.core.menu
 			const int row1 = 257;
 			const int row2 = 292;
 			
-			DrawAlignedText(batch, xPositionOnScreen + DividerWidth + (Divider1 / 2), row1, "Item", Alignment.Middle, Alignment.End, false);
-			DrawAlignedText(batch, xPositionOnScreen + DividerWidth + Divider1 + ((Divider2 - Divider1) / 2), row1, "Sell Price", Alignment.Middle, Alignment.End, false);
-			DrawAlignedText(batch, xPositionOnScreen + DividerWidth + Divider2 + ((Divider3 - Divider2) / 2), row1, "Sell Price", Alignment.Middle, Alignment.End, false);
-			DrawAlignedText(batch, xPositionOnScreen + DividerWidth + Divider2 + ((Divider3 - Divider2) / 2), row2, "Per Day", Alignment.Middle, Alignment.End, false);
-			DrawAlignedText(batch, xPositionOnScreen + Divider3 + ((width - Divider3) / 2), row1, "Supply", Alignment.Middle, Alignment.End, false);
-			DrawAlignedText(batch, xPositionOnScreen + Divider3 + ((width - Divider3) / 2), row2, "(Low to High)", Alignment.Middle, Alignment.End, false);
+			DrawAlignedText(batch, xPositionOnScreen + DividerWidth + (Divider1 / 2), row1, _helper.Translation.Get("fse.forecast.menu.header.item"), Alignment.Middle, Alignment.End, false);
+			DrawAlignedText(batch, xPositionOnScreen + DividerWidth + Divider1 + ((Divider2 - Divider1) / 2), row1, _helper.Translation.Get("fse.forecast.menu.header.sellPrice"), Alignment.Middle, Alignment.End, false);
+			DrawAlignedText(batch, xPositionOnScreen + DividerWidth + Divider2 + ((Divider3 - Divider2) / 2), row1, _helper.Translation.Get("fse.forecast.menu.header.sellPrice"), Alignment.Middle, Alignment.End, false);
+			DrawAlignedText(batch, xPositionOnScreen + DividerWidth + Divider2 + ((Divider3 - Divider2) / 2), row2, _helper.Translation.Get("fse.forecast.menu.header.perDay"), Alignment.Middle, Alignment.End, false);
+			DrawAlignedText(batch, xPositionOnScreen + Divider3 + ((width - Divider3) / 2), row1, _helper.Translation.Get("fse.forecast.menu.header.supply"), Alignment.Middle, Alignment.End, false);
+			DrawAlignedText(batch, xPositionOnScreen + Divider3 + ((width - Divider3) / 2), row2, _helper.Translation.Get("fse.forecast.menu.header.supplyDescriptor"), Alignment.Middle, Alignment.End, false);
 		}
 
 		private void DrawTitle(SpriteBatch batch)
 		{
-			DrawAlignedText(batch, xPositionOnScreen + width / 2, yPositionOnScreen, "Ferngill Economic Forecast", Alignment.Middle, Alignment.End, true);
+			DrawAlignedText(batch, xPositionOnScreen + width / 2, yPositionOnScreen, _helper.Translation.Get("fse.forecast.menu.header.title"), Alignment.Middle, Alignment.End, true);
 		}
 
 		private void DrawSeasonsCheckbox(SpriteBatch batch)
@@ -386,10 +393,9 @@ namespace fse.core.menu
 				_categoryDropdown.RecalculateBounds();
 			}
 			
-			const string label = "Select Category";
 			var xLoc = _categoryDropdown.bounds.X + (_categoryDropdown.bounds.Width / 2);
 			
-			DrawAlignedText(batch, xLoc, yPositionOnScreen + 105, label, Alignment.Middle, Alignment.End, false);
+			DrawAlignedText(batch, xLoc, yPositionOnScreen + 105, _helper.Translation.Get("fse.forecast.menu.header.category"), Alignment.Middle, Alignment.End, false);
 			_categoryDropdown.draw(batch, 0, 0);
 		}
 		
@@ -405,7 +411,7 @@ namespace fse.core.menu
 				)
 				{
 					dropDownOptions = _sortOptions,
-					dropDownDisplayOptions = _sortOptions,
+					dropDownDisplayOptions = _sortDisplayOptions,
 				};
 
 				_sortDropdown.bounds.X -= _sortDropdown.bounds.Width;
@@ -413,10 +419,9 @@ namespace fse.core.menu
 				_sortDropdown.RecalculateBounds();
 				
 			}
-			const string label = "Sort By";
 			var xLoc = _sortDropdown.bounds.X + (_sortDropdown.bounds.Width / 2);
 			
-			DrawAlignedText(batch, xLoc, yPositionOnScreen + 105, label, Alignment.Middle, Alignment.End, false);
+			DrawAlignedText(batch, xLoc, yPositionOnScreen + 105, _helper.Translation.Get("fse.forecast.menu.sortBy"), Alignment.Middle, Alignment.End, false);
 			_sortDropdown.draw(batch, 0, 0);
 		}
 
@@ -666,29 +671,29 @@ namespace fse.core.menu
 
 			switch (_chosenSort)
 			{
-				case Name:
+				case nameof(Name):
 				{
 					items.Sort((a, b) =>
 						string.Compare(a.GetObjectInstance().Name, b.GetObjectInstance().Name, StringComparison.Ordinal)
 					);
 					break;
 				}
-				case Supply:
+				case nameof(Supply):
 				{
 					items.Sort((a, b) => a.Supply - b.Supply);
 					break;
 				}
-				case DailyChange:
+				case nameof(DailyChange):
 				{
 					items.Sort((a, b) => a.DailyDelta - b.DailyDelta);
 					break;
 				}
-				case MarketPrice:
+				case nameof(MarketPrice):
 				{
 					items.Sort((a, b) => b.GetPrice(b.GetObjectInstance().Price) - a.GetPrice(a.GetObjectInstance().Price));
 					break;
 				}
-				case MarketPricePerDay:
+				case nameof(MarketPricePerDay):
 				{
 					items.Sort((a, b) => _economyService.GetPricePerDay(b) - _economyService.GetPricePerDay(a));
 					break;

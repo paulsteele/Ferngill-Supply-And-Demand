@@ -14,15 +14,15 @@ namespace fse.core
 		public override void Entry(IModHelper helper)
 		{
 			_economyService = new EconomyService(helper, Monitor);
-			RegisterPatches();
+			RegisterPatches(helper);
 			RegisterHandlers(helper);
 		}
 
-		private void RegisterPatches()
+		private void RegisterPatches(IModHelper helper)
 		{
 			var harmony = new Harmony(ModManifest.UniqueID);
 
-			SelfRegisteringPatches.Initialize(_economyService, Monitor);
+			SelfRegisteringPatches.Initialize(helper, _economyService, Monitor);
 			new ObjectPatches().Register(harmony);
 			new ShopMenuPatches().Register(harmony);
 		}

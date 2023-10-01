@@ -84,7 +84,7 @@ namespace fse.core.patches
 				transpiler: new HarmonyMethod(typeof(ShopMenuPatches), nameof(ShopDrawingTranspiler))
 			);
 
-			_forecastMenu = new ForecastMenu(EconomyService, Monitor);
+			_forecastMenu = new ForecastMenu(ModHelper, EconomyService, Monitor);
 		}
 
 		public static IEnumerable<CodeInstruction> ShopDrawingTranspiler(IEnumerable<CodeInstruction> steps)

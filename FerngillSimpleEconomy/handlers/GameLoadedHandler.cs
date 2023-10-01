@@ -37,9 +37,9 @@ namespace fse.core.handlers
 			}
 
 			var appIcon = _helper.ModContent.Load<Texture2D>(Path.Combine("assets", "app_icon.png"));
-			var success = api.AddApp(_helper.ModRegistry.ModID, "Ferngill Economic Forecast", () =>
+			var success = api.AddApp(_helper.ModRegistry.ModID, _helper.Translation.Get("fes.appname"), () =>
 			{
-				Game1.activeClickableMenu = new ForecastMenu(_economyService, _monitor);
+				Game1.activeClickableMenu = new ForecastMenu(_helper, _economyService, _monitor);
 			}, appIcon);
 			if (success)
 			{

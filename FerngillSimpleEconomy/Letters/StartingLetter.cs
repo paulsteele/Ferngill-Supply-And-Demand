@@ -10,10 +10,10 @@ namespace fse.core.Letters
 	public class StartingLetter : ILetter
 	{
 		private readonly IModHelper _modHelper;
-		public string Id => "pts.fse.starting.letter";
-		public string Text => "HEY FARMER";
+		public string Id => "fse.starting.letter";
+		public string Text => _modHelper.Translation.Get("fse.startingLetter.text");
 		public string GroupId => "pts.fse";
-		public string Title => "Faarrrmer";
+		public string Title => _modHelper.Translation.Get("fse.startingLetter.title");
 		public List<Item> Items => default;
 		public string Recipe => default;
 		public int WhichBG => default;
