@@ -1,5 +1,4 @@
 ﻿using fse.core.handlers;
-using fse.core.menu;
 using fse.core.patches;
 using fse.core.services;
 using HarmonyLib;
