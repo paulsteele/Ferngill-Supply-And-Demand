@@ -454,14 +454,9 @@ namespace fse.core.menu
 			
 			DrawAlignedText(batch, xPositionOnScreen + DividerWidth + Divider1 + ((Divider2 - Divider1) / 2), textCenterLine, $"{model.GetPrice(obj.Price)}", Alignment.Middle, Alignment.Middle, false);
 			DrawAlignedText(batch, xPositionOnScreen + DividerWidth + Divider2 + ((Divider3 - Divider2) / 2), textCenterLine, $"{_economyService.GetPricePerDay(model)}", Alignment.Middle, Alignment.Middle, false);
-			
-
-			// var text = drawSprite ? $"{obj.Name} - {model.GetMultiplier():F2}x" : $"{model.GetMultiplier():F2}x";
-			// var text = drawSprite ? $"{obj.Name} - {model.GetPrice(obj.Price)} - {_economyService.GetPricePerDay(model)}" : $"{model.GetPrice(obj.Price)} - {_economyService.GetPricePerDay(model)}";
-			// Utility.drawTextWithShadow(batch, text, Game1.dialogueFont, new Vector2(x, y + Game1.tileSize + (drawSprite ? 0 : -20)), Game1.textColor);
 		}
 
-		private void DrawSupplyBar(SpriteBatch batch, int startingX, int startingY, int endingX, int barHeight, ItemModel model)
+		public void DrawSupplyBar(SpriteBatch batch, int startingX, int startingY, int endingX, int barHeight, ItemModel model)
 		{
 			var barWidth = ((endingX - startingX) / 10) * 10;
 			var percentage = Math.Min(model.Supply / (float)ItemModel.MaxCalculatedSupply, 1);
