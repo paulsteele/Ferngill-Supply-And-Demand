@@ -451,6 +451,10 @@ namespace fse.core.menu
 				DrawAlignedText(batch, x + Game1.tileSize + 5, textCenterLine, firstLine, Alignment.Start, Alignment.Start, false);
 				DrawAlignedText(batch, x + Game1.tileSize + 5, textCenterLine, secondLine, Alignment.Start, Alignment.End, false);
 			}
+			
+			DrawAlignedText(batch, xPositionOnScreen + DividerWidth + Divider1 + ((Divider2 - Divider1) / 2), textCenterLine, $"{model.GetPrice(obj.Price)}", Alignment.Middle, Alignment.Middle, false);
+			DrawAlignedText(batch, xPositionOnScreen + DividerWidth + Divider2 + ((Divider3 - Divider2) / 2), textCenterLine, $"{_economyService.GetPricePerDay(model)}", Alignment.Middle, Alignment.Middle, false);
+			
 
 			// var text = drawSprite ? $"{obj.Name} - {model.GetMultiplier():F2}x" : $"{model.GetMultiplier():F2}x";
 			// var text = drawSprite ? $"{obj.Name} - {model.GetPrice(obj.Price)} - {_economyService.GetPricePerDay(model)}" : $"{model.GetPrice(obj.Price)} - {_economyService.GetPricePerDay(model)}";
