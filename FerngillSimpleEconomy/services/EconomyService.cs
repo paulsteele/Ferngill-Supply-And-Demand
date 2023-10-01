@@ -206,7 +206,7 @@ namespace fse.core.services
 			
 			if (seed == null || seed.DaysToGrow < 1)
 			{
-				return modelPrice;
+				return -1;
 			}
 
 			return modelPrice / seed.DaysToGrow;

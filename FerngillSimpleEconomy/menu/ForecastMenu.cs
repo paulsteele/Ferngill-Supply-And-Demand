@@ -75,6 +75,14 @@ namespace fse.core.menu
 				_categories = new Dictionary<int, string>();
 				_allItems = Array.Empty<ItemModel>();
 			}
+
+			_chosenSeasons = Utility.getSeasonNumber(Game1.currentSeason) switch {
+				0 => Seasons.Spring,
+				1 => Seasons.Summer,
+				2 => Seasons.Fall,
+				3 => Seasons.Winter,
+				_ => _chosenSeasons,
+			};
 		}
 
 		public override void gameWindowSizeChanged(Rectangle oldBounds, Rectangle newBounds)
@@ -456,9 +464,13 @@ namespace fse.core.menu
 				DrawAlignedText(batch, x + Game1.tileSize + 5, textCenterLine, firstLine, Alignment.Start, Alignment.Start, false);
 				DrawAlignedText(batch, x + Game1.tileSize + 5, textCenterLine, secondLine, Alignment.Start, Alignment.End, false);
 			}
-			
+
+			var pricePerDay = _economyService.GetPricePerDay(model);
+
+			var pricePerDayDisplay = pricePerDay != -1 ? $"{pricePerDay}" : "---";
+
 			DrawAlignedText(batch, xPositionOnScreen + DividerWidth + Divider1 + ((Divider2 - Divider1) / 2), textCenterLine, $"{model.GetPrice(obj.Price)}", Alignment.Middle, Alignment.Middle, false);
-			DrawAlignedText(batch, xPositionOnScreen + DividerWidth + Divider2 + ((Divider3 - Divider2) / 2), textCenterLine, $"{_economyService.GetPricePerDay(model)}", Alignment.Middle, Alignment.Middle, false);
+			DrawAlignedText(batch, xPositionOnScreen + DividerWidth + Divider2 + ((Divider3 - Divider2) / 2), textCenterLine, pricePerDayDisplay, Alignment.Middle, Alignment.Middle, false);
 		}
 
 		public void DrawSupplyBar(SpriteBatch batch, int startingX, int startingY, int endingX, int barHeight, ItemModel model)
