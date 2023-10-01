@@ -43,6 +43,7 @@ namespace fse.core.services
 			Economy = newModel;
 			ConsolidateEconomyCategories();
 			Economy.GenerateSeedMapping();
+			Economy.GenerateFishMapping();
 			
 			QueueSave();
 			Loaded = true;
@@ -185,17 +186,24 @@ namespace fse.core.services
 
 		public ItemModel GetItemModelFromSeed(int seed) => Economy.GetItemModelFromSeedId(seed);
 		private SeedModel GetSeedModelFromItem(int item) => Economy.GetSeedModelFromModelId(item);
+		private FishModel GetFishModelFromItem(int item) => Economy.GetFishModelFromModelId(item);
 
 		public bool ItemValidForSeason(ItemModel model, Seasons seasonsFilter)
 		{
 			var seed = GetSeedModelFromItem(model.ObjectId);
 
-			if (seed == null)
+			if (seed != null)
 			{
-				return true;
+				return (seed.Seasons & seasonsFilter) != 0;
 			}
 
-			return (seed.Seasons & seasonsFilter) != 0;
+			var fish = GetFishModelFromItem(model.ObjectId);
+			if (fish != null)
+			{
+				return (fish.Seasons & seasonsFilter) != 0;
+			}
+
+			return (HardcodedSeasonsList.GetSeasonForItem(model.ObjectId) & seasonsFilter) != 0;
 		}
 
 		public int GetPricePerDay(ItemModel model)

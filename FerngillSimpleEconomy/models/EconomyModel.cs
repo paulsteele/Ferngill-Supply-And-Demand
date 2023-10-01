@@ -14,6 +14,7 @@ namespace fse.core.models
 		[JsonInclude] public Dictionary<int, Dictionary<int, ItemModel>> CategoryEconomies { get; set; }
 		private Dictionary<int, ItemModel> SeedToItem { get; } = new();
 		private Dictionary<int, SeedModel> ItemToSeed { get; } = new();
+		private Dictionary<int, FishModel> ItemToFish { get; } = new();
 
 		public bool HasSameItems(EconomyModel other)
 		{
@@ -76,8 +77,30 @@ namespace fse.core.models
 			}
 		}
 
+		public void GenerateFishMapping()
+		{
+			var fishData = Game1.content.Load<Dictionary<int, string>>("Data\\Fish");
+
+			foreach (var fish in fishData.Keys)
+			{
+				var fishModel = new FishModel(fish, fishData[fish]);
+				var obj = new Object(fishModel.ObjectId, 1);
+				if (!CategoryEconomies.TryGetValue(obj.Category, out var category))
+				{
+					continue;
+				}
+				if (!category.TryGetValue(fishModel.ObjectId, out var itemModel))
+				{
+					continue;
+				}
+
+				ItemToFish.TryAdd(itemModel.ObjectId, fishModel);
+			}
+		}
+
 		public ItemModel GetItemModelFromSeedId(int seed) => SeedToItem.TryGetValue(seed, out var model) ? model : default;
 		public SeedModel GetSeedModelFromModelId(int modelId) => ItemToSeed.TryGetValue(modelId, out var model) ? model : default;
+		public FishModel GetFishModelFromModelId(int modelId) => ItemToFish.TryGetValue(modelId, out var model) ? model : default;
 
 		public void AdvanceOneDay()
 		{
