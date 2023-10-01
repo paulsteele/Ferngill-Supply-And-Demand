@@ -44,8 +44,8 @@ namespace fse.core.menu
 		private int _chosenCategory;
 		private Seasons _chosenSeasons = Seasons.Spring | Seasons.Summer | Seasons.Fall | Seasons.Winter;
 
-		private const int Divider1 = 260;
-		private const int Divider2 = 520;
+		private const int Divider1 = 340;
+		private const int Divider2 = 560;
 		private const int Divider3 = 780;
 		private const int DividerWidth = 32;
 
@@ -316,13 +316,12 @@ namespace fse.core.menu
 			const int row1 = 257;
 			const int row2 = 292;
 			
-			DrawAlignedText(batch, xPositionOnScreen + DividerWidth + (Divider1 / 2), row1, "Item", Alignment.Middle, Alignment.Middle, false);
-			DrawAlignedText(batch, xPositionOnScreen + DividerWidth + Divider1 + ((Divider2 - Divider1) / 2), row1, "Market Price", Alignment.Middle, Alignment.Middle, false);
-			DrawAlignedText(batch, xPositionOnScreen + DividerWidth + Divider2 + ((Divider3 - Divider2) / 2), row1, "Market Price", Alignment.Middle, Alignment.Middle, false);
-			DrawAlignedText(batch, xPositionOnScreen + DividerWidth + Divider2 + ((Divider3 - Divider2) / 2), row2, "Per Day", Alignment.Middle, Alignment.Middle, false);
-			DrawAlignedText(batch, xPositionOnScreen + Divider3 + ((width - Divider3) / 2), row1, "Supply", Alignment.Middle, Alignment.Middle, false);
-			DrawAlignedText(batch, xPositionOnScreen + Divider3 + ((width - Divider3) / 2), row2, "(Low to High)", Alignment.Middle, Alignment.Middle, false);
-			
+			DrawAlignedText(batch, xPositionOnScreen + DividerWidth + (Divider1 / 2), row1, "Item", Alignment.Middle, Alignment.End, false);
+			DrawAlignedText(batch, xPositionOnScreen + DividerWidth + Divider1 + ((Divider2 - Divider1) / 2), row1, "Sell Price", Alignment.Middle, Alignment.End, false);
+			DrawAlignedText(batch, xPositionOnScreen + DividerWidth + Divider2 + ((Divider3 - Divider2) / 2), row1, "Sell Price", Alignment.Middle, Alignment.End, false);
+			DrawAlignedText(batch, xPositionOnScreen + DividerWidth + Divider2 + ((Divider3 - Divider2) / 2), row2, "Per Day", Alignment.Middle, Alignment.End, false);
+			DrawAlignedText(batch, xPositionOnScreen + Divider3 + ((width - Divider3) / 2), row1, "Supply", Alignment.Middle, Alignment.End, false);
+			DrawAlignedText(batch, xPositionOnScreen + Divider3 + ((width - Divider3) / 2), row2, "(Low to High)", Alignment.Middle, Alignment.End, false);
 		}
 
 		private void DrawTitle(SpriteBatch batch)
@@ -390,7 +389,7 @@ namespace fse.core.menu
 			const string label = "Select Category";
 			var xLoc = _categoryDropdown.bounds.X + (_categoryDropdown.bounds.Width / 2);
 			
-			DrawAlignedText(batch, xLoc, yPositionOnScreen + 105, label, Alignment.Middle, Alignment.Middle, false);
+			DrawAlignedText(batch, xLoc, yPositionOnScreen + 105, label, Alignment.Middle, Alignment.End, false);
 			_categoryDropdown.draw(batch, 0, 0);
 		}
 		
@@ -417,7 +416,7 @@ namespace fse.core.menu
 			const string label = "Sort By";
 			var xLoc = _sortDropdown.bounds.X + (_sortDropdown.bounds.Width / 2);
 			
-			DrawAlignedText(batch, xLoc, yPositionOnScreen + 105, label, Alignment.Middle, Alignment.Middle, false);
+			DrawAlignedText(batch, xLoc, yPositionOnScreen + 105, label, Alignment.Middle, Alignment.End, false);
 			_sortDropdown.draw(batch, 0, 0);
 		}
 
@@ -428,9 +427,31 @@ namespace fse.core.menu
 			var x = startingX + padding;
 			var y = startingY + 270 + padding + (rowHeight + padding) * rowNumber;
 
-			obj.drawInMenu(batch, new Vector2(x, y), 1);
+			var textCenterLine = y + rowHeight / 2;
 
-			DrawSupplyBar(batch,x + Divider3 + 10, y + 0,  x + rowWidth - 10 - padding * 2, (Game1.tileSize / 2), model);
+			obj.drawInMenu(batch, new Vector2(x, y + 10), 1);
+
+			if (rowNumber != _maxNumberOfRows - 1)
+			{
+				drawHorizontalPartition(batch, y + rowHeight - 5, true );
+			}
+
+			DrawSupplyBar(batch,x + Divider3 + 10, y + 10,  x + rowWidth - 10 - padding * 2, (Game1.tileSize / 2), model);
+
+			var splitPoint = obj.Name.LastIndexOf(" ", StringComparison.Ordinal);
+			if (splitPoint == -1)
+			{
+				DrawAlignedText(batch, x + Game1.tileSize, textCenterLine, obj.Name, Alignment.Start, Alignment.Middle, false);
+			}
+			else
+			{
+				var firstLine = obj.Name[..splitPoint];
+				var secondLine = obj.Name[(splitPoint + 1)..];
+				
+				DrawAlignedText(batch, x + Game1.tileSize + 5, textCenterLine, firstLine, Alignment.Start, Alignment.Start, false);
+				DrawAlignedText(batch, x + Game1.tileSize + 5, textCenterLine, secondLine, Alignment.Start, Alignment.End, false);
+			}
+
 			// var text = drawSprite ? $"{obj.Name} - {model.GetMultiplier():F2}x" : $"{model.GetMultiplier():F2}x";
 			// var text = drawSprite ? $"{obj.Name} - {model.GetPrice(obj.Price)} - {_economyService.GetPricePerDay(model)}" : $"{model.GetPrice(obj.Price)} - {_economyService.GetPricePerDay(model)}";
 			// Utility.drawTextWithShadow(batch, text, Game1.dialogueFont, new Vector2(x, y + Game1.tileSize + (drawSprite ? 0 : -20)), Game1.textColor);
@@ -620,6 +641,8 @@ namespace fse.core.menu
 			var newY = verticalAlignment switch
 			{
 				Alignment.End => y,
+				Alignment.Middle => (int) (y - textBounds.Y / 2),
+				Alignment.Start => (int) (y - textBounds.Y),
 				_ => y,
 			};
 
