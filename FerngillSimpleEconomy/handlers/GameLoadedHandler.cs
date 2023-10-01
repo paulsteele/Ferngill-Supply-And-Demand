@@ -3,6 +3,7 @@ using fse.core.actions;
 using fse.core.integrations;
 using fse.core.menu;
 using fse.core.services;
+using MailFrameworkMod.Api;
 using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI;
 using StardewValley;
@@ -14,11 +15,19 @@ namespace fse.core.handlers
 		private readonly EconomyService _economyService;
 		private readonly IModHelper _helper;
 		private readonly IMonitor _monitor;
-		public GameLoadedHandler(EconomyService economyService, IModHelper helper, IMonitor monitor)
+		private readonly ISemanticVersion _semanticVersion;
+
+		public GameLoadedHandler(
+			EconomyService economyService, 
+			IModHelper helper, 
+			IMonitor monitor,
+			ISemanticVersion semanticVersion
+			)
 		{
 			_economyService = economyService;
 			_helper = helper;
 			_monitor = monitor;
+			_semanticVersion = semanticVersion;
 		}
 
 		public void Register()
@@ -28,6 +37,12 @@ namespace fse.core.handlers
 		}
 
 		private void OnLaunched()
+		{
+			RegisterMobilePhone();
+			RegisterMailFramework();
+		}
+
+		private void RegisterMobilePhone()
 		{
 			var api = _helper.ModRegistry.GetApi<IMobilePhoneApi>("aedenthorn.MobilePhone");
 			if (api == null)
@@ -49,6 +64,18 @@ namespace fse.core.handlers
 			{
 				_monitor.Log("Could not load phone app. Menu will not be accessible. The rest of the mod will still function", LogLevel.Error);
 			}
+		}
+		
+		private void RegisterMailFramework()
+		{
+			var mailFrameworkModApi = _helper.ModRegistry.GetApi<IMailFrameworkModApi>("DIGUS.MailFrameworkMod");
+			if (mailFrameworkModApi == null)
+			{
+				return;
+			}
+			
+			var contentPack = _helper.ContentPacks.CreateTemporary($"{_helper.DirectoryPath}/assets/mail", $"{_helper.ModContent.ModID}.mail", "fsemail", "fsemail", "fse", _semanticVersion);
+			mailFrameworkModApi.RegisterContentPack(contentPack);
 		}
 	}
 }

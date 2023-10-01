@@ -31,7 +31,7 @@ namespace fse.core
 		{
 			new DayEndHandler(helper, Monitor, _economyService).Register();
 			new SaveLoadedHandler(helper, Monitor, _economyService).Register();
-			new GameLoadedHandler(_economyService, helper, Monitor).Register();
+			new GameLoadedHandler(_economyService, helper, Monitor, ModManifest.Version).Register();
 		}
 	}
 }

@@ -1,7 +1,5 @@
 ﻿{
 	"fse.appname" : "Ferngill Economic Forecast",
-	"fse.startingLetter.text" : "This is a localized letter",
-	"fse.startingLetter.title" : "Ferngill Economic Introduction",
 	"fse.forecast.menu.sort.none": "None",
 	"fse.forecast.menu.sort.name": "Name",
 	"fse.forecast.menu.sort.marketPrice": "Sell Price",

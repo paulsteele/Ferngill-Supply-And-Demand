@@ -1,7 +1,5 @@
 ﻿using fse.core.actions;
-using fse.core.Letters;
 using fse.core.services;
-using MailFrameworkMod.Api;
 using StardewModdingAPI;
 
 namespace fse.core.handlers
@@ -32,21 +30,6 @@ namespace fse.core.handlers
 		private void GameLoopOnSaveLoaded()
 		{
 			_economyService.OnLoaded();
-			LoadMailFramework();
-		}
-		
-		private void LoadMailFramework()
-		{
-			var mailFrameworkModApi = _helper.ModRegistry.GetApi<IMailFrameworkModApi>("DIGUS.MailFrameworkMod");
-			if (mailFrameworkModApi == null)
-			{
-				return;
-			}
-
-			var letter = new StartingLetter(_helper);
-			
-			mailFrameworkModApi.RegisterLetter(letter, letter.Condition, letter.OnRead);
-			
 		}
 	}
 }
