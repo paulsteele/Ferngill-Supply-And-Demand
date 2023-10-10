@@ -150,6 +150,12 @@ namespace fse.core.services
 				_monitor.Log($"Economy not generated to determine item model for {obj.name}", LogLevel.Error);
 				return basePrice;
 			}
+
+			if (obj.Category == Object.artisanGoodsCategory)
+			{
+				return GetArtisanGoodPrice(obj, basePrice);
+			}
+			
 			var itemModel = Economy.GetItem(obj);
 			if (itemModel == null)
 			{
@@ -163,6 +169,28 @@ namespace fse.core.services
 			return adjustedPrice;
 		}
 
+		private Object GetArtisanBase(Object obj)
+		{
+			var preserveId = obj.preservedParentSheetIndex?.Get();
+			return preserveId == null ? null : new Object(preserveId.Value, 1);
+		}
+
+		private int GetArtisanGoodPrice(Object obj, int price)
+		{
+			var artisanBase = GetArtisanBase(obj);
+
+			if (artisanBase == null)
+			{
+				return -1;
+			}
+
+			var basePrice = GetPrice(artisanBase, artisanBase.Price);
+
+			var modifier = price / (double)artisanBase.Price;
+
+			return (int)(basePrice * modifier);
+		}
+
 		public void AdjustSupply(Object obj, int amount)
 		{
 			if (Economy == null)
@@ -170,6 +198,12 @@ namespace fse.core.services
 				_monitor.Log($"Economy not generated to determine item model for {obj.name}", LogLevel.Error);
 				return;
 			}
+
+			if (obj.Category == Object.artisanGoodsCategory)
+			{
+				obj = GetArtisanBase(obj);
+			}
+			
 			var itemModel = Economy.GetItem(obj);
 			if (itemModel == null)
 			{

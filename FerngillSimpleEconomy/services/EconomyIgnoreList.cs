@@ -12,8 +12,14 @@
 			159, // crimsonfish
 			160, // anglerfish
 			163, // legendfish
+			342, // pickles
+			344, // jelly
+			350, // juice
+			384, // wine
+			447, // aged roe
 			775, // glacierfish
 			683, // mutantcarp
+			812, // roe
 			889, // qi fruit
 			898, // son of crimsonfish
 			899, // anglerfish
