@@ -14,8 +14,8 @@
 			163, // legendfish
 			342, // pickles
 			344, // jelly
+			348, // wine
 			350, // juice
-			384, // wine
 			447, // aged roe
 			775, // glacierfish
 			683, // mutantcarp

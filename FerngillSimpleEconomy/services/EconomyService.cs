@@ -91,6 +91,12 @@ namespace fse.core.services
 			Economy.ForAllItems(model => model.CapSupply());
 			QueueSave();
 		}
+		
+		public void SetupForNewYear()
+		{
+			RandomizeEconomy(Economy, true, true);
+			QueueSave();
+		}
 
 		private static void RandomizeEconomy(EconomyModel model, bool updateSupply, bool updateDelta)
 		{
@@ -153,7 +159,11 @@ namespace fse.core.services
 
 			if (obj.Category == Object.artisanGoodsCategory)
 			{
-				return GetArtisanGoodPrice(obj, basePrice);
+				var price = GetArtisanGoodPrice(obj, basePrice);
+				if (price > 0)
+				{
+					return price;
+				}
 			}
 			
 			var itemModel = Economy.GetItem(obj);
@@ -172,7 +182,7 @@ namespace fse.core.services
 		private Object GetArtisanBase(Object obj)
 		{
 			var preserveId = obj.preservedParentSheetIndex?.Get();
-			return preserveId == null ? null : new Object(preserveId.Value, 1);
+			return preserveId is null or 0 ? null : new Object(preserveId.Value, 1);
 		}
 
 		private int GetArtisanGoodPrice(Object obj, int price)
@@ -186,6 +196,11 @@ namespace fse.core.services
 
 			var basePrice = GetPrice(artisanBase, artisanBase.Price);
 
+			if (artisanBase.Price < 1)
+			{
+				return -1;
+			}
+			
 			var modifier = price / (double)artisanBase.Price;
 
 			return (int)(basePrice * modifier);
@@ -201,7 +216,7 @@ namespace fse.core.services
 
 			if (obj.Category == Object.artisanGoodsCategory)
 			{
-				obj = GetArtisanBase(obj);
+				obj = GetArtisanBase(obj) ?? obj;
 			}
 			
 			var itemModel = Economy.GetItem(obj);

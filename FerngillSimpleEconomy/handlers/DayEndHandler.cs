@@ -42,7 +42,16 @@ namespace fse.core.handlers
 				}
 			}
 
-			if (Game1.dayOfMonth >= LastDayOfMonth)
+			if (Game1.dayOfMonth < LastDayOfMonth)
+			{
+				return;
+			}
+
+			if (Utility.getSeasonNumber(Game1.currentSeason) == 3)
+			{
+				_economyService.SetupForNewYear();
+			}
+			else
 			{
 				_economyService.SetupForNewSeason();
 			}

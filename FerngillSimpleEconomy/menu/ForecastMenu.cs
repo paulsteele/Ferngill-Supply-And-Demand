@@ -328,15 +328,14 @@ namespace fse.core.menu
 			
 		private void DrawHeader(SpriteBatch batch)
 		{
-			const int row1 = 257;
-			const int row2 = 292;
+			var yLoc = yPositionOnScreen + 254;
 			
-			DrawAlignedText(batch, xPositionOnScreen + DividerWidth + (Divider1 / 2), row1, _helper.Translation.Get("fse.forecast.menu.header.item"), Alignment.Middle, Alignment.End, false);
-			DrawAlignedText(batch, xPositionOnScreen + DividerWidth + Divider1 + ((Divider2 - Divider1) / 2), row1, _helper.Translation.Get("fse.forecast.menu.header.sellPrice"), Alignment.Middle, Alignment.End, false);
-			DrawAlignedText(batch, xPositionOnScreen + DividerWidth + Divider2 + ((Divider3 - Divider2) / 2), row1, _helper.Translation.Get("fse.forecast.menu.header.sellPrice"), Alignment.Middle, Alignment.End, false);
-			DrawAlignedText(batch, xPositionOnScreen + DividerWidth + Divider2 + ((Divider3 - Divider2) / 2), row2, _helper.Translation.Get("fse.forecast.menu.header.perDay"), Alignment.Middle, Alignment.End, false);
-			DrawAlignedText(batch, xPositionOnScreen + Divider3 + ((width - Divider3) / 2), row1, _helper.Translation.Get("fse.forecast.menu.header.supply"), Alignment.Middle, Alignment.End, false);
-			DrawAlignedText(batch, xPositionOnScreen + Divider3 + ((width - Divider3) / 2), row2, _helper.Translation.Get("fse.forecast.menu.header.supplyDescriptor"), Alignment.Middle, Alignment.End, false);
+			DrawAlignedText(batch, xPositionOnScreen + DividerWidth + (Divider1 / 2), yLoc, _helper.Translation.Get("fse.forecast.menu.header.item"), Alignment.Middle, Alignment.Middle, false);
+			DrawAlignedText(batch, xPositionOnScreen + DividerWidth + Divider1 + ((Divider2 - Divider1) / 2), yLoc, _helper.Translation.Get("fse.forecast.menu.header.sellPrice"), Alignment.Middle, Alignment.Middle, false);
+			DrawAlignedText(batch, xPositionOnScreen + DividerWidth + Divider2 + ((Divider3 - Divider2) / 2), yLoc, _helper.Translation.Get("fse.forecast.menu.header.sellPrice"), Alignment.Middle, Alignment.Start, false);
+			DrawAlignedText(batch, xPositionOnScreen + DividerWidth + Divider2 + ((Divider3 - Divider2) / 2), yLoc, _helper.Translation.Get("fse.forecast.menu.header.perDay"), Alignment.Middle, Alignment.End, false);
+			DrawAlignedText(batch, xPositionOnScreen + Divider3 + ((width - Divider3) / 2), yLoc, _helper.Translation.Get("fse.forecast.menu.header.supply"), Alignment.Middle, Alignment.Start, false);
+			DrawAlignedText(batch, xPositionOnScreen + Divider3 + ((width - Divider3) / 2), yLoc, _helper.Translation.Get("fse.forecast.menu.header.supplyDescriptor"), Alignment.Middle, Alignment.End, false);
 		}
 
 		private void DrawTitle(SpriteBatch batch)
