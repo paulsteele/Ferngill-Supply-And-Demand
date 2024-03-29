@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json.Serialization;
 using StardewValley;
+using StardewValley.GameData.Crops;
 using Object = StardewValley.Object;
 
 namespace fse.core.models
@@ -11,10 +12,10 @@ namespace fse.core.models
 	{
 		public static readonly string ModelKey = "fsd.economy.model";
 
-		[JsonInclude] public Dictionary<int, Dictionary<int, ItemModel>> CategoryEconomies { get; set; }
-		private Dictionary<int, ItemModel> SeedToItem { get; } = new();
-		private Dictionary<int, SeedModel> ItemToSeed { get; } = new();
-		private Dictionary<int, FishModel> ItemToFish { get; } = new();
+		[JsonInclude] public Dictionary<int, Dictionary<string, ItemModel>> CategoryEconomies { get; set; }
+		private Dictionary<string, ItemModel> SeedToItem { get; } = new();
+		private Dictionary<string, SeedModel> ItemToSeed { get; } = new();
+		private Dictionary<string, FishModel> ItemToFish { get; } = new();
 
 		public bool HasSameItems(EconomyModel other)
 		{
@@ -52,12 +53,12 @@ namespace fse.core.models
 
 			var category = CategoryEconomies[obj.Category];
 			
-			return !category.ContainsKey(obj.ParentSheetIndex) ? null : category[obj.ParentSheetIndex];
+			return !category.ContainsKey(obj.ItemId) ? null : category[obj.ItemId];
 		}
 		
 		public void GenerateSeedMapping()
 		{
-			var cropData = Game1.content.Load<Dictionary<int, string>>("Data\\Crops");
+			var cropData = Game1.content.Load<Dictionary<string, CropData>>("Data\\Crops");
 
 			foreach (var seed in cropData.Keys)
 			{
@@ -79,7 +80,7 @@ namespace fse.core.models
 
 		public void GenerateFishMapping()
 		{
-			var fishData = Game1.content.Load<Dictionary<int, string>>("Data\\Fish");
+			var fishData = Game1.content.Load<Dictionary<string, string>>("Data\\Fish");
 
 			foreach (var fish in fishData.Keys)
 			{
@@ -98,9 +99,9 @@ namespace fse.core.models
 			}
 		}
 
-		public ItemModel GetItemModelFromSeedId(int seed) => SeedToItem.TryGetValue(seed, out var model) ? model : default;
-		public SeedModel GetSeedModelFromModelId(int modelId) => ItemToSeed.TryGetValue(modelId, out var model) ? model : default;
-		public FishModel GetFishModelFromModelId(int modelId) => ItemToFish.TryGetValue(modelId, out var model) ? model : default;
+		public ItemModel GetItemModelFromSeedId(string seed) => SeedToItem.TryGetValue(seed, out var model) ? model : default;
+		public SeedModel GetSeedModelFromModelId(string modelId) => ItemToSeed.TryGetValue(modelId, out var model) ? model : default;
+		public FishModel GetFishModelFromModelId(string modelId) => ItemToFish.TryGetValue(modelId, out var model) ? model : default;
 
 		public void AdvanceOneDay()
 		{

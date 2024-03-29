@@ -53,7 +53,7 @@ namespace fse.core.patches
 			var items = shopMenu.forSale
 				.Select((t, i) => (salable: t, visibleIndex: i - __instance.currentItemIndex))
 				.Where(t => t.salable is Object { Category: Object.SeedsCategory })
-				.Select(t => (model: EconomyService.GetItemModelFromSeed(((Object) t.salable).ParentSheetIndex), t.visibleIndex))
+				.Select(t => (model: EconomyService.GetItemModelFromSeed(((Object) t.salable).ItemId), t.visibleIndex))
 				.Where(t => t.model != null)
 				.Where(t => t.visibleIndex is >= 0 and < ShopMenu.itemsPerPage);
 

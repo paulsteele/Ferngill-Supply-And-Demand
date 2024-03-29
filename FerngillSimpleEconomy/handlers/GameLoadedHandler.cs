@@ -1,12 +1,7 @@
-﻿using System.IO;
-using fse.core.actions;
-using fse.core.integrations;
-using fse.core.menu;
+﻿using fse.core.actions;
 using fse.core.services;
 using MailFrameworkMod.Api;
-using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI;
-using StardewValley;
 
 namespace fse.core.handlers
 {
@@ -38,32 +33,7 @@ namespace fse.core.handlers
 
 		private void OnLaunched()
 		{
-			RegisterMobilePhone();
 			RegisterMailFramework();
-		}
-
-		private void RegisterMobilePhone()
-		{
-			var api = _helper.ModRegistry.GetApi<IMobilePhoneApi>("aedenthorn.MobilePhone");
-			if (api == null)
-			{
-				_monitor.Log("Could not load phone app. Menu will not be accessible. The rest of the mod will still function", LogLevel.Error);
-				return;
-			}
-
-			var appIcon = _helper.ModContent.Load<Texture2D>(Path.Combine("assets", "app_icon.png"));
-			var success = api.AddApp(_helper.ModRegistry.ModID, _helper.Translation.Get("fse.appname"), () =>
-			{
-				Game1.activeClickableMenu = new ForecastMenu(_helper, _economyService, _monitor);
-			}, appIcon);
-			if (success)
-			{
-				_monitor.Log($"loaded phone app successfully", LogLevel.Debug);
-			}
-			else
-			{
-				_monitor.Log("Could not load phone app. Menu will not be accessible. The rest of the mod will still function", LogLevel.Error);
-			}
 		}
 		
 		private void RegisterMailFramework()

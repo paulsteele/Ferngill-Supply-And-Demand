@@ -2,10 +2,10 @@
 {
 	public class FishModel
 	{
-		public int ObjectId { get; set; }
+		public string ObjectId { get; set; }
 		public Seasons Seasons { get; set; }
 
-		public FishModel(int id, string fishEntry)
+		public FishModel(string id, string fishEntry)
 		{
 			ObjectId = id;
 

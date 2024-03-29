@@ -72,11 +72,11 @@ namespace fse.core.services
 
 		private static EconomyModel GenerateBlankEconomy()
 		{
-			var validItems = Game1.objectInformation.Keys
+			var validItems = Game1.objectData.Keys
 				.Where(key => !EconomyIgnoreList.IgnoreList.Contains(key))
 				.Select(id => new Object(id, 1))
 				.Where(obj => EconomyValidCategories.Categories.Contains(obj.Category))
-				.GroupBy(obj => obj.Category, obj => new ItemModel { ObjectId = obj.ParentSheetIndex })
+				.GroupBy(obj => obj.Category, obj => new ItemModel { ObjectId = obj.ItemId })
 				.ToDictionary(grouping => grouping.Key, grouping => grouping.ToDictionary(item => item.ObjectId));
 
 			return new EconomyModel
@@ -182,7 +182,7 @@ namespace fse.core.services
 		private Object GetArtisanBase(Object obj)
 		{
 			var preserveId = obj.preservedParentSheetIndex?.Get();
-			return preserveId is null or 0 ? null : new Object(preserveId.Value, 1);
+			return string.IsNullOrWhiteSpace(preserveId)  ? null : new Object(preserveId, 1);
 		}
 
 		private int GetArtisanGoodPrice(Object obj, int price)
@@ -233,9 +233,9 @@ namespace fse.core.services
 			QueueSave();
 		}
 
-		public ItemModel GetItemModelFromSeed(int seed) => Economy.GetItemModelFromSeedId(seed);
-		private SeedModel GetSeedModelFromItem(int item) => Economy.GetSeedModelFromModelId(item);
-		private FishModel GetFishModelFromItem(int item) => Economy.GetFishModelFromModelId(item);
+		public ItemModel GetItemModelFromSeed(string seed) => Economy.GetItemModelFromSeedId(seed);
+		private SeedModel GetSeedModelFromItem(string item) => Economy.GetSeedModelFromModelId(item);
+		private FishModel GetFishModelFromItem(string item) => Economy.GetFishModelFromModelId(item);
 
 		public bool ItemValidForSeason(ItemModel model, Seasons seasonsFilter)
 		{

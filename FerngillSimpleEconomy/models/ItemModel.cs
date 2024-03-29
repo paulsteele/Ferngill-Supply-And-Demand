@@ -29,7 +29,7 @@ namespace fse.core.models
 		public static int MeanSupply => (MinSupply + MaxCalculatedSupply) / 2;
 		public static int MeanDelta => (MinDelta + MaxDelta) / 2;
 
-		[JsonInclude] public int ObjectId { get; set; }
+		[JsonInclude] public string ObjectId { get; set; }
 
 		[JsonInclude]
 		public int Supply

@@ -16,6 +16,7 @@ namespace fse.core
 			_economyService = new EconomyService(helper, Monitor);
 			RegisterPatches(helper);
 			RegisterHandlers(helper);
+			helper.ConsoleCommands.Add("fse_new_year", "Fully Resets Ferngill Simple Economy", (_, _) => _economyService.SetupForNewYear());
 		}
 
 		private void RegisterPatches(IModHelper helper)
