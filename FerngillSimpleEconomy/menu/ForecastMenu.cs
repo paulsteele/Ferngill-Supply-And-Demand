@@ -35,6 +35,7 @@ namespace fse.core.menu
 		private OptionsDropDown _sortDropdown;
 		private OptionsCheckbox[] _seasonsCheckboxes;
 		private ClickableTextureComponent _exitButton;
+		private bool _drawn;
 
 		private string None => _helper.Translation.Get("fse.forecast.menu.sort.none");
 		private string Name => _helper.Translation.Get("fse.forecast.menu.sort.name");
@@ -48,6 +49,7 @@ namespace fse.core.menu
 		private string _chosenSort = "None";
 		private int _chosenCategory;
 		private Seasons _chosenSeasons = Seasons.Spring | Seasons.Summer | Seasons.Fall | Seasons.Winter;
+		private IClickableMenu _oldPage;
 
 		private const int Divider1 = 340;
 		private const int Divider2 = 560;
@@ -99,6 +101,7 @@ namespace fse.core.menu
 			_sortDropdown = null;
 			_seasonsCheckboxes = null;
 			_exitButton = null;
+			_drawn = false;
 		}
 
 		public override void receiveScrollWheelAction(int direction)
@@ -112,10 +115,23 @@ namespace fse.core.menu
 			}
 		}
 
+		public void TakeOverMenuTab(GameMenu gameMenu)
+		{
+			_oldPage = gameMenu.pages[gameMenu.currentTab];
+
+			gameMenu.pages[gameMenu.currentTab] = this;
+			gameMenu.invisible = true;
+			gameMenu.upperRightCloseButton.visible = false;
+		}
+
 		public override void receiveLeftClick(int x, int y, bool playSound = true)
 		{
 			base.receiveLeftClick(x, y, playSound);
 			var startingIndex = _itemIndex;
+			if (!_drawn)
+			{
+				return;
+			}
 			
 			if (_categoryDropdown.bounds.Contains(x, y))
 			{
@@ -141,9 +157,13 @@ namespace fse.core.menu
 			}
 			else if (_exitButton.containsPoint(x, y))
 			{
-				if (Game1.activeClickableMenu is GameMenu activeClickableMenu)
+				if (Game1.activeClickableMenu is GameMenu gameMenu && _oldPage != null)
 				{
-					activeClickableMenu.changeTab(activeClickableMenu.lastOpenedNonMapTab);
+					gameMenu.invisible = false;
+					gameMenu.upperRightCloseButton.visible = true;
+
+					gameMenu.pages[gameMenu.currentTab] = _oldPage;
+					_oldPage = null;
 				}
 			}
 
@@ -193,6 +213,10 @@ namespace fse.core.menu
 		{
 			base.releaseLeftClick(x, y);
 			_isScrolling = false;
+			if (!_drawn)
+			{
+				return;
+			}
 
 			// ReSharper disable once InvertIf
 			if (_isInCategoryDropdown)
@@ -228,6 +252,10 @@ namespace fse.core.menu
 		public override void leftClickHeld(int x, int y)
 		{
 			base.leftClickHeld(x, y);
+			if (!_drawn)
+			{
+				return;
+			}
 			if (_isInCategoryDropdown)
 			{
 				_categoryDropdown.leftClickHeld(x, y);
@@ -297,6 +325,7 @@ namespace fse.core.menu
 			DrawSeasonsCheckbox(batch);
 			DrawExitButton(batch);
 			DrawMouse(batch);
+			_drawn = true;
 		}
 
 		private void SetupPositionAndSize()

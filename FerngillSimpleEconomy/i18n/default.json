@@ -22,7 +22,7 @@
 	"fse.config.StdDevDelta": "Standard Deviation Change Per Day",
 	"fse.config.MinPercentage": "Minimum Price Multiplier",
 	"fse.config.MaxPercentage": "Maximum Price Multiplier",
-	"fse.config.MenuTabIndex": "Mod Compatibility Menu Tab Index",
+	"fse.config.MenuTabOffset": "Menu Tab X Offset",
 	"fse.config.EnableMenuTab": "Show Tab In Menu",
 	"fse.config.EnableShopDisplay": "Show Preview In Shop",
 	"fse.config.ResetEconomy": "Reset Economy(In game only)",

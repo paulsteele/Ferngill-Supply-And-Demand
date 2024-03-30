@@ -128,10 +128,9 @@ namespace fse.core.handlers
 			
 			configMenu.AddNumberOption(
 				mod: _manifest,
-				name: ()=> _helper.Translation.Get("fse.config.MenuTabIndex"),
-				getValue: () => ConfigModel.Instance.MenuTabIndex,
-				setValue: val => ConfigModel.Instance.MenuTabIndex = val,
-				min: 0
+				name: ()=> _helper.Translation.Get("fse.config.MenuTabOffset"),
+				getValue: () => ConfigModel.Instance.MenuTabOffset,
+				setValue: val => ConfigModel.Instance.MenuTabOffset = val
 			);
 			
 			configMenu.AddBoolOption(

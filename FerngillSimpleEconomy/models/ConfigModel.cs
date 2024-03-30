@@ -13,7 +13,7 @@ public class ConfigModel
 	public int StdDevDelta { get; set; } = 5;
 	public float MinPercentage { get; set; } = 0.2f;
 	public float MaxPercentage { get; set; } = 1.3f;
-	public int MenuTabIndex { get; set; } = 10;
+	public int MenuTabOffset { get; set; } = 0;
 	public bool EnableMenuTab { get; set; } = true;
 	public bool EnableShopDisplay { get; set; } = true;
 }

@@ -32,7 +32,6 @@ namespace fse.core
 			SelfRegisteringPatches.Initialize(helper, _economyService, Monitor);
 			new ObjectPatches().Register(harmony);
 			new ShopMenuPatches().Register(harmony);
-			new GameMenuPatches().Register(harmony);
 		}
 
 		private void RegisterHandlers(IModHelper helper)
@@ -40,6 +39,7 @@ namespace fse.core
 			new DayEndHandler(helper, Monitor, _economyService).Register();
 			new SaveLoadedHandler(helper, Monitor, _economyService).Register();
 			new GameLoadedHandler(helper, Monitor, ModManifest, _economyService).Register();
+			new GameMenuLoadedHandler(helper, Monitor, _economyService).Register();
 		}
 	}
 }
