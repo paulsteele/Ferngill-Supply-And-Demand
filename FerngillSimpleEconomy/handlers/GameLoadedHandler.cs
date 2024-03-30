@@ -1,9 +1,14 @@
 ﻿using fse.core.actions;
+using fse.core.menu;
 using fse.core.models;
 using fse.core.services;
 using GenericModConfigMenu;
 using MailFrameworkMod.Api;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 using StardewModdingAPI;
+using StardewValley;
+using StardewValley.Menus;
 
 namespace fse.core.handlers
 {
@@ -12,16 +17,19 @@ namespace fse.core.handlers
 		private readonly IModHelper _helper;
 		private readonly IMonitor _monitor;
 		private readonly IManifest _manifest;
+		private readonly EconomyService _economyService;
 
 		public GameLoadedHandler(
 			IModHelper helper, 
 			IMonitor monitor,
-			IManifest manifest
+			IManifest manifest,
+			EconomyService economyService
 			)
 		{
 			_helper = helper;
 			_monitor = monitor;
 			_manifest = manifest;
+			_economyService = economyService;
 		}
 
 		public void Register()
@@ -138,6 +146,38 @@ namespace fse.core.handlers
 				name: ()=> _helper.Translation.Get("fse.config.EnableShopDisplay"),
 				getValue: () => ConfigModel.Instance.EnableShopDisplay,
 				setValue: val => ConfigModel.Instance.EnableShopDisplay = val
+			);
+			
+			var resetButton = new OptionsButton(_helper.Translation.Get("fse.config.Reset"), () => { });
+			var resetState = false;
+
+			configMenu.AddComplexOption(
+				mod: _manifest,
+				name: () => _helper.Translation.Get("fse.config.ResetEconomy"),
+				draw: (batch, position) =>
+				{
+					resetButton.bounds = new Rectangle((int)position.X, (int)position.Y, 300, 60);
+					resetButton.draw(batch, 0, 0);
+					var state = Mouse.GetState();
+
+					if (state.LeftButton == ButtonState.Pressed)
+					{
+						resetState = true;
+					}
+					else
+					{
+						if (resetState && resetButton.bounds.Contains(state.Position))
+						{
+							if (_economyService.Loaded)
+							{
+								_economyService.SetupForNewYear();
+								_economyService.AdvanceOneDay();
+							}
+						}
+
+						resetState = false;
+					}
+				}
 			);
 		}
 	}
