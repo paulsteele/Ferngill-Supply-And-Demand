@@ -26,6 +26,9 @@
 			"900", // legendfish
 			"902", // glacierfish
 			"901", // mutantcarp
+			"SmokedFish",
+			"DriedFruit", 
+			"DriedMushrooms",
 		};
 	}
 }
