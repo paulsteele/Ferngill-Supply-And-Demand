@@ -501,6 +501,10 @@ namespace fse.core.menu
 			var splitPoint = obj.Name.LastIndexOf(" ", StringComparison.Ordinal);
 			if (splitPoint == -1)
 			{
+				splitPoint = obj.Name.LastIndexOf("_", StringComparison.Ordinal);
+			}
+			if (splitPoint == -1)
+			{
 				DrawAlignedText(batch, x + Game1.tileSize, textCenterLine, obj.Name, Alignment.Start, Alignment.Middle, false);
 			}
 			else
