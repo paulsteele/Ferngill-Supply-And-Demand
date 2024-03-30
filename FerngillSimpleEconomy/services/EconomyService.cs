@@ -29,23 +29,27 @@ namespace fse.core.services
 		{
 			var existingModel = _modHelper.Data.ReadSaveData<EconomyModel>(EconomyModel.ModelKey);
 			var newModel = GenerateBlankEconomy();
+			var needToSave = false;
 
 			if (existingModel != null && existingModel.HasSameItems(newModel))
 			{
 				Economy = existingModel;
-				Economy.GenerateSeedMapping();
-				Loaded = true;
-				return;
 			}
-
-			RandomizeEconomy(newModel, true, true);
-
-			Economy = newModel;
+			else
+			{
+				RandomizeEconomy(newModel, true, true);
+				Economy = newModel;
+				needToSave = true;
+			}
+			
 			ConsolidateEconomyCategories();
 			Economy.GenerateSeedMapping();
 			Economy.GenerateFishMapping();
-			
-			QueueSave();
+
+			if (needToSave)
+			{
+				QueueSave();
+			}
 			Loaded = true;
 		}
 
@@ -68,7 +72,6 @@ namespace fse.core.services
 		{
 			_modHelper.Data.WriteSaveData(EconomyModel.ModelKey, Economy);
 		}
-
 
 		private static EconomyModel GenerateBlankEconomy()
 		{
