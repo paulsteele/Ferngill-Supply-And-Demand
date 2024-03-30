@@ -1,4 +1,5 @@
 ﻿using fse.core.handlers;
+using fse.core.models;
 using fse.core.patches;
 using fse.core.services;
 using HarmonyLib;
@@ -13,6 +14,7 @@ namespace fse.core
 
 		public override void Entry(IModHelper helper)
 		{
+			ConfigModel.Instance = helper.ReadConfig<ConfigModel>();
 			_economyService = new EconomyService(helper, Monitor);
 			RegisterPatches(helper);
 			RegisterHandlers(helper);

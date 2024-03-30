@@ -8,26 +8,11 @@ namespace fse.core.models
 {
 	public class ItemModel
 	{
-		private const int MinSupply = 0;
-		public const int MaxCalculatedSupply = 1000;
-		private const int MaxSupply = int.MaxValue;
-		public const int StdDevSupply = 150;
-		private const int MinDelta = -30;
-		private const int MaxDelta = 30;
-		public const int StdDevDelta = 5;
-
-		private const float MaxPercentage = 1.3f;
-		private const float MinPercentage = 0.2f;
-
 		private int _dailyDelta;
-
 		private int _supply;
 
 		// there are a variety of factors that can influence sell price. Cache the calculation for each input
 		private readonly Dictionary<int, int> _cachedPrices = new();
-
-		public static int MeanSupply => (MinSupply + MaxCalculatedSupply) / 2;
-		public static int MeanDelta => (MinDelta + MaxDelta) / 2;
 
 		[JsonInclude] public string ObjectId { get; set; }
 
@@ -35,14 +20,14 @@ namespace fse.core.models
 		public int Supply
 		{
 			get => _supply;
-			set => _supply = BoundsHelper.EnsureBounds(value, MinSupply, MaxSupply);
+			set => _supply = BoundsHelper.EnsureBounds(value, ConfigModel.MinSupply, ConfigModel.MaxSupply);
 		}
 
 		[JsonInclude]
 		public int DailyDelta
 		{
 			get => _dailyDelta;
-			set => _dailyDelta = BoundsHelper.EnsureBounds(value, MinDelta, MaxDelta);
+			set => _dailyDelta = BoundsHelper.EnsureBounds(value, ConfigModel.Instance.MinDelta, ConfigModel.Instance.MaxDelta);
 		}
 
 		public void AdvanceOneDay()
@@ -53,12 +38,11 @@ namespace fse.core.models
 
 		public float GetMultiplier()
 		{
-			var ratio = 1 - (Math.Min(Supply, MaxCalculatedSupply) / (float)MaxCalculatedSupply);
-			const float percentageRange = MaxPercentage - MinPercentage;
+			var ratio = 1 - (Math.Min(Supply, ConfigModel.Instance.MaxCalculatedSupply) / (float)ConfigModel.Instance.MaxCalculatedSupply);
+			var percentageRange = ConfigModel.Instance.MaxPercentage - ConfigModel.Instance.MinPercentage;
 
-			return (ratio * percentageRange) + MinPercentage;
+			return (ratio * percentageRange) + ConfigModel.Instance.MinPercentage;
 		}
-
 
 		public int GetPrice(int basePrice)
 		{
@@ -73,7 +57,7 @@ namespace fse.core.models
 
 		public void CapSupply()
 		{
-			Supply = Math.Min(Supply, MaxCalculatedSupply);
+			Supply = Math.Min(Supply, ConfigModel.Instance.MaxCalculatedSupply);
 		}
 		
 		private Object _objectInstance;

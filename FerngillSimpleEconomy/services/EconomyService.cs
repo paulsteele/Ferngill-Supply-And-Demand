@@ -100,12 +100,15 @@ namespace fse.core.services
 			RandomizeEconomy(Economy, true, true);
 			QueueSave();
 		}
+		
+		public static int MeanSupply => (ConfigModel.MinSupply + ConfigModel.Instance.MaxCalculatedSupply) / 2;
+		public static int MeanDelta => (ConfigModel.Instance.MinDelta + ConfigModel.Instance.MaxDelta) / 2;
 
 		private static void RandomizeEconomy(EconomyModel model, bool updateSupply, bool updateDelta)
 		{
 			var rand = new Random();
-			var supplyNormal = new Normal(ItemModel.MeanSupply, ItemModel.StdDevSupply, rand);
-			var deltaNormal = new Normal(ItemModel.MeanDelta, ItemModel.StdDevDelta, rand);
+			var supplyNormal = new Normal(MeanSupply, ConfigModel.Instance.StdDevSupply, rand);
+			var deltaNormal = new Normal(MeanDelta, ConfigModel.Instance.StdDevDelta, rand);
 
 			model.ForAllItems(item =>
 			{

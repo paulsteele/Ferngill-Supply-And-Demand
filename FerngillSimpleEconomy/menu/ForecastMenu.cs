@@ -494,7 +494,7 @@ namespace fse.core.menu
 		public void DrawSupplyBar(SpriteBatch batch, int startingX, int startingY, int endingX, int barHeight, ItemModel model)
 		{
 			var barWidth = ((endingX - startingX) / 10) * 10;
-			var percentage = Math.Min(model.Supply / (float)ItemModel.MaxCalculatedSupply, 1);
+			var percentage = Math.Min(model.Supply / (float)ConfigModel.Instance.MaxCalculatedSupply, 1);
 
 			if (_barBackgroundTexture == null || _barForegroundTexture == null)
 			{
