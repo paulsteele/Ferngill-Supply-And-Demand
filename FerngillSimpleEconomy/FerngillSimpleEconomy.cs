@@ -26,6 +26,7 @@ namespace fse.core
 			SelfRegisteringPatches.Initialize(helper, _economyService, Monitor);
 			new ObjectPatches().Register(harmony);
 			new ShopMenuPatches().Register(harmony);
+			new GameMenuPatches().Register(harmony);
 		}
 
 		private void RegisterHandlers(IModHelper helper)
