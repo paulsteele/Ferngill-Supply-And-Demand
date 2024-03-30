@@ -95,7 +95,6 @@ namespace fse.core.patches
 			{
 				var current = enumerator.Current;
 
-
 				if (current?.opcode == OpCodes.Ldfld && (FieldInfo)current?.operand == AccessTools.Field(typeof(ShopMenu), nameof(ShopMenu.downArrow)))
 				{
 					yield return new CodeInstruction(OpCodes.Ldarg_1);

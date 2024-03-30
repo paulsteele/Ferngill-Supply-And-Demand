@@ -4,7 +4,6 @@
 		"GroupId": "fse",
 		"Title": "fse.startingLetter.title",
 		"Text": "fse.startingLetter.text",
-		"WhichBG": 0,
-		"TextColor": -1
+		"WhichBG": 0
 	}
 ]

@@ -11,7 +11,6 @@ namespace fse.core.models
 		public int DaysToGrow { get; set; }
 		public Seasons Seasons { get; set; }
 
-		//1 1 1 1/spring/0/24/-1/0/false/false/false
 		public SeedModel(string id, CropData cropEntry)
 		{
 			ObjectId = id;
