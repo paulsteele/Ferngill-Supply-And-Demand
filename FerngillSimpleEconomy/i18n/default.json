@@ -14,5 +14,15 @@
 	"fse.forecast.menu.header.perDay": "Per Day",
 	"fse.forecast.menu.header.supply": "Supply",
 	"fse.forecast.menu.header.supplyDescriptor": "(Low to High)",
-	"fse.forecast.menu.tab.title": "Forecast"
+	"fse.forecast.menu.tab.title": "Forecast",
+	"fse.config.MaxCalculatedSupply": "Max Calculated Supply",
+	"fse.config.MinDelta": "Minimum Supply Change Per Day",
+	"fse.config.MaxDelta": "Maximum Supply Change Per Day",
+	"fse.config.StdDevSupply": "Standard Deviation Supply",
+	"fse.config.StdDevDelta": "Standard Deviation Change Per Day",
+	"fse.config.MinPercentage": "Minimum Price Multiplier",
+	"fse.config.MaxPercentage": "Maximum Price Multiplier",
+	"fse.config.MenuTabIndex": "Mod Compatibility Menu Tab Index",
+	"fse.config.EnableMenuTab": "Show Tab In Menu",
+	"fse.config.EnableShopDisplay": "Maximum Price Multiplier"
 }

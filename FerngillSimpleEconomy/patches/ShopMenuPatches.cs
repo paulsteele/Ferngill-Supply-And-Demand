@@ -3,6 +3,7 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using fse.core.menu;
+using fse.core.models;
 using HarmonyLib;
 using Microsoft.Xna.Framework.Graphics;
 using StardewValley;
@@ -46,6 +47,11 @@ namespace fse.core.patches
 			}
 
 			if (shopMenu.forSale == null)
+			{
+				return;
+			}
+
+			if (!ConfigModel.Instance.EnableShopDisplay)
 			{
 				return;
 			}

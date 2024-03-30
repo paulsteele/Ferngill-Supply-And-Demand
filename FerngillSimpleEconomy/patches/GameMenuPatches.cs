@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Reflection.Emit;
 using fse.core.menu;
+using fse.core.models;
 using HarmonyLib;
 using Microsoft.Xna.Framework;
 using StardewValley.Menus;
@@ -9,8 +10,6 @@ namespace fse.core.patches
 {
 	public class GameMenuPatches : SelfRegisteringPatches
 	{
-		private const int TabIndex = 10;
-
 		public override void Register(Harmony harmony)
 		{
 			harmony.Patch(
@@ -39,7 +38,7 @@ namespace fse.core.patches
 		// ReSharper disable once InconsistentNaming
 		public static void PostFixChangeTab(GameMenu __instance, int __state)
 		{
-			if (__instance.currentTab != TabIndex)
+			if (__instance.currentTab != ConfigModel.Instance.MenuTabIndex)
 			{
 				return;
 			}
@@ -58,7 +57,7 @@ namespace fse.core.patches
 				return true;
 			}
 
-			__result = TabIndex;
+			__result = ConfigModel.Instance.MenuTabIndex;
 			return false;
 		}
 
@@ -67,10 +66,15 @@ namespace fse.core.patches
 			GameMenu __instance
 		)
 		{
+			if (!ConfigModel.Instance.EnableMenuTab)
+			{
+				return;
+			}
+			
 			__instance.pages.Add(new ForecastMenu(ModHelper, EconomyService, Monitor));
 			__instance.tabs.Add(new ClickableComponent(
 				new Rectangle(
-					__instance.xPositionOnScreen + 64 * (TabIndex + 1), 
+					__instance.xPositionOnScreen + 64 * (ConfigModel.Instance.MenuTabIndex + 1), 
 					__instance.yPositionOnScreen + IClickableMenu.tabYPositionRelativeToMenuY + 64, 
 					64, 
 					64
@@ -100,7 +104,7 @@ namespace fse.core.patches
 				if (current.Calls(AccessTools.Method(typeof(List<IClickableMenu>), nameof(List<IClickableMenu>.Add))))
 				{
 					tabsCount++;
-					if (tabsCount == TabIndex)
+					if (tabsCount == ConfigModel.Instance.MenuTabIndex)
 					{
 						yield return current;
 						
