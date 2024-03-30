@@ -1,34 +1,95 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Reflection;
+﻿using System.Collections.Generic;
 using System.Reflection.Emit;
+using fse.core.menu;
 using HarmonyLib;
+using Microsoft.Xna.Framework;
 using StardewValley.Menus;
 
 namespace fse.core.patches
 {
 	public class GameMenuPatches : SelfRegisteringPatches
 	{
+		private const int TabIndex = 10;
+
 		public override void Register(Harmony harmony)
 		{
 			harmony.Patch(
 				AccessTools.Constructor(typeof(GameMenu), new []{typeof(bool)}),
-				transpiler: new HarmonyMethod(typeof(GameMenuPatches), nameof(GameMenuConstructor))
+				transpiler: new HarmonyMethod(typeof(GameMenuPatches), nameof(TranspilerConstructor))
+			);
+			harmony.Patch(
+				AccessTools.Method(typeof(GameMenu), nameof(GameMenu.getTabNumberFromName)),
+				prefix: new HarmonyMethod(typeof(GameMenuPatches), nameof(PrefixGetTabIndex))
+			);
+			harmony.Patch(
+				AccessTools.Method(typeof(GameMenu), nameof(GameMenu.changeTab)),
+				postfix: new HarmonyMethod(typeof(GameMenuPatches), nameof(PostFixChangeTab))
+			);
+			harmony.Patch(
+				AccessTools.Method(typeof(GameMenu), nameof(GameMenu.changeTab)),
+				prefix: new HarmonyMethod(typeof(GameMenuPatches), nameof(PrefixChangeTab))
 			);
 		}
-
-
-		public static void AddForecastTab(
-			// ReSharper disable once InconsistentNaming
-			ShopMenu __instance
-		)
+		
+		public static void PrefixChangeTab(GameMenu __instance, out int __state)
 		{
-			Monitor.Log("write forecast tab here");
-			Monitor.Log(__instance.ToString());
+			__state = __instance.currentTab;
 		}
 
 		// ReSharper disable once InconsistentNaming
-		public static IEnumerable<CodeInstruction> GameMenuConstructor(IEnumerable<CodeInstruction> steps)
+		public static void PostFixChangeTab(GameMenu __instance, int __state)
+		{
+			if (__instance.currentTab != TabIndex)
+			{
+				return;
+			}
+
+			__instance.lastOpenedNonMapTab = __state;
+			__instance.invisible = true;
+
+			__instance.upperRightCloseButton.visible = false;
+		}
+
+		// ReSharper disable once InconsistentNaming
+		public static bool PrefixGetTabIndex(ref int __result, ref string name)
+		{
+			if (name != "forecast")
+			{
+				return true;
+			}
+
+			__result = TabIndex;
+			return false;
+		}
+
+		public static void AddForecastTab(
+			// ReSharper disable once InconsistentNaming
+			GameMenu __instance
+		)
+		{
+			__instance.pages.Add(new ForecastMenu(ModHelper, EconomyService, Monitor));
+			__instance.tabs.Add(new ClickableComponent(
+				new Rectangle(
+					__instance.xPositionOnScreen + 64 * (TabIndex + 1), 
+					__instance.yPositionOnScreen + IClickableMenu.tabYPositionRelativeToMenuY + 64, 
+					64, 
+					64
+				), 
+				"forecast", 
+				ModHelper.Translation.Get("fse.forecast.menu.tab.title")
+			)
+			{
+				myID = 12350,
+				downNeighborID = 8,
+				rightNeighborID = 12349,
+				leftNeighborID = 12347,
+				tryDefaultIfNoDownNeighborExists = true,
+				fullyImmutable = true
+			});
+		}
+
+		// ReSharper disable once InconsistentNaming
+		public static IEnumerable<CodeInstruction> TranspilerConstructor(IEnumerable<CodeInstruction> steps)
 		{
 			using var enumerator = steps.GetEnumerator();
 
@@ -39,7 +100,7 @@ namespace fse.core.patches
 				if (current.Calls(AccessTools.Method(typeof(List<IClickableMenu>), nameof(List<IClickableMenu>.Add))))
 				{
 					tabsCount++;
-					if (tabsCount == 10)
+					if (tabsCount == TabIndex)
 					{
 						yield return current;
 						

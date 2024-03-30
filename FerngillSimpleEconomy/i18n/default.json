@@ -13,5 +13,6 @@
 	"fse.forecast.menu.header.sellPrice": "Sell Price",
 	"fse.forecast.menu.header.perDay": "Per Day",
 	"fse.forecast.menu.header.supply": "Supply",
-	"fse.forecast.menu.header.supplyDescriptor": "(Low to High)"
+	"fse.forecast.menu.header.supplyDescriptor": "(Low to High)",
+	"fse.forecast.menu.tab.title": "Forecast"
 }

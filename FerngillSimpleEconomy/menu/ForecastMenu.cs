@@ -34,6 +34,7 @@ namespace fse.core.menu
 		private OptionsDropDown _categoryDropdown;
 		private OptionsDropDown _sortDropdown;
 		private OptionsCheckbox[] _seasonsCheckboxes;
+		private ClickableTextureComponent _exitButton;
 
 		private string None => _helper.Translation.Get("fse.forecast.menu.sort.none");
 		private string Name => _helper.Translation.Get("fse.forecast.menu.sort.name");
@@ -97,6 +98,7 @@ namespace fse.core.menu
 			_categoryDropdown = null;
 			_sortDropdown = null;
 			_seasonsCheckboxes = null;
+			_exitButton = null;
 		}
 
 		public override void receiveScrollWheelAction(int direction)
@@ -120,26 +122,29 @@ namespace fse.core.menu
 				_categoryDropdown.receiveLeftClick(x, y);
 				_isInCategoryDropdown = true;
 			}
-			
-			if (_sortDropdown.bounds.Contains(x, y))
+			else if (_sortDropdown.bounds.Contains(x, y))
 			{
 				_sortDropdown.receiveLeftClick(x, y);
 				_isInSortDropdown = true;
 			}
-
-			if (_upArrow.containsPoint(x, y))
+			else if (_upArrow.containsPoint(x, y))
 			{
 				_itemIndex = BoundsHelper.EnsureBounds(_itemIndex - 1, 0, _bottomIndex);
 			}
-			
-			if (_downArrow.containsPoint(x, y))
+			else if (_downArrow.containsPoint(x, y))
 			{
 				_itemIndex = BoundsHelper.EnsureBounds(_itemIndex + 1, 0, _bottomIndex);
 			}
-
-			if (_scrollbar.containsPoint(x, y))
+			else if (_scrollbar.containsPoint(x, y))
 			{
 				_isScrolling = true;
+			}
+			else if (_exitButton.containsPoint(x, y))
+			{
+				if (Game1.activeClickableMenu is GameMenu activeClickableMenu)
+				{
+					activeClickableMenu.changeTab(activeClickableMenu.lastOpenedNonMapTab);
+				}
 			}
 
 			var seasonsChanged = false;
@@ -290,6 +295,7 @@ namespace fse.core.menu
 			DrawCategoryDropdown(batch);
 			DrawSortingDropdown(batch);
 			DrawSeasonsCheckbox(batch);
+			DrawExitButton(batch);
 			DrawMouse(batch);
 		}
 
@@ -404,6 +410,19 @@ namespace fse.core.menu
 			
 			DrawAlignedText(batch, xLoc, yPositionOnScreen + 105, _helper.Translation.Get("fse.forecast.menu.header.category"), Alignment.Middle, Alignment.End, false);
 			_categoryDropdown.draw(batch, 0, 0);
+		}
+		
+		private void DrawExitButton(SpriteBatch batch)
+		{
+			_exitButton ??= new ClickableTextureComponent(
+				new Rectangle(
+					xPositionOnScreen + width - 36,
+					yPositionOnScreen - 8, 48, 48
+				),
+				Game1.mouseCursors,
+				new Rectangle(337, 494, 12, 12), 4f);
+
+			_exitButton.draw(batch);
 		}
 		
 		private void DrawSortingDropdown(SpriteBatch batch)
