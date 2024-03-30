@@ -12,6 +12,8 @@ namespace fse.core.patches
 {
 	public class GameMenuPatches : SelfRegisteringPatches
 	{
+		private static Texture2D _menuTexture;
+
 		public override void Register(Harmony harmony)
 		{
 			harmony.Patch(
@@ -104,11 +106,18 @@ namespace fse.core.patches
 			GameMenu __instance
 		)
 		{
+			if (!ConfigModel.Instance.EnableMenuTab)
+			{
+				return;
+			}
+
+			_menuTexture ??= ModHelper.ModContent.Load<Texture2D>("assets/stock-menu.png");
+			
 			var tab = __instance.tabs[ConfigModel.Instance.MenuTabIndex];
 			b.Draw(
-				Game1.mouseCursors, 
+				_menuTexture,
 				new Vector2(tab.bounds.X, tab.bounds.Y ), 
-				new Rectangle?(new Rectangle(0 * 16, 368, 16, 16)),
+				new Rectangle?(new Rectangle(0 * 16, 0, 16, 16)),
 				Color.White, 
 				0.0f, 
 				Vector2.Zero, 
@@ -119,7 +128,7 @@ namespace fse.core.patches
 		}
 		
 		// ReSharper disable once InconsistentNaming
-		// find the second
+		// find the second time sprite batch end is called as that is when the tabs are finished drawing
 		// ldarg.1      // b
 		// callvirt     instance void [MonoGame.Framework]Microsoft.Xna.Framework.Graphics.SpriteBatch::End()
 
