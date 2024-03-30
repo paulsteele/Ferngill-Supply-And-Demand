@@ -65,6 +65,14 @@ namespace fse.core.menu
 			
 			_sortDisplayOptions = new List<string> { None, Name, Supply, DailyChange, MarketPrice, MarketPricePerDay };
 
+			_chosenSeasons = Utility.getSeasonNumber(Game1.currentSeason) switch {
+				0 => Seasons.Spring,
+				1 => Seasons.Summer,
+				2 => Seasons.Fall,
+				3 => Seasons.Winter,
+				_ => _chosenSeasons,
+			};
+			
 			if (economyService.Loaded)
 			{
 				_categories = economyService.GetCategories().GroupBy(pair => pair.Value).ToDictionary(pairs => pairs.First().Key, pairs => pairs.First().Value);
@@ -76,14 +84,6 @@ namespace fse.core.menu
 				_categories = new Dictionary<int, string>();
 				_allItems = Array.Empty<ItemModel>();
 			}
-
-			_chosenSeasons = Utility.getSeasonNumber(Game1.currentSeason) switch {
-				0 => Seasons.Spring,
-				1 => Seasons.Summer,
-				2 => Seasons.Fall,
-				3 => Seasons.Winter,
-				_ => _chosenSeasons,
-			};
 		}
 
 		public override void gameWindowSizeChanged(Rectangle oldBounds, Rectangle newBounds)
