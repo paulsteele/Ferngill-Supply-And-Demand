@@ -1,13 +1,11 @@
 ﻿using fse.core.actions;
-using fse.core.menu;
+using fse.core.extensions;
 using fse.core.models;
 using fse.core.services;
 using GenericModConfigMenu;
 using MailFrameworkMod.Api;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
 using StardewModdingAPI;
-using StardewValley;
 using StardewValley.Menus;
 
 namespace fse.core.handlers
@@ -157,15 +155,13 @@ namespace fse.core.handlers
 				{
 					resetButton.bounds = new Rectangle((int)position.X, (int)position.Y, 300, 60);
 					resetButton.draw(batch, 0, 0);
-					var state = Mouse.GetState();
-
-					if (state.LeftButton == ButtonState.Pressed)
+					if (_helper.Input.IsDown(SButton.MouseLeft))
 					{
 						resetState = true;
 					}
 					else
 					{
-						if (resetState && resetButton.bounds.Contains(state.Position))
+						if (resetState && resetButton.bounds.Contains(_helper.Input.GetCursorPosition().GetUiScaledPosition()))
 						{
 							if (_economyService.Loaded)
 							{

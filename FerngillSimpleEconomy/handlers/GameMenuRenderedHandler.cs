@@ -1,10 +1,10 @@
 ﻿using fse.core.actions;
+using fse.core.extensions;
 using fse.core.menu;
 using fse.core.models;
 using fse.core.services;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
@@ -60,7 +60,7 @@ public class GameMenuLoadedHandler : IHandler
 			return;
 		}
 		
-		if (!_tab.bounds.Contains(Mouse.GetState().Position))
+		if (!_tab.bounds.Contains(buttonPressedEventArgs.Cursor.GetUiScaledPosition()))
 		{
 			return;
 		}
@@ -123,7 +123,7 @@ public class GameMenuLoadedHandler : IHandler
 
 		var hoverText = gameMenu.hoverText;
 
-		if (_tab.bounds.Contains(Mouse.GetState().Position))
+		if (_tab.bounds.Contains(_helper.Input.GetCursorPosition().GetUiScaledPosition()))
 		{
 			hoverText = _tab.label;
 		}
