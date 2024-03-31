@@ -1,4 +1,5 @@
-﻿using fse.core.actions;
+﻿using System.Linq;
+using fse.core.actions;
 using fse.core.extensions;
 using fse.core.models;
 using fse.core.services;
@@ -6,6 +7,7 @@ using GenericModConfigMenu;
 using MailFrameworkMod.Api;
 using Microsoft.Xna.Framework;
 using StardewModdingAPI;
+using StardewValley;
 using StardewValley.Menus;
 
 namespace fse.core.handlers
@@ -144,6 +146,47 @@ namespace fse.core.handlers
 				getValue: () => ConfigModel.Instance.EnableShopDisplay,
 				setValue: val => ConfigModel.Instance.EnableShopDisplay = val
 			);
+			
+			configMenu.AddSectionTitle(
+				mod: _manifest,
+				text: ()=> _helper.Translation.Get("fse.config.category.header")
+			);
+			
+			configMenu.AddParagraph(
+				mod: _manifest,
+				text: ()=> _helper.Translation.Get("fse.config.category.subtitle")
+			);
+
+			var potentialCategories = Game1.objectData.Keys.Select(k => new Object(k, 1)).DistinctBy(o => o.Category).Select(o => (o.Category, Name: o.getCategoryName()));
+			
+			foreach (var category in potentialCategories)
+			{
+				if (string.IsNullOrWhiteSpace(category.Name))
+				{
+					continue;
+				}
+				
+				configMenu.AddBoolOption(
+					mod: _manifest,
+					name: ()=> $"{category.Name} ({category.Category})",
+					getValue: () => ConfigModel.Instance.ValidCategories.Contains(category.Category),
+					setValue: val =>
+					{
+						if (val)
+						{
+							if (ConfigModel.Instance.ValidCategories.Contains(category.Category))
+							{
+								return;
+							}
+							ConfigModel.Instance.ValidCategories.Add(category.Category);
+						}
+						else
+						{
+							ConfigModel.Instance.ValidCategories.Remove(category.Category);
+						}
+					}
+				);
+			}
 			
 			var resetButton = new OptionsButton(_helper.Translation.Get("fse.config.Reset"), () => { });
 			var resetState = false;

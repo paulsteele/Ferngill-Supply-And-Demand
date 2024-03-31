@@ -78,7 +78,7 @@ namespace fse.core.services
 			var validItems = Game1.objectData.Keys
 				.Where(key => !EconomyIgnoreList.IgnoreList.Contains(key))
 				.Select(id => new Object(id, 1))
-				.Where(obj => EconomyValidCategories.Categories.Contains(obj.Category))
+				.Where(obj => ConfigModel.Instance.ValidCategories.Contains(obj.Category))
 				.GroupBy(obj => obj.Category, obj => new ItemModel { ObjectId = obj.ItemId })
 				.ToDictionary(grouping => grouping.Key, grouping => grouping.ToDictionary(item => item.ObjectId));
 

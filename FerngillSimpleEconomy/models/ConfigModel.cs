@@ -1,4 +1,7 @@
-﻿namespace fse.core.models;
+﻿using System.Collections.Generic;
+using StardewValley;
+
+namespace fse.core.models;
 
 public class ConfigModel
 {
@@ -16,4 +19,18 @@ public class ConfigModel
 	public int MenuTabOffset { get; set; } = 0;
 	public bool EnableMenuTab { get; set; } = true;
 	public bool EnableShopDisplay { get; set; } = true;
+
+	public List<int> ValidCategories { get; set; } = new()
+	{
+		Object.GemCategory,
+		Object.FishCategory,
+		Object.EggCategory,
+		Object.MilkCategory,
+		Object.meatCategory,
+		Object.artisanGoodsCategory,
+		Object.VegetableCategory,
+		Object.FruitsCategory,
+		Object.flowersCategory,
+		Object.GreensCategory,
+	};
 }
