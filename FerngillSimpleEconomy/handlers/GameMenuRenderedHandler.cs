@@ -85,11 +85,13 @@ public class GameMenuLoadedHandler : IHandler
 			return;
 		}
 		
-		if (gameMenu.pages[gameMenu.currentTab] is ForecastMenu)
+		switch (gameMenu.pages[gameMenu.currentTab])
 		{
-			return;
+			case MapPage:
+			case CollectionsPage { letterviewerSubMenu: not null }:
+				return;
 		}
-			
+
 		_menuTexture ??= _helper.ModContent.Load<Texture2D>("assets/stock-menu.png");
 
 		_tab.bounds = new Rectangle(

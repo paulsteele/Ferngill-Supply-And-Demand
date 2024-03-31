@@ -49,7 +49,7 @@ namespace fse.core.menu
 		private string _chosenSort = "None";
 		private int _chosenCategory;
 		private Seasons _chosenSeasons = Seasons.Spring | Seasons.Summer | Seasons.Fall | Seasons.Winter;
-		private IClickableMenu _oldPage;
+		private GameMenu _hiddenMenu;
 
 		private const int Divider1 = 340;
 		private const int Divider2 = 560;
@@ -117,9 +117,9 @@ namespace fse.core.menu
 
 		public void TakeOverMenuTab(GameMenu gameMenu)
 		{
-			_oldPage = gameMenu.pages[gameMenu.currentTab];
-
-			gameMenu.pages[gameMenu.currentTab] = this;
+			_hiddenMenu = gameMenu;
+			Game1.activeClickableMenu = this;
+			
 			gameMenu.invisible = true;
 			gameMenu.upperRightCloseButton.visible = false;
 		}
@@ -157,13 +157,12 @@ namespace fse.core.menu
 			}
 			else if (_exitButton.containsPoint(x, y))
 			{
-				if (Game1.activeClickableMenu is GameMenu gameMenu && _oldPage != null)
+				if (_hiddenMenu != null)
 				{
-					gameMenu.invisible = false;
-					gameMenu.upperRightCloseButton.visible = true;
+					_hiddenMenu.invisible = false;
+					_hiddenMenu.upperRightCloseButton.visible = true;
 
-					gameMenu.pages[gameMenu.currentTab] = _oldPage;
-					_oldPage = null;
+					Game1.activeClickableMenu = _hiddenMenu;
 				}
 			}
 
