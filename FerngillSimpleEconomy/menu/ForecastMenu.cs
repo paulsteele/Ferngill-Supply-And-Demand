@@ -519,7 +519,7 @@ namespace fse.core.menu
 
 			var pricePerDayDisplay = pricePerDay != -1 ? $"{pricePerDay}" : "---";
 
-			DrawAlignedText(batch, xPositionOnScreen + DividerWidth + Divider1 + ((Divider2 - Divider1) / 2), textCenterLine, $"{model.GetPrice(obj.Price)}", Alignment.Middle, Alignment.Middle, false);
+			DrawAlignedText(batch, xPositionOnScreen + DividerWidth + Divider1 + ((Divider2 - Divider1) / 2), textCenterLine, $"{obj.sellToStorePrice()}", Alignment.Middle, Alignment.Middle, false);
 			DrawAlignedText(batch, xPositionOnScreen + DividerWidth + Divider2 + ((Divider3 - Divider2) / 2), textCenterLine, pricePerDayDisplay, Alignment.Middle, Alignment.Middle, false);
 		}
 

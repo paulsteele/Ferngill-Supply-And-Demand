@@ -265,7 +265,7 @@ namespace fse.core.services
 		{
 			var seed = GetSeedModelFromItem(model.ObjectId);
 
-			var modelPrice = model.GetPrice(model.GetObjectInstance().Price);
+			var modelPrice = model.GetObjectInstance().sellToStorePrice();
 			
 			if (seed == null || seed.DaysToGrow < 1)
 			{
