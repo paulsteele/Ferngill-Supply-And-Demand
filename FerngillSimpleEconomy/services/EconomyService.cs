@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using fse.core.models;
+using fse.core.multiplayer;
 using MathNet.Numerics.Distributions;
 using StardewModdingAPI;
 using StardewValley;
@@ -27,6 +28,11 @@ namespace fse.core.services
 
 		public void OnLoaded()
 		{
+			if (IsClient)
+			{
+				_modHelper.Multiplayer.SendMessage(new RequestEconomyModelMessage(), RequestEconomyModelMessage.Type);
+				return;
+			}
 			var existingModel = _modHelper.Data.ReadSaveData<EconomyModel>(EconomyModel.ModelKey);
 			var newModel = GenerateBlankEconomy();
 			var needToSave = false;
@@ -53,6 +59,22 @@ namespace fse.core.services
 			Loaded = true;
 		}
 
+		public void ReceiveEconomy(EconomyModel economyModel)
+		{
+			Economy = economyModel;
+			ConsolidateEconomyCategories();
+			Economy.GenerateSeedMapping();
+			Economy.GenerateFishMapping();
+			Loaded = true;
+		}
+
+		public void SendEconomyMessage()
+		{
+			var message = new EconomyModelMessage(Economy);
+
+			_modHelper.Multiplayer.SendMessage(message, EconomyModelMessage.Type);
+		}
+
 		private void ConsolidateEconomyCategories()
 		{
 			foreach (var matchingCategories in GetCategories()
@@ -70,6 +92,10 @@ namespace fse.core.services
 
 		private void QueueSave()
 		{
+			if (IsClient)
+			{
+				return;
+			}
 			_modHelper.Data.WriteSaveData(EconomyModel.ModelKey, Economy);
 		}
 
@@ -90,6 +116,10 @@ namespace fse.core.services
 
 		public void SetupForNewSeason()
 		{
+			if (IsClient)
+			{
+				return;
+			}
 			RandomizeEconomy(Economy, false, true);
 			Economy.ForAllItems(model => model.CapSupply());
 			QueueSave();
@@ -97,6 +127,10 @@ namespace fse.core.services
 		
 		public void SetupForNewYear()
 		{
+			if (IsClient)
+			{
+				return;
+			}
 			RandomizeEconomy(Economy, true, true);
 			QueueSave();
 		}
@@ -126,6 +160,10 @@ namespace fse.core.services
 
 		public void AdvanceOneDay()
 		{
+			if (IsClient)
+			{
+				return;
+			}
 			if (Economy == null)
 			{
 				return;
@@ -134,6 +172,8 @@ namespace fse.core.services
 			Economy.AdvanceOneDay();
 			QueueSave();
 		}
+
+		private static bool IsClient => !Game1.player.IsMainPlayer;
 
 		public Dictionary<int, string> GetCategories()
 		{
@@ -214,6 +254,10 @@ namespace fse.core.services
 
 		public void AdjustSupply(Object obj, int amount)
 		{
+			if (IsClient)
+			{
+				return;
+			}
 			if (Economy == null)
 			{
 				_monitor.Log($"Economy not generated to determine item model for {obj.name}", LogLevel.Error);

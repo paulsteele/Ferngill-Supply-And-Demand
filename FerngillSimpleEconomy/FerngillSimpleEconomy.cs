@@ -40,6 +40,7 @@ namespace fse.core
 			new SaveLoadedHandler(helper, Monitor, _economyService).Register();
 			new GameLoadedHandler(helper, Monitor, ModManifest, _economyService).Register();
 			new GameMenuLoadedHandler(helper, Monitor, _economyService).Register();
+			new MultiplayerHandler(helper, Monitor, _economyService).Register();
 		}
 	}
 }
