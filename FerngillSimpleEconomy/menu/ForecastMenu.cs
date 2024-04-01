@@ -497,19 +497,19 @@ namespace fse.core.menu
 
 			DrawSupplyBar(batch,x + Divider3 + 10, y + 10,  x + rowWidth - 10 - padding * 2, (Game1.tileSize / 2), model);
 
-			var splitPoint = obj.Name.LastIndexOf(" ", StringComparison.Ordinal);
+			var splitPoint = obj.DisplayName.LastIndexOf(" ", StringComparison.Ordinal);
 			if (splitPoint == -1)
 			{
-				splitPoint = obj.Name.LastIndexOf("_", StringComparison.Ordinal);
+				splitPoint = obj.DisplayName.LastIndexOf("_", StringComparison.Ordinal);
 			}
 			if (splitPoint == -1)
 			{
-				DrawAlignedText(batch, x + Game1.tileSize, textCenterLine, obj.Name, Alignment.Start, Alignment.Middle, false);
+				DrawAlignedText(batch, x + Game1.tileSize, textCenterLine, obj.DisplayName, Alignment.Start, Alignment.Middle, false);
 			}
 			else
 			{
-				var firstLine = obj.Name[..splitPoint];
-				var secondLine = obj.Name[(splitPoint + 1)..];
+				var firstLine = obj.DisplayName[..splitPoint];
+				var secondLine = obj.DisplayName[(splitPoint + 1)..];
 				
 				DrawAlignedText(batch, x + Game1.tileSize + 5, textCenterLine, firstLine, Alignment.Start, Alignment.Start, false);
 				DrawAlignedText(batch, x + Game1.tileSize + 5, textCenterLine, secondLine, Alignment.Start, Alignment.End, false);
@@ -736,7 +736,7 @@ namespace fse.core.menu
 				case nameof(Name):
 				{
 					items.Sort((a, b) =>
-						string.Compare(a.GetObjectInstance().Name, b.GetObjectInstance().Name, StringComparison.Ordinal)
+						string.Compare(a.GetObjectInstance().DisplayName, b.GetObjectInstance().DisplayName, StringComparison.Ordinal)
 					);
 					break;
 				}
