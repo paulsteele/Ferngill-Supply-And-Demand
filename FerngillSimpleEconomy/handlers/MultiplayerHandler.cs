@@ -27,14 +27,19 @@ namespace fse.core.handlers
 		{
 			_helper.Events.Multiplayer.ModMessageReceived += (_, e) =>
 			{
-				if (_helper.IsMultiplayerMessageOfType(EconomyModelMessage.Type, e))
+				if (_helper.IsMultiplayerMessageOfType(EconomyModelMessage.StaticType, e))
 				{
 					HandleEconomyModelMessage(e.ReadAs<EconomyModelMessage>());
 				}
 
-				if (_helper.IsMultiplayerMessageOfType(RequestEconomyModelMessage.Type, e))
+				if (_helper.IsMultiplayerMessageOfType(RequestEconomyModelMessage.StaticType, e))
 				{
-					HandleRequestEconomyModelMessage(e.ReadAs<RequestEconomyModelMessage>());
+					HandleRequestEconomyModelMessage();
+				}
+
+				if (_helper.IsMultiplayerMessageOfType(SupplyAdjustedMessage.StaticType, e))
+				{
+					HandleSupplyAdjustedMessage(e.ReadAs<SupplyAdjustedMessage>());
 				}
 			};
 		}
@@ -49,7 +54,7 @@ namespace fse.core.handlers
 			_economyService.ReceiveEconomy(message.Model);
 		}
 		
-		private void HandleRequestEconomyModelMessage(RequestEconomyModelMessage readAs)
+		private void HandleRequestEconomyModelMessage()
 		{
 			if (!Game1.player.IsMainPlayer)
 			{
@@ -57,6 +62,13 @@ namespace fse.core.handlers
 			}
 			
 			_economyService.SendEconomyMessage();
+		}
+		
+		private void HandleSupplyAdjustedMessage(SupplyAdjustedMessage message)
+		{
+			var obj = new Object(message.ObjectId, 1);
+			
+			_economyService.AdjustSupply(obj, message.Amount, false);
 		}
 	}
 }

@@ -1,6 +1,7 @@
 ﻿namespace fse.core.multiplayer;
 
-public class RequestEconomyModelMessage
+public class RequestEconomyModelMessage : IMessage
 {
-	public const string Type = "fse.economy.model.request.message";
+	public const string StaticType = "fse.economy.model.request.message";
+	public string Type => StaticType;
 }

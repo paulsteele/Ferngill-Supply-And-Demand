@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using fse.core.extensions;
 using fse.core.models;
 using fse.core.multiplayer;
 using MathNet.Numerics.Distributions;
@@ -30,7 +31,7 @@ namespace fse.core.services
 		{
 			if (IsClient)
 			{
-				_modHelper.Multiplayer.SendMessage(new RequestEconomyModelMessage(), RequestEconomyModelMessage.Type);
+				_modHelper.SendMessageToPeers(new RequestEconomyModelMessage());
 				return;
 			}
 			var existingModel = _modHelper.Data.ReadSaveData<EconomyModel>(EconomyModel.ModelKey);
@@ -68,12 +69,7 @@ namespace fse.core.services
 			Loaded = true;
 		}
 
-		public void SendEconomyMessage()
-		{
-			var message = new EconomyModelMessage(Economy);
-
-			_modHelper.Multiplayer.SendMessage(message, EconomyModelMessage.Type);
-		}
+		public void SendEconomyMessage() => _modHelper.SendMessageToPeers(new EconomyModelMessage(Economy));
 
 		private void ConsolidateEconomyCategories()
 		{
@@ -256,12 +252,8 @@ namespace fse.core.services
 			return (int)(basePrice * modifier);
 		}
 
-		public void AdjustSupply(Object obj, int amount)
+		public void AdjustSupply(Object obj, int amount, bool notifyPeers = true)
 		{
-			if (IsClient)
-			{
-				return;
-			}
 			if (Economy == null)
 			{
 				_monitor.Log($"Economy not generated to determine item model for {obj.name}", LogLevel.Error);
@@ -284,7 +276,16 @@ namespace fse.core.services
 			itemModel.Supply += amount;
 
 			_monitor.Log($"Adjusted {obj.name} supply from {prev} to {itemModel.Supply}", LogLevel.Trace);
-			QueueSave();
+
+			if (notifyPeers)
+			{
+				_modHelper.SendMessageToPeers(new SupplyAdjustedMessage(itemModel.ObjectId, amount));
+			}
+			
+			if (!IsClient)
+			{
+				QueueSave();
+			}
 		}
 
 		public ItemModel GetItemModelFromSeed(string seed) => Economy.GetItemModelFromSeedId(seed);

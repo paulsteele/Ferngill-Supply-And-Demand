@@ -50,7 +50,8 @@ namespace fse.core.handlers
 			{
 				foreach (var item in Game1.getFarm().getShippingBin(farmer).Where(item => item is Object))
 				{
-					_economyService.AdjustSupply(item as Object, item.Stack);
+					// don't notify as entire economy will be synchronized at the start of the day
+					_economyService.AdjustSupply(item as Object, item.Stack, false);
 				}
 			}
 

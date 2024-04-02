@@ -2,9 +2,10 @@
 
 namespace fse.core.multiplayer;
 
-public class EconomyModelMessage
+public class EconomyModelMessage : IMessage
 {
-	public const string Type = "fse.economy.model.message";
+	public const string StaticType = "fse.economy.model.message";
+	public string Type => StaticType;
 	public EconomyModel Model { get; }
 	
 	public EconomyModelMessage(EconomyModel model) => Model = model;
