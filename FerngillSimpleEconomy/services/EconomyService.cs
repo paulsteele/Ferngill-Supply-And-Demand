@@ -170,6 +170,10 @@ namespace fse.core.services
 			}
 
 			Economy.AdvanceOneDay();
+			if (Game1.player.IsMainPlayer)
+			{
+				SendEconomyMessage();
+			}
 			QueueSave();
 		}
 

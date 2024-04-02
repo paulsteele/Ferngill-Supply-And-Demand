@@ -34,7 +34,19 @@ namespace fse.core.handlers
 
 		private void GameLoopOnDayEnding()
 		{
-			foreach (var farmer in Game1.getAllFarmers())
+			if (!Game1.player.IsMainPlayer)
+			{
+				return;
+			}
+
+			var farmers = Game1.getAllFarmers();
+
+			if (!Game1.player.team.useSeparateWallets.Value)
+			{
+				farmers = new[] { farmers.First() };
+			}
+			
+			foreach (var farmer in farmers)
 			{
 				foreach (var item in Game1.getFarm().getShippingBin(farmer).Where(item => item is Object))
 				{
@@ -42,6 +54,11 @@ namespace fse.core.handlers
 				}
 			}
 
+			HandleEndOfSeason();
+		}
+
+		private void HandleEndOfSeason()
+		{
 			if (Game1.dayOfMonth < LastDayOfMonth)
 			{
 				return;
