@@ -46,10 +46,13 @@ namespace fse.core.menu
 		
 		private readonly List<string> _sortOptions = new() { "None", nameof(Name), nameof(Supply), nameof(DailyChange), nameof(MarketPrice), nameof(MarketPricePerDay) };
 		private readonly List<string> _sortDisplayOptions;
-		private string _chosenSort = "None";
+		private string _chosenSort;
 		private int _chosenCategory;
 		private Seasons _chosenSeasons = Seasons.Spring | Seasons.Summer | Seasons.Fall | Seasons.Winter;
 		private GameMenu _hiddenMenu;
+
+		private static int? _cachedChosenCategory;
+		private static string _cachedChosenSort;
 
 		private const int Divider1 = 340;
 		private const int Divider2 = 560;
@@ -74,11 +77,13 @@ namespace fse.core.menu
 				3 => Seasons.Winter,
 				_ => _chosenSeasons,
 			};
+
+			_chosenSort = string.IsNullOrWhiteSpace(_cachedChosenSort) ? _sortOptions.First() : _cachedChosenSort ;
 			
 			if (economyService.Loaded)
 			{
 				_categories = economyService.GetCategories().GroupBy(pair => pair.Value).ToDictionary(pairs => pairs.First().Key, pairs => pairs.First().Value);
-				_chosenCategory = economyService.GetCategories().Keys.First();
+				_chosenCategory = _cachedChosenCategory ?? economyService.GetCategories().Keys.First();
 				SetupItemsWithSort();
 			}
 			else
@@ -227,6 +232,7 @@ namespace fse.core.menu
 					if (int.TryParse(_categoryDropdown.dropDownOptions[_categoryDropdown.selectedOption], out var result))
 					{
 						_chosenCategory = result;
+						_cachedChosenCategory = _chosenCategory;
 						SetupItemsWithSort();
 						_itemIndex = 0;
 					}
@@ -242,6 +248,7 @@ namespace fse.core.menu
 				if (_sortDropdown.dropDownOptions.Count > _sortDropdown.selectedOption)
 				{
 					_chosenSort = _sortDropdown.dropDownOptions[_sortDropdown.selectedOption];
+					_cachedChosenSort = _chosenSort;
 					SetupItemsWithSort();
 				}
 				_isInSortDropdown = false;
@@ -430,6 +437,12 @@ namespace fse.core.menu
 					dropDownOptions = _categories.Keys.Select(i => i.ToString()).ToList(),
 					dropDownDisplayOptions = _categories.Values.ToList(),
 				};
+				
+				var index = _categoryDropdown.dropDownOptions.FindIndex(m => m.Equals(_chosenCategory.ToString()));
+				if (index > -1)
+				{
+					_categoryDropdown.selectedOption = index;
+				}
 
 				_categoryDropdown.RecalculateBounds();
 			}
@@ -467,6 +480,12 @@ namespace fse.core.menu
 					dropDownOptions = _sortOptions,
 					dropDownDisplayOptions = _sortDisplayOptions,
 				};
+				
+				var index = _sortDropdown.dropDownOptions.FindIndex(m => m.Equals(_chosenSort));
+				if (index > -1)
+				{
+					_sortDropdown.selectedOption = index;
+				}
 
 				_sortDropdown.bounds.X -= _sortDropdown.bounds.Width;
 				_sortDropdown.dropDownBounds.X -= _sortDropdown.bounds.Width;
