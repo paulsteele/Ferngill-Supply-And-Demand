@@ -206,10 +206,13 @@ namespace fse.core.handlers
 					{
 						if (resetState && resetButton.bounds.Contains(_helper.Input.GetCursorPosition().GetUiScaledPosition()))
 						{
-							if (_economyService.Loaded)
+							if (Game1.player.IsMainPlayer)
 							{
-								_economyService.SetupForNewYear();
-								_economyService.AdvanceOneDay();
+								if (_economyService.Loaded)
+								{
+									_economyService.SetupForNewYear();
+									_economyService.AdvanceOneDay();
+								}
 							}
 						}
 

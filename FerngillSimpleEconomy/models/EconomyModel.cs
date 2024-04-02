@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json.Serialization;
+using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.GameData.Crops;
 using Object = StardewValley.Object;
@@ -106,6 +107,11 @@ namespace fse.core.models
 		public void AdvanceOneDay()
 		{
 			ForAllItems(model => model.AdvanceOneDay());
+		}
+
+		public void UpdateAllMultipliers()
+		{
+			ForAllItems(model => model.UpdateMultiplier());
 		}
 	}
 }

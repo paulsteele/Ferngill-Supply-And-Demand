@@ -48,10 +48,8 @@ namespace fse.core.services
 				Economy = newModel;
 				needToSave = true;
 			}
-			
-			ConsolidateEconomyCategories();
-			Economy.GenerateSeedMapping();
-			Economy.GenerateFishMapping();
+	
+			EconomySetup();
 
 			if (needToSave)
 			{
@@ -63,10 +61,16 @@ namespace fse.core.services
 		public void ReceiveEconomy(EconomyModel economyModel)
 		{
 			Economy = economyModel;
+			EconomySetup();
+			Loaded = true;
+		}
+
+		private void EconomySetup()
+		{
 			ConsolidateEconomyCategories();
 			Economy.GenerateSeedMapping();
 			Economy.GenerateFishMapping();
-			Loaded = true;
+			Economy.UpdateAllMultipliers();
 		}
 
 		public void SendEconomyMessage() => _modHelper.SendMessageToPeers(new EconomyModelMessage(Economy));
@@ -166,10 +170,7 @@ namespace fse.core.services
 			}
 
 			Economy.AdvanceOneDay();
-			if (Game1.player.IsMainPlayer)
-			{
-				SendEconomyMessage();
-			}
+			SendEconomyMessage();
 			QueueSave();
 		}
 

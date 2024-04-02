@@ -11,8 +11,8 @@ namespace fse.core.models
 		private int _dailyDelta;
 		private int _supply;
 
-		// there are a variety of factors that can influence sell price. Cache the calculation for each input
-		private readonly Dictionary<int, int> _cachedPrices = new();
+		//cache the multiplier at the beginning of the day to keep prices consistent throughout the day
+		private float _cachedMultiplier = 1f;
 
 		[JsonInclude] public string ObjectId { get; set; }
 
@@ -33,10 +33,15 @@ namespace fse.core.models
 		public void AdvanceOneDay()
 		{
 			Supply += DailyDelta;
-			_cachedPrices.Clear();
+			UpdateMultiplier();
 		}
 
-		public float GetMultiplier()
+		public void UpdateMultiplier()
+		{
+			_cachedMultiplier = GetMultiplier();
+		}
+
+		private float GetMultiplier()
 		{
 			var ratio = 1 - (Math.Min(Supply, ConfigModel.Instance.MaxCalculatedSupply) / (float)ConfigModel.Instance.MaxCalculatedSupply);
 			var percentageRange = ConfigModel.Instance.MaxPercentage - ConfigModel.Instance.MinPercentage;
@@ -44,16 +49,7 @@ namespace fse.core.models
 			return (ratio * percentageRange) + ConfigModel.Instance.MinPercentage;
 		}
 
-		public int GetPrice(int basePrice)
-		{
-			// ReSharper disable once InvertIf
-			if (!_cachedPrices.ContainsKey(basePrice))
-			{
-				_cachedPrices.Add(basePrice, (int)(basePrice * GetMultiplier()));
-			}
-
-			return _cachedPrices[basePrice];
-		}
+		public int GetPrice(int basePrice) => (int)(basePrice * _cachedMultiplier);
 
 		public void CapSupply()
 		{

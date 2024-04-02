@@ -4,6 +4,7 @@ using fse.core.patches;
 using fse.core.services;
 using HarmonyLib;
 using StardewModdingAPI;
+using StardewValley;
 
 namespace fse.core
 {
@@ -20,6 +21,11 @@ namespace fse.core
 			RegisterHandlers(helper);
 			helper.ConsoleCommands.Add("fse_reset", "Fully Resets Ferngill Simple Economy", (_, _) =>
 			{
+				if (!Game1.player.IsMainPlayer)
+				{
+					return;
+				}
+
 				_economyService.SetupForNewYear();
 				_economyService.AdvanceOneDay();
 			});
