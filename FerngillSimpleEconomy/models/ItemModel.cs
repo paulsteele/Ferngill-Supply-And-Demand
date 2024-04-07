@@ -55,7 +55,11 @@ namespace fse.core.models
 		{
 			Supply = Math.Min(Supply, ConfigModel.Instance.MaxCalculatedSupply);
 		}
-		
+		public void CapDelta(int cap)
+		{
+		 DailyDelta = Math.Min(DailyDelta, cap);
+		}
+
 		private Object _objectInstance;
 		public Object GetObjectInstance() => _objectInstance ??= new Object(ObjectId, 1);
 	}

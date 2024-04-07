@@ -114,6 +114,17 @@ namespace fse.core.services
 			};
 		}
 
+		private void CapOutOfSeasonDeltas(Seasons season)
+		{
+			Economy.ForAllItems(model =>
+			{
+				if (!ItemValidForSeason(model, season))
+				{
+					model.CapDelta(-1);
+				}
+			});
+		}
+
 		public void SetupForNewSeason()
 		{
 			if (IsClient)
@@ -122,6 +133,14 @@ namespace fse.core.services
 			}
 			RandomizeEconomy(Economy, false, true);
 			Economy.ForAllItems(model => model.CapSupply());
+			var nextSeason = Utility.getSeasonNumber(Game1.currentSeason) switch
+			{
+			 0 => Seasons.Summer,
+			 1 => Seasons.Fall,
+			 2 => Seasons.Winter,
+			 3 => Seasons.Spring
+			};
+			CapOutOfSeasonDeltas(nextSeason);
 			QueueSave();
 		}
 		
