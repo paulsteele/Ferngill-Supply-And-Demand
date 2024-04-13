@@ -36,4 +36,8 @@
       <ProjectReference Include="..\FerngillSimpleEconomy\FerngillSimpleEconomy.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="extensions\" />
+    </ItemGroup>
+
 </Project>

@@ -1,18 +1,19 @@
-﻿using fse.core.extensions;
-using fse.core.multiplayer;
+﻿using fse.core.multiplayer;
+using fse.core.services;
 using Moq;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Network;
 using Tests.HarmonyMocks;
 
-namespace Tests.extensions;
+namespace Tests.services;
 
-public class HelperExtensionsTests : HarmonyTestBase
+public class MultiplayerServiceTests : HarmonyTestBase
 {
 	private Mock<IModHelper> _mockModHelper;
 	private Mock<IMultiplayerHelper> _mockMultiplayerHelper;
 	private Mock<IModContentHelper> _mockModContentHelper;
+	private MultiplayerService _multiplayerService;
 
 	private Farmer _farmer1;
 	private Farmer _farmer2;
@@ -57,13 +58,15 @@ public class HelperExtensionsTests : HarmonyTestBase
 		HarmonyGame.GetPlayerResult = _farmer1;
 		HarmonyGame.GetOnlineFarmersResults = farmerCollection;
 		HarmonyFarmerCollection.CollectionEnumerator = _farmers.GetEnumerator();
+
+		_multiplayerService = new MultiplayerService(_mockModHelper.Object);
 	}
 
 	[Test]
 	public void ShouldSendMessageToOtherPlayers()
 	{
 		var message = new TestMessage();
-		_mockModHelper.Object.SendMessageToPeers(message);
+		_multiplayerService.SendMessageToPeers(message);
 
 		_mockMultiplayerHelper.Verify(m => m.SendMessage(
 			It.Is<IMessage>(m => m == message),

@@ -11,19 +11,11 @@ using Object = StardewValley.Object;
 
 namespace fse.core.services
 {
-	public class EconomyService
+	public class EconomyService(IModHelper modHelper, IMonitor monitor, IMultiplayerService multiplayerService)
 	{
-		private readonly IModHelper _modHelper;
-		private readonly IMonitor _monitor;
 		private readonly Dictionary<int, List<int>> CategoryMapping = new();
 
 		public bool Loaded { get; private set; }
-
-		public EconomyService(IModHelper modHelper, IMonitor monitor)
-		{
-			_modHelper = modHelper;
-			_monitor = monitor;
-		}
 
 		private EconomyModel Economy { get; set; }
 
@@ -31,10 +23,10 @@ namespace fse.core.services
 		{
 			if (IsClient)
 			{
-				_modHelper.SendMessageToPeers(new RequestEconomyModelMessage());
+				multiplayerService.SendMessageToPeers(new RequestEconomyModelMessage());
 				return;
 			}
-			var existingModel = _modHelper.Data.ReadSaveData<EconomyModel>(EconomyModel.ModelKey);
+			var existingModel = modHelper.Data.ReadSaveData<EconomyModel>(EconomyModel.ModelKey);
 			var newModel = GenerateBlankEconomy();
 			var needToSave = false;
 
@@ -73,7 +65,7 @@ namespace fse.core.services
 			Economy.UpdateAllMultipliers();
 		}
 
-		public void SendEconomyMessage() => _modHelper.SendMessageToPeers(new EconomyModelMessage(Economy));
+		public void SendEconomyMessage() => multiplayerService.SendMessageToPeers(new EconomyModelMessage(Economy));
 
 		private void ConsolidateEconomyCategories()
 		{
@@ -96,7 +88,7 @@ namespace fse.core.services
 			{
 				return;
 			}
-			_modHelper.Data.WriteSaveData(EconomyModel.ModelKey, Economy);
+			modHelper.Data.WriteSaveData(EconomyModel.ModelKey, Economy);
 		}
 
 		private static EconomyModel GenerateBlankEconomy()
@@ -200,7 +192,7 @@ namespace fse.core.services
 		{
 			if (Economy == null)
 			{
-				_monitor.Log($"Economy not generated to determine item model for {obj.name}", LogLevel.Error);
+				monitor.Log($"Economy not generated to determine item model for {obj.name}", LogLevel.Error);
 				return basePrice;
 			}
 
@@ -216,12 +208,12 @@ namespace fse.core.services
 			var itemModel = Economy.GetItem(obj);
 			if (itemModel == null)
 			{
-				_monitor.Log($"Could not find item model for {obj.name}", LogLevel.Trace);
+				monitor.Log($"Could not find item model for {obj.name}", LogLevel.Trace);
 				return basePrice;
 			}
 			var adjustedPrice = itemModel.GetPrice(basePrice);
 			
-			_monitor.Log($"Altered {obj.name} from {basePrice} to {adjustedPrice}", LogLevel.Trace);
+			monitor.Log($"Altered {obj.name} from {basePrice} to {adjustedPrice}", LogLevel.Trace);
 
 			return adjustedPrice;
 		}
@@ -257,7 +249,7 @@ namespace fse.core.services
 		{
 			if (Economy == null)
 			{
-				_monitor.Log($"Economy not generated to determine item model for {obj.name}", LogLevel.Error);
+				monitor.Log($"Economy not generated to determine item model for {obj.name}", LogLevel.Error);
 				return;
 			}
 
@@ -269,18 +261,18 @@ namespace fse.core.services
 			var itemModel = Economy.GetItem(obj);
 			if (itemModel == null)
 			{
-				_monitor.Log($"Could not find item model for {obj.name}", LogLevel.Trace);
+				monitor.Log($"Could not find item model for {obj.name}", LogLevel.Trace);
 				return;
 			}
 
 			var prev = itemModel.Supply;
 			itemModel.Supply += amount;
 
-			_monitor.Log($"Adjusted {obj.name} supply from {prev} to {itemModel.Supply}", LogLevel.Trace);
+			monitor.Log($"Adjusted {obj.name} supply from {prev} to {itemModel.Supply}", LogLevel.Trace);
 
 			if (notifyPeers)
 			{
-				_modHelper.SendMessageToPeers(new SupplyAdjustedMessage(itemModel.ObjectId, amount));
+				multiplayerService.SendMessageToPeers(new SupplyAdjustedMessage(itemModel.ObjectId, amount));
 			}
 			
 			if (!IsClient)
