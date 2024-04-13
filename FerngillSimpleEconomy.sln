@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FerngillSimpleEconomy", "FerngillSimpleEconomy\FerngillSimpleEconomy.csproj", "{EF206A28-797A-4B3A-87DF-682FDA9A78E8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{FA8E9748-89B2-4AE1-B8F2-86188D016CAB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +14,9 @@ Global
 		{EF206A28-797A-4B3A-87DF-682FDA9A78E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EF206A28-797A-4B3A-87DF-682FDA9A78E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EF206A28-797A-4B3A-87DF-682FDA9A78E8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FA8E9748-89B2-4AE1-B8F2-86188D016CAB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FA8E9748-89B2-4AE1-B8F2-86188D016CAB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FA8E9748-89B2-4AE1-B8F2-86188D016CAB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FA8E9748-89B2-4AE1-B8F2-86188D016CAB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
