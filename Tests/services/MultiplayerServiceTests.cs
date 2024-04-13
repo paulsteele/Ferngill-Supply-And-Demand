@@ -2,9 +2,11 @@
 using fse.core.services;
 using Moq;
 using StardewModdingAPI;
+using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Network;
 using Tests.HarmonyMocks;
+using Range = System.Range;
 
 namespace Tests.services;
 
@@ -27,7 +29,7 @@ public class MultiplayerServiceTests : HarmonyTestBase
 	{
 		base.Setup();
 		_mockModHelper = new Mock<IModHelper>();
-		_mockMultiplayerHelper = new Mock<IMultiplayerHelper>();
+		_mockMultiplayerHelper = new Mock<IMultiplayerHelper>(MockBehavior.Loose);
 		_mockModContentHelper = new Mock<IModContentHelper>();
 
 		_mockModHelper.SetupGet(m => m.Multiplayer).Returns(_mockMultiplayerHelper.Object);
@@ -63,20 +65,36 @@ public class MultiplayerServiceTests : HarmonyTestBase
 	}
 
 	[Test]
-	public void ShouldSendMessageToOtherPlayers()
+	public void ShouldSendMessageToOtherPlayers(
+		[Values(0, 1, 2, 3)] int currentFarmerIndex,
+		[Values(1, 2, 3, 4)] int numberOfFarmers
+	)
 	{
+		if (currentFarmerIndex >= numberOfFarmers)
+		{
+			Assert.Pass("N/A");
+			return;
+		}
+
+		_farmers = _farmers.Take(numberOfFarmers).ToArray();
+		HarmonyFarmerCollection.CollectionEnumerator = _farmers.GetEnumerator();
+		HarmonyGame.GetPlayerResult = _farmers[currentFarmerIndex];
+
+		var expectedLongList = new []{1L, 2L, 3L, 4L}.Take(numberOfFarmers).ToList();
+		expectedLongList.Remove(currentFarmerIndex + 1);
+		
 		var message = new TestMessage();
 		_multiplayerService.SendMessageToPeers(message);
-
+		
 		_mockMultiplayerHelper.Verify(m => m.SendMessage(
 			It.Is<IMessage>(m => m == message),
 			message.Type,
 			It.Is<string[]>(strings => string.Equals(strings[0], "mod-id")),
-			It.Is<long[]>(longs => longs[0] == 2L && longs[1] == 3L && longs[2] == 4L)
+			expectedLongList.ToArray()
 		), 
-		Times.Once);
+		Times.Exactly(numberOfFarmers == 1 ? 0 : 1));
 	}
-	
+
 	class TestMessage : IMessage
 	{
 		public string Type => nameof(TestMessage);
