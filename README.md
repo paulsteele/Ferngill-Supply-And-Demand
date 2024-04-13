@@ -1,0 +1,5 @@
+﻿
+# Credits
+
+## Translations
+* Korean - cheesecats

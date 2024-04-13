@@ -208,12 +208,12 @@ namespace fse.core.services
 			var itemModel = Economy.GetItem(obj);
 			if (itemModel == null)
 			{
-				monitor.Log($"Could not find item model for {obj.name}", LogLevel.Trace);
+				// monitor.Log($"Could not find item model for {obj.name}", LogLevel.Trace);
 				return basePrice;
 			}
 			var adjustedPrice = itemModel.GetPrice(basePrice);
 			
-			monitor.Log($"Altered {obj.name} from {basePrice} to {adjustedPrice}", LogLevel.Trace);
+			// monitor.Log($"Altered {obj.name} from {basePrice} to {adjustedPrice}", LogLevel.Trace);
 
 			return adjustedPrice;
 		}
@@ -261,14 +261,14 @@ namespace fse.core.services
 			var itemModel = Economy.GetItem(obj);
 			if (itemModel == null)
 			{
-				monitor.Log($"Could not find item model for {obj.name}", LogLevel.Trace);
+				// monitor.Log($"Could not find item model for {obj.name}", LogLevel.Trace);
 				return;
 			}
 
 			var prev = itemModel.Supply;
 			itemModel.Supply += amount;
 
-			monitor.Log($"Adjusted {obj.name} supply from {prev} to {itemModel.Supply}", LogLevel.Trace);
+			// monitor.Log($"Adjusted {obj.name} supply from {prev} to {itemModel.Supply}", LogLevel.Trace);
 
 			if (notifyPeers)
 			{
