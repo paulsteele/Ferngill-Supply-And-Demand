@@ -11,12 +11,14 @@ namespace fse.core
 	// ReSharper disable once UnusedType.Global
 	public class FerngillSimpleEconomy : Mod
 	{
+		private MultiplayerService _multiplayerService;
 		private EconomyService _economyService;
 
 		public override void Entry(IModHelper helper)
 		{
 			ConfigModel.Instance = helper.ReadConfig<ConfigModel>();
-			_economyService = new EconomyService(helper, Monitor);
+			_multiplayerService = new MultiplayerService(helper);
+			_economyService = new EconomyService(helper, Monitor, _multiplayerService);
 			RegisterPatches(helper);
 			RegisterHandlers(helper);
 			helper.ConsoleCommands.Add("fse_reset", "Fully Resets Ferngill Simple Economy", (_, _) =>
@@ -46,7 +48,7 @@ namespace fse.core
 			new SaveLoadedHandler(helper, Monitor, _economyService).Register();
 			new GameLoadedHandler(helper, Monitor, ModManifest, _economyService).Register();
 			new GameMenuLoadedHandler(helper, Monitor, _economyService).Register();
-			new MultiplayerHandler(helper, Monitor, _economyService).Register();
+			new MultiplayerHandler(helper, _economyService, _multiplayerService).Register();
 		}
 	}
 }
