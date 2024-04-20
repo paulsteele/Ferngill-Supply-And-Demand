@@ -12,7 +12,7 @@ namespace fse.core
 	public class FerngillSimpleEconomy : Mod
 	{
 		private MultiplayerService _multiplayerService;
-		private EconomyService _economyService;
+		private IEconomyService _economyService;
 
 		public override void Entry(IModHelper helper)
 		{

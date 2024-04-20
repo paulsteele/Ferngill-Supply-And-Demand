@@ -7,7 +7,7 @@ namespace fse.core.handlers
 {
 	public class MultiplayerHandler(
 		IModHelper helper,
-		EconomyService economyService,
+		IEconomyService economyService,
 		IMultiplayerService multiplayerService
 	)
 		: IHandler

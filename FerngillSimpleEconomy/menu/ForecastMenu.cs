@@ -15,7 +15,7 @@ namespace fse.core.menu
 	public class ForecastMenu : IClickableMenu
 	{
 		private readonly IModHelper _helper;
-		private readonly EconomyService _economyService;
+		private readonly IEconomyService _economyService;
 		private readonly IMonitor _monitor;
 		private ItemModel[] _allItems;
 		private Dictionary<int, string> _categories;
@@ -61,7 +61,7 @@ namespace fse.core.menu
 
 		public ForecastMenu(
 			IModHelper helper,
-			EconomyService economyService,
+			IEconomyService economyService,
 			IMonitor monitor)
 		{
 			_helper = helper;

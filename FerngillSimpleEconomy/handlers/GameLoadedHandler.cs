@@ -17,14 +17,14 @@ namespace fse.core.handlers
 		private readonly IModHelper _helper;
 		private readonly IMonitor _monitor;
 		private readonly IManifest _manifest;
-		private readonly EconomyService _economyService;
+		private readonly IEconomyService _economyService;
 
 		public GameLoadedHandler(
 			IModHelper helper, 
 			IMonitor monitor,
 			IManifest manifest,
-			EconomyService economyService
-			)
+			IEconomyService economyService
+		)
 		{
 			_helper = helper;
 			_monitor = monitor;

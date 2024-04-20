@@ -16,14 +16,14 @@ public class GameMenuLoadedHandler : IHandler
 {
 	private readonly IModHelper _helper;
 	private readonly IMonitor _monitor;
-	private readonly EconomyService _economyService;
+	private readonly IEconomyService _economyService;
 	private Texture2D _menuTexture;
 	private ClickableComponent _tab;
 
 	public GameMenuLoadedHandler(
 		IModHelper helper,
 		IMonitor monitor,
-		EconomyService economyService
+		IEconomyService economyService
 	)
 	{
 		_helper = helper;
