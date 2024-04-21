@@ -17,12 +17,24 @@ public class HarmonyFarmer
 			prefix: new HarmonyMethod(typeof(HarmonyFarmer), nameof(MockUniqueMultiplayerID))
 		);
 		
+		harmony.Patch(
+			AccessTools.PropertyGetter(typeof(Farmer), nameof(Farmer.IsMainPlayer)),
+			prefix: new HarmonyMethod(typeof(HarmonyFarmer), nameof(MockIsMainPlayer))
+		);
+		
+		harmony.Patch(
+			AccessTools.PropertyGetter(typeof(Farmer), nameof(Farmer.team)),
+			prefix: new HarmonyMethod(typeof(HarmonyFarmer), nameof(MockGetTeam))
+		);
+		
 		UniqueMultiplayerIdDictionary.Clear();
 	}
 
 	static bool MockConstructor() => false;
 
 	public static Dictionary<Farmer, long> UniqueMultiplayerIdDictionary = new();
+	public static Dictionary<Farmer, bool> IsMainPlayerDictionary = new();
+	public static Dictionary<Farmer, FarmerTeam> FarmerTeamDictionary = new();
 
 	static bool MockUniqueMultiplayerID(
 		Farmer __instance,
@@ -30,6 +42,25 @@ public class HarmonyFarmer
 	)
 	{
 		__result = UniqueMultiplayerIdDictionary[__instance];
+		return false;
+	}
+	
+	static bool MockIsMainPlayer(
+		Farmer __instance,
+		ref bool __result
+	)
+	{
+		__result = IsMainPlayerDictionary[__instance];
+		
+		return false;
+	}
+	
+	static bool MockGetTeam(
+		Farmer __instance,
+		ref FarmerTeam __result
+	)
+	{
+		__result = FarmerTeamDictionary[__instance];
 		
 		return false;
 	}

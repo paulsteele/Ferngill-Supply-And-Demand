@@ -4,9 +4,8 @@ using StardewValley.Network;
 
 namespace Tests.HarmonyMocks;
 
-public class HarmonyGame
+public static class HarmonyGame
 {
-	
 	public static void Setup(Harmony harmony)
 	{
 		harmony.Patch(
@@ -16,6 +15,14 @@ public class HarmonyGame
 		harmony.Patch(
 			AccessTools.Method(typeof(Game1), nameof(Game1.getOnlineFarmers)),
 			prefix: new HarmonyMethod(typeof(HarmonyGame), nameof(MockGetOnlineFarmers))
+		);
+		harmony.Patch(
+			AccessTools.Method(typeof(Game1), nameof(Game1.getAllFarmers)),
+			prefix: new HarmonyMethod(typeof(HarmonyGame), nameof(MockGetAllFarmers))
+		);
+		harmony.Patch(
+			AccessTools.Method(typeof(Game1), nameof(Game1.getFarm)),
+			prefix: new HarmonyMethod(typeof(HarmonyGame), nameof(MockGetFarm))
 		);
 	}
 
@@ -30,6 +37,20 @@ public class HarmonyGame
 	static bool MockGetOnlineFarmers(ref FarmerCollection __result)
 	{
 		__result = GetOnlineFarmersResults;
+		return false;
+	}
+	
+	public static IEnumerable<Farmer> GetAllFarmersResults { get; set; }
+	static bool MockGetAllFarmers(ref IEnumerable<Farmer> __result)
+	{
+		__result = GetAllFarmersResults;
+		return false;
+	}
+	
+	public static Farm GetFarmResult { get; set; }
+	static bool MockGetFarm(ref Farm __result)
+	{
+		__result = GetFarmResult;
 		return false;
 	}
 }

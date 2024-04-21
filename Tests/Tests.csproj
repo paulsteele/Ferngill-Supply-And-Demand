@@ -28,18 +28,22 @@
 				<HintPath Condition="Exists('C:\Program Files (x86)\Steam\steamapps\common\Stardew Valley\Stardew Valley.dll')">C:\Program Files (x86)\Steam\steamapps\common\Stardew Valley\Stardew Valley.dll</HintPath>
 				<HintPath Condition="Exists('../../../Library/Application Support/Steam/steamapps/common/Stardew Valley/Contents/MacOS/Stardew Valley.dll')">../../../Library/Application Support/Steam/steamapps/common/Stardew Valley/Contents/MacOS/Stardew Valley.dll</HintPath>
       </Reference>
+			<Reference Include="Stardew Valley Game Data">
+				<HintPath Condition="Exists('C:\Program Files (x86)\Steam\steamapps\common\Stardew Valley\StardewValley.GameData.dll')">C:\Program Files (x86)\Steam\steamapps\common\Stardew Valley\StardewValley.GameData.dll</HintPath>
+				<HintPath Condition="Exists('../../../Library/Application Support/Steam/steamapps/common/Stardew Valley/Contents/MacOS/StardewValley.GameData.dll')">../../../Library/Application Support/Steam/steamapps/common/Stardew Valley/Contents/MacOS/StardewValley.GameData.dll</HintPath>
+			</Reference>
       <Reference Include="StardewModdingAPI">
 				<HintPath Condition="Exists('C:\Program Files (x86)\Steam\steamapps\common\Stardew Valley\StardewModdingAPI.dll')">C:\Program Files (x86)\Steam\steamapps\common\Stardew Valley\StardewModdingAPI.dll</HintPath>
 				<HintPath Condition="Exists('../../../Library/Application Support/Steam/steamapps/common/Stardew Valley/Contents/MacOS/StardewModdingAPI.dll')">../../../Library/Application Support/Steam/steamapps/common/Stardew Valley/Contents/MacOS/StardewModdingAPI.dll</HintPath>
       </Reference>
+			<Reference Include="MonoGame Framework">
+				<HintPath Condition="Exists('C:\Program Files (x86)\Steam\steamapps\common\Stardew Valley\MonoGame.Framework.dll')">C:\Program Files (x86)\Steam\steamapps\common\Stardew Valley\MonoGame.Framework.dll</HintPath>
+				<HintPath Condition="Exists('../../../Library/Application Support/Steam/steamapps/common/Stardew Valley/Contents/MacOS/MonoGame.Framework.dll')">../../../Library/Application Support/Steam/steamapps/common/Stardew Valley/Contents/MacOS/MonoGame.Framework.dll</HintPath>
+			</Reference>
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\FerngillSimpleEconomy\FerngillSimpleEconomy.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="extensions\" />
     </ItemGroup>
 
 </Project>

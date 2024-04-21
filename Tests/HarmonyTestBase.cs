@@ -13,5 +13,8 @@ public class HarmonyTestBase
 		HarmonyFarmer.Setup(harmony);
 		HarmonyGame.Setup(harmony);
 		HarmonyFarmerCollection.Setup(harmony);
+		HarmonyFarmerTeam.Setup(harmony);
+		HarmonyFarm.Setup(harmony);
+		HarmonyObject.Setup(harmony);
 	}
 }
