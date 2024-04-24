@@ -31,6 +31,7 @@ public static class HarmonyUtility
 			),
 			prefix: new HarmonyMethod(typeof(HarmonyUtility), nameof(MockDrawTextWithShadow))
 		);
+		DrawTextWithShadowCalls.Clear();
 	}
 
 	public static List<(SpriteBatch b, string text, SpriteFont font, Vector2 position, Color color)>

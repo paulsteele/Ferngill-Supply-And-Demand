@@ -19,5 +19,6 @@ public class HarmonyTestBase
 		HarmonyModMessageReceivedEventArgs.Setup(harmony);
 		HarmonySpriteFont.Setup(harmony);
 		HarmonyUtility.Setup(harmony);
+		HarmonySpriteBatch.Setup(harmony);
 	}
 }

@@ -10,13 +10,26 @@ public class HarmonySpriteFont
 	public static void Setup(Harmony harmony)
 	{
 		harmony.Patch(
-			AccessTools.Constructor(typeof(SpriteFont)),
+			AccessTools.Constructor(
+				typeof(SpriteFont),
+				new []
+				{
+					typeof(Texture2D),
+					typeof(List<Rectangle>),
+					typeof(List<Rectangle>),
+					typeof(List<char>),
+					typeof(int),
+					typeof(float),
+					typeof(List<Vector3>),
+					typeof(char?)
+				}
+			),
 			prefix: new HarmonyMethod(typeof(HarmonySpriteFont), nameof(MockConstructor))
 		);
 		
 		harmony.Patch(
 			AccessTools.Method(typeof(SpriteFont), nameof(SpriteFont.MeasureString), new []{typeof(string)}),
-			prefix: new HarmonyMethod(typeof(HarmonySpriteFont), nameof(MockConstructor))
+			prefix: new HarmonyMethod(typeof(HarmonySpriteFont), nameof(MockMeasureString))
 		);
 	}
 	

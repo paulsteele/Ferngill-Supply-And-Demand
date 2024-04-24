@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using Microsoft.Xna.Framework.Graphics;
 using StardewValley;
 using StardewValley.Network;
 
@@ -45,7 +46,9 @@ public static class HarmonyGame
 				}
 			),
 			prefix: new HarmonyMethod(typeof(HarmonyGame), nameof(MockDrawDialogueBox))
+			
 		);
+		DrawDialogueBoxCalls.Clear();
 	}
 
 	public static Farmer GetPlayerResult { get; set; }
