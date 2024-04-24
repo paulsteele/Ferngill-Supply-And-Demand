@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using Netcode;
 using Object = StardewValley.Object;
 
 namespace Tests.HarmonyMocks;
@@ -14,5 +15,13 @@ public class HarmonyObject
 		);
 	}
 
-	static bool MockConstructor() => false;
+	static bool MockConstructor(
+		ref Object __instance,
+		string itemId
+		)
+	{
+		__instance.itemId = new NetString();
+		__instance.ItemId = itemId;
+		return false;
+	}
 }

@@ -16,5 +16,6 @@ public class HarmonyTestBase
 		HarmonyFarmerTeam.Setup(harmony);
 		HarmonyFarm.Setup(harmony);
 		HarmonyObject.Setup(harmony);
+		HarmonyModMessageReceivedEventArgs.Setup(harmony);
 	}
 }

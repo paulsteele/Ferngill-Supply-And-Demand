@@ -36,6 +36,10 @@
 				<HintPath Condition="Exists('C:\Program Files (x86)\Steam\steamapps\common\Stardew Valley\StardewModdingAPI.dll')">C:\Program Files (x86)\Steam\steamapps\common\Stardew Valley\StardewModdingAPI.dll</HintPath>
 				<HintPath Condition="Exists('../../../Library/Application Support/Steam/steamapps/common/Stardew Valley/Contents/MacOS/StardewModdingAPI.dll')">../../../Library/Application Support/Steam/steamapps/common/Stardew Valley/Contents/MacOS/StardewModdingAPI.dll</HintPath>
       </Reference>
+			<Reference Include="SMAPI.Toolkit">
+				<HintPath Condition="Exists('C:\Program Files (x86)\Steam\steamapps\common\Stardew Valley\smapi-internal\SMAPI.Toolkit.dll')">C:\Program Files (x86)\Steam\steamapps\common\Stardew Valley\smapi-internal\SMAPI.Toolkit.dll</HintPath>
+				<HintPath Condition="Exists('../../../Library/Application Support/Steam/steamapps/common/Stardew Valley/Contents/MacOS/smapi-internal/SMAPI.Toolkit.dll')">../../../Library/Application Support/Steam/steamapps/common/Stardew Valley/Contents/MacOS/smapi-internal/SMAPI.Toolkit.dll</HintPath>
+			</Reference>
 			<Reference Include="MonoGame Framework">
 				<HintPath Condition="Exists('C:\Program Files (x86)\Steam\steamapps\common\Stardew Valley\MonoGame.Framework.dll')">C:\Program Files (x86)\Steam\steamapps\common\Stardew Valley\MonoGame.Framework.dll</HintPath>
 				<HintPath Condition="Exists('../../../Library/Application Support/Steam/steamapps/common/Stardew Valley/Contents/MacOS/MonoGame.Framework.dll')">../../../Library/Application Support/Steam/steamapps/common/Stardew Valley/Contents/MacOS/MonoGame.Framework.dll</HintPath>
