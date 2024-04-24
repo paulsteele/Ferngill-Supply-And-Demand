@@ -1,5 +1,6 @@
 ﻿using fse.core.actions;
 using fse.core.extensions;
+using fse.core.helpers;
 using fse.core.menu;
 using fse.core.models;
 using fse.core.services;
@@ -70,7 +71,7 @@ public class GameMenuLoadedHandler : IHandler
 			return;
 		}
 
-		new ForecastMenu(_helper, _economyService, _monitor).TakeOverMenuTab(gameMenu);
+		new ForecastMenu(_helper, _economyService, _monitor, new DrawTextHelper()).TakeOverMenuTab(gameMenu);
 	}
 
 	public void DrawTab(SpriteBatch batch)

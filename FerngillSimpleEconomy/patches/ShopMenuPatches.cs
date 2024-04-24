@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
+using fse.core.helpers;
 using fse.core.menu;
 using fse.core.models;
 using HarmonyLib;
@@ -90,7 +91,7 @@ namespace fse.core.patches
 				transpiler: new HarmonyMethod(typeof(ShopMenuPatches), nameof(ShopDrawingTranspiler))
 			);
 
-			_forecastMenu = new ForecastMenu(ModHelper, EconomyService, Monitor);
+			_forecastMenu = new ForecastMenu(ModHelper, EconomyService, Monitor, new DrawTextHelper());
 		}
 
 		public static IEnumerable<CodeInstruction> ShopDrawingTranspiler(IEnumerable<CodeInstruction> steps)
