@@ -22,5 +22,10 @@ public class HarmonyTestBase
 		HarmonySpriteBatch.Setup(harmony);
 		HarmonyGameMenu.Setup(harmony);
 		HarmonyOptions.Setup(harmony);
+		HarmonyTexture2D.Setup(harmony);
+		HarmonyIClickableMenu.Setup(harmony);
+		HarmonyMapPage.Setup(harmony);
+		HarmonyCollectionsPage.Setup(harmony);
+		HarmonyLetterViewMenu.Setup(harmony);
 	}
 }

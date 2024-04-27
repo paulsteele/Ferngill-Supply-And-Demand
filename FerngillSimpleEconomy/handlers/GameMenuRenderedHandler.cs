@@ -1,6 +1,5 @@
 ﻿using fse.core.actions;
 using fse.core.extensions;
-using fse.core.helpers;
 using fse.core.menu;
 using fse.core.models;
 using fse.core.services;
@@ -19,7 +18,7 @@ public class GameMenuLoadedHandler : IHandler
 	private readonly IMonitor _monitor;
 	private readonly IForecastMenuService _forecastMenuService;
 	private Texture2D _menuTexture;
-	private ClickableComponent _tab;
+	public readonly ClickableComponent Tab;
 
 	public GameMenuLoadedHandler(
 		IModHelper helper,
@@ -31,7 +30,7 @@ public class GameMenuLoadedHandler : IHandler
 		_monitor = monitor;
 		_forecastMenuService = forecastMenuService;
 
-		_tab = new ClickableComponent(
+		Tab = new ClickableComponent(
 			new Rectangle(0, 0, 64, 64), 
 			"forecast", 
 			_helper.Translation.Get("fse.forecast.menu.tab.title")
@@ -61,7 +60,7 @@ public class GameMenuLoadedHandler : IHandler
 			return;
 		}
 		
-		if (!_tab.bounds.Contains(buttonPressedEventArgs.Cursor.GetUiScaledPosition()))
+		if (!Tab.bounds.Contains(buttonPressedEventArgs.Cursor.GetUiScaledPosition()))
 		{
 			return;
 		}
@@ -101,7 +100,7 @@ public class GameMenuLoadedHandler : IHandler
 			offset += 70;
 		}
 		
-		_tab.bounds = new Rectangle(
+		Tab.bounds = new Rectangle(
 			gameMenu.xPositionOnScreen + (64 * 11) + offset,
 			gameMenu.yPositionOnScreen + IClickableMenu.tabYPositionRelativeToMenuY + 64,
 			64,
@@ -110,7 +109,7 @@ public class GameMenuLoadedHandler : IHandler
 			
 		batch.Draw(
 			_menuTexture,
-			new Vector2(_tab.bounds.X, _tab.bounds.Y), 
+			new Vector2(Tab.bounds.X, Tab.bounds.Y), 
 			new Rectangle?(new Rectangle(0 * 16, 0, 16, 16)),
 			Color.White, 
 			0.0f, 
@@ -124,9 +123,9 @@ public class GameMenuLoadedHandler : IHandler
 
 		var hoverText = gameMenu.hoverText;
 
-		if (_tab.bounds.Contains(_helper.Input.GetCursorPosition().GetUiScaledPosition()))
+		if (Tab.bounds.Contains(_helper.Input.GetCursorPosition().GetUiScaledPosition()))
 		{
-			hoverText = _tab.label;
+			hoverText = Tab.label;
 		}
 
 		if (!string.IsNullOrWhiteSpace(hoverText))
