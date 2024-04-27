@@ -17,20 +17,20 @@ public class GameMenuLoadedHandler : IHandler
 {
 	private readonly IModHelper _helper;
 	private readonly IMonitor _monitor;
-	private readonly IEconomyService _economyService;
+	private readonly IForecastMenuService _forecastMenuService;
 	private Texture2D _menuTexture;
 	private ClickableComponent _tab;
 
 	public GameMenuLoadedHandler(
 		IModHelper helper,
 		IMonitor monitor,
-		IEconomyService economyService
+		IForecastMenuService forecastMenuService
 	)
 	{
 		_helper = helper;
 		_monitor = monitor;
-		_economyService = economyService;
-			
+		_forecastMenuService = forecastMenuService;
+
 		_tab = new ClickableComponent(
 			new Rectangle(0, 0, 64, 64), 
 			"forecast", 
@@ -71,7 +71,7 @@ public class GameMenuLoadedHandler : IHandler
 			return;
 		}
 
-		new ForecastMenu(_helper, _economyService, _monitor, new DrawTextHelper()).TakeOverMenuTab(gameMenu);
+		_forecastMenuService.CreateMenu().TakeOverMenuTab(gameMenu);
 	}
 
 	public void DrawTab(SpriteBatch batch)

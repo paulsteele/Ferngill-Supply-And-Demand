@@ -19,8 +19,8 @@ public class GameMenuRenderedHandlerTests : HarmonyTestBase
 	private MockDisplayEvents _mockDisplayEvents;
 	private MockInputEvents _mockInputEvents;
 	private Mock<IMonitor> _mockMonitor;
-	private Mock<IEconomyService> _mockEconomyService;
 	private Mock<ICursorPosition> _mockCursor;
+	private Mock<IForecastMenuService> _mockForecastMenuService;
 
 	private GameMenuLoadedHandler _gameMenuLoadedHandler;
 
@@ -30,7 +30,6 @@ public class GameMenuRenderedHandlerTests : HarmonyTestBase
 		base.Setup();
 
 		_mockMonitor = new Mock<IMonitor>();
-		_mockEconomyService = new Mock<IEconomyService>();
 		_mockModHelper = new Mock<IModHelper>();
 		_mockDisplayEvents = new MockDisplayEvents();
 		_mockInputEvents = new MockInputEvents();
@@ -62,7 +61,7 @@ public class GameMenuRenderedHandlerTests : HarmonyTestBase
 
 		_mockCursor.SetupGet(m => m.ScreenPixels).Returns(new Vector2(32, 32));
 
-		_gameMenuLoadedHandler = new GameMenuLoadedHandler(_mockModHelper.Object, _mockMonitor.Object, _mockEconomyService.Object);
+		_gameMenuLoadedHandler = new GameMenuLoadedHandler(_mockModHelper.Object, _mockMonitor.Object, _mockForecastMenuService.Object);
 		_gameMenuLoadedHandler.Register();
 	}
 

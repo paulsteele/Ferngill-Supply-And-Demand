@@ -9,12 +9,19 @@ namespace fse.core.patches
 		protected static IModHelper ModHelper;
 		protected static IMonitor Monitor;
 		protected static IEconomyService EconomyService;
+		protected static IForecastMenuService ForecastMenuService;
 
-		public static void Initialize(IModHelper modHelper, IEconomyService economyService, IMonitor monitor)
+		public static void Initialize(
+			IModHelper modHelper, 
+			IEconomyService economyService, 
+			IMonitor monitor,
+			IForecastMenuService forecastMenuService
+		)
 		{
 			ModHelper = modHelper;
 			EconomyService = economyService;
 			Monitor = monitor;
+			ForecastMenuService = forecastMenuService;
 		}
 
 		public abstract void Register(Harmony harmony);
