@@ -99,7 +99,7 @@ public class ForecastMenu : AbstractForecastMenu
 		else
 		{
 			_categories = new Dictionary<int, string>();
-			_allItems = Array.Empty<ItemModel>();
+			_allItems = [];
 		}
 	}
 

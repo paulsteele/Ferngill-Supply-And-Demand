@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewValley;
 using StardewValley.Menus;
@@ -33,6 +34,10 @@ public static class HarmonyGame
 		harmony.Patch(
 			AccessTools.Method(typeof(Game1), nameof(Game1.getFarm)),
 			prefix: new HarmonyMethod(typeof(HarmonyGame), nameof(MockGetFarm))
+		);
+		harmony.Patch(
+			AccessTools.Method(typeof(Game1), nameof(Game1.getSourceRectForStandardTileSheet)),
+			prefix: new HarmonyMethod(typeof(HarmonyGame), nameof(MockGetSourceRectForStandardTileSheet))
 		);
 		harmony.Patch(
 			AccessTools.Method(
@@ -114,6 +119,12 @@ public static class HarmonyGame
 	)
 	{
 		DrawDialogueBoxCalls.Add(new (x, y, width, height, speaker, drawOnlyBox));
+		return false;
+	}
+	
+	static bool MockGetSourceRectForStandardTileSheet(ref Rectangle __result)
+	{
+		__result = new Rectangle();
 		return false;
 	}
 }

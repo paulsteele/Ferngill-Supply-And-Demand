@@ -49,13 +49,90 @@ public class HarmonyIClickableMenu
 			}),
 			prefix: new HarmonyMethod(typeof(HarmonyIClickableMenu), nameof(MockDrawHoverText))
 		);
+		harmony.Patch(
+			AccessTools.Method(typeof(IClickableMenu), nameof(IClickableMenu.drawTextureBox), new []
+			{
+				typeof(SpriteBatch),
+				typeof(Texture2D),
+				typeof(Rectangle),
+				typeof(int),
+				typeof(int),
+				typeof(int),
+				typeof(int),
+				typeof(Color),
+				typeof(float),
+				typeof(bool),
+				typeof(float),
+			}),
+			prefix: new HarmonyMethod(typeof(HarmonyIClickableMenu), nameof(MockDrawTextureBox))
+		);
+		harmony.Patch(
+			AccessTools.Method(typeof(IClickableMenu), "drawHorizontalPartition", new []
+			{
+				typeof(SpriteBatch),
+				typeof(int),
+				typeof(bool),
+				typeof(int),
+				typeof(int),
+				typeof(int),
+			}),
+			prefix: new HarmonyMethod(typeof(HarmonyIClickableMenu), nameof(MockDrawHorizontalPartition))
+		);
+		harmony.Patch(
+			AccessTools.Method(typeof(IClickableMenu), "drawVerticalPartition", new []
+			{
+				typeof(SpriteBatch),
+				typeof(int),
+				typeof(bool),
+				typeof(int),
+				typeof(int),
+				typeof(int),
+				typeof(int),
+			}),
+			prefix: new HarmonyMethod(typeof(HarmonyIClickableMenu), nameof(MockDrawVerticalPartition))
+		);
 
-		DrawMouseCalls = new Dictionary<SpriteBatch, int>();
-		DrawHoverTextCalls = new Dictionary<SpriteBatch, string>();
+		DrawMouseCalls = new();
+		DrawHoverTextCalls = new();
+		DrawTextBoxCalls = new();
+		DrawHoriztonalPartitionCalls = new();
+		DrawVerticalPartitionCalls = new();
 	}
 
 	public static Dictionary<SpriteBatch, int> DrawMouseCalls;
 	public static Dictionary<SpriteBatch, string> DrawHoverTextCalls;
+	public static Dictionary<SpriteBatch, 
+		List<(
+			Texture2D texture,
+			Rectangle sourceRect,
+			int x,
+			int y,
+			int width,
+			int height,
+			Color color,
+			float scale,
+			bool drawShadow,
+			float draw_layer
+		)>> DrawTextBoxCalls;
+	
+	public static Dictionary<SpriteBatch, 
+		List<(
+			int yPosition,
+			bool small,
+			int red,
+			int green,
+			int blue
+		)>> DrawHoriztonalPartitionCalls;
+	
+	public static Dictionary<SpriteBatch, 
+		List<(
+			int xPosition,
+			bool small,
+			int red,
+			int green,
+			int blue,
+			int heightOverride
+		)>> DrawVerticalPartitionCalls;
 
 	static bool MockDrawMouse
 	(
@@ -78,6 +155,79 @@ public class HarmonyIClickableMenu
 		{
 			DrawHoverTextCalls[b] = text;
 		}
+
+		return false;
+	}
+	
+	static bool MockDrawTextureBox
+	(
+		SpriteBatch b,
+		Texture2D texture,
+		Rectangle sourceRect,
+		int x,
+		int y,
+		int width,
+		int height,
+		Color color,
+		float scale,
+		bool drawShadow,
+		// ReSharper disable once InconsistentNaming
+		float draw_layer
+	)
+	{
+		#pragma warning disable CA1854
+		if (!DrawTextBoxCalls.ContainsKey(b))
+		#pragma warning restore CA1854
+		{
+			DrawTextBoxCalls.Add(b, []);
+		}
+		
+		DrawTextBoxCalls[b].Add((texture, sourceRect, x, y, width, height, color, scale, drawShadow, draw_layer));
+
+		return false;
+	}
+	
+	static bool MockDrawHorizontalPartition
+	(
+		SpriteBatch b,
+		int yPosition,
+		bool small,
+		int red,
+		int green,
+		int blue
+	)
+	{
+		#pragma warning disable CA1854
+		if (!DrawHoriztonalPartitionCalls.ContainsKey(b))
+		#pragma warning restore CA1854
+		{
+			DrawHoriztonalPartitionCalls.Add(b, []);
+		}
+
+		DrawHoriztonalPartitionCalls[b].Add((yPosition, small, red, green, blue));
+
+		return false;
+	}
+	
+	static bool MockDrawVerticalPartition
+	(
+		SpriteBatch b,
+		int xPosition,
+		bool small,
+		int red,
+		int green,
+		int blue,
+		int heightOverride
+	)
+	{
+		#pragma warning disable CA1854
+		if (!DrawVerticalPartitionCalls.ContainsKey(b))
+		#pragma warning restore CA1854
+		{
+			DrawVerticalPartitionCalls.Add(b, []);
+		}
+
+		DrawVerticalPartitionCalls[b].Add((xPosition, small, red, green, blue, heightOverride));
 
 		return false;
 	}

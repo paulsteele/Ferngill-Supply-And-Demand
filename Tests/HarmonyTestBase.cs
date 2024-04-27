@@ -27,5 +27,7 @@ public class HarmonyTestBase
 		HarmonyMapPage.Setup(harmony);
 		HarmonyCollectionsPage.Setup(harmony);
 		HarmonyLetterViewMenu.Setup(harmony);
+		HarmonyOptionsDropDown.Setup(harmony);
+		HarmonyOptionsCheckbox.Setup(harmony);
 	}
 }
