@@ -6,7 +6,7 @@ namespace fse.core.services;
 
 public interface IForecastMenuService
 {
-	ForecastMenu CreateMenu();
+	AbstractForecastMenu CreateMenu();
 }
 
 public class ForecastMenuService(
@@ -16,5 +16,5 @@ public class ForecastMenuService(
 	IDrawTextHelper drawTextHelper
 ) : IForecastMenuService
 {
-	public ForecastMenu CreateMenu() => new ForecastMenu(modHelper, economyService, monitor, drawTextHelper);
+	public AbstractForecastMenu CreateMenu() => new ForecastMenu(modHelper, economyService, monitor, drawTextHelper);
 }

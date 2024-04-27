@@ -22,6 +22,9 @@ public static class HarmonyOptions
 			AccessTools.PropertyGetter(typeof(Options), nameof(Options.zoomLevel)),
 			prefix: new HarmonyMethod(typeof(HarmonyOptions), nameof(MockGetZoomLevel))
 		);
+
+		GetUiScaleResult = 1f;
+		GetZoomLevelResult = 1f;
 	}
 
 	static bool MockConstructor() => false;

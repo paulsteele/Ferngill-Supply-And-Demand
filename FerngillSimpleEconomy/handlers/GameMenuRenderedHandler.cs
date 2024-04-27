@@ -66,7 +66,7 @@ public class GameMenuLoadedHandler : IHandler
 			return;
 		}
 
-		if (gameMenu.pages[gameMenu.currentTab] is ForecastMenu)
+		if (gameMenu.pages[gameMenu.currentTab] is AbstractForecastMenu)
 		{
 			return;
 		}

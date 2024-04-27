@@ -12,7 +12,13 @@ using StardewValley.Menus;
 
 namespace fse.core.menu;
 
-public class ForecastMenu : IClickableMenu
+public abstract class AbstractForecastMenu : IClickableMenu
+{
+	public abstract void TakeOverMenuTab(GameMenu gameMenu);
+	public abstract void DrawSupplyBar(SpriteBatch batch, int startingX, int startingY, int endingX, int barHeight, ItemModel model);
+}
+
+public class ForecastMenu : AbstractForecastMenu
 {
 	private readonly IModHelper _helper;
 	private readonly IEconomyService _economyService;
@@ -124,7 +130,7 @@ public class ForecastMenu : IClickableMenu
 		}
 	}
 
-	public void TakeOverMenuTab(GameMenu gameMenu)
+	public override void TakeOverMenuTab(GameMenu gameMenu)
 	{
 		_hiddenMenu = gameMenu;
 		Game1.activeClickableMenu = this;
@@ -546,7 +552,7 @@ public class ForecastMenu : IClickableMenu
 		_drawTextHelper.DrawAlignedText(batch, xPositionOnScreen + DividerWidth + Divider2 + ((Divider3 - Divider2) / 2), textCenterLine, pricePerDayDisplay, DrawTextHelper.DrawTextAlignment.Middle, DrawTextHelper.DrawTextAlignment.Middle, false);
 	}
 
-	public void DrawSupplyBar(SpriteBatch batch, int startingX, int startingY, int endingX, int barHeight, ItemModel model)
+	public override void DrawSupplyBar(SpriteBatch batch, int startingX, int startingY, int endingX, int barHeight, ItemModel model)
 	{
 		var barWidth = ((endingX - startingX) / 10) * 10;
 		var percentage = Math.Min(model.Supply / (float)ConfigModel.Instance.MaxCalculatedSupply, 1);
