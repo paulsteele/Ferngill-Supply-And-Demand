@@ -68,6 +68,54 @@ public class DrawTextHelperTests : HarmonyTestBase
 		100,
 		-300
 	)]
+	[TestCase(
+		100, 
+		200, 
+		"test", 
+		300, 
+		500,
+		DrawTextHelper.DrawTextAlignment.Middle,
+		DrawTextHelper.DrawTextAlignment.Start,
+		true,
+		-90,
+		-848,
+		380,
+		628,
+		-50,
+		-300
+	)]
+	[TestCase(
+		100, 
+		200, 
+		"test", 
+		300, 
+		500,
+		DrawTextHelper.DrawTextAlignment.Start,
+		DrawTextHelper.DrawTextAlignment.Middle,
+		true,
+		60,
+		-598,
+		380,
+		628,
+		100,
+		-50
+	)]
+	[TestCase(
+		100, 
+		200, 
+		"test", 
+		300, 
+		500,
+		DrawTextHelper.DrawTextAlignment.Start,
+		DrawTextHelper.DrawTextAlignment.End,
+		true,
+		60,
+		-348,
+		380,
+		628,
+		100,
+		200
+	)]
 	public void ShouldDrawText(
 		int x, 
 		int y, 

@@ -1,6 +1,7 @@
 ﻿using HarmonyLib;
 using Microsoft.Xna.Framework.Graphics;
 using StardewValley;
+using StardewValley.Menus;
 using StardewValley.Network;
 
 namespace Tests.HarmonyMocks;
@@ -12,6 +13,14 @@ public static class HarmonyGame
 		harmony.Patch(
 			AccessTools.PropertyGetter(typeof(Game1), nameof(Game1.player)),
 			prefix: new HarmonyMethod(typeof(HarmonyGame), nameof(MockGetPlayer))
+		);
+		harmony.Patch(
+			AccessTools.PropertyGetter(typeof(Game1), nameof(Game1.activeClickableMenu)),
+			prefix: new HarmonyMethod(typeof(HarmonyGame), nameof(MockGetActiveClickableMenu))
+		);
+		harmony.Patch(
+			AccessTools.PropertyGetter(typeof(Game1), nameof(Game1.options)),
+			prefix: new HarmonyMethod(typeof(HarmonyGame), nameof(MockGetOptions))
 		);
 		harmony.Patch(
 			AccessTools.Method(typeof(Game1), nameof(Game1.getOnlineFarmers)),
@@ -46,7 +55,6 @@ public static class HarmonyGame
 				}
 			),
 			prefix: new HarmonyMethod(typeof(HarmonyGame), nameof(MockDrawDialogueBox))
-			
 		);
 		DrawDialogueBoxCalls.Clear();
 	}
@@ -76,6 +84,19 @@ public static class HarmonyGame
 	static bool MockGetFarm(ref Farm __result)
 	{
 		__result = GetFarmResult;
+		return false;
+	}
+	
+	public static IClickableMenu GetActiveClickableMenuResult { get; set; }
+	static bool MockGetActiveClickableMenu(ref IClickableMenu __result)
+	{
+		__result = GetActiveClickableMenuResult;
+		return false;
+	}
+	public static Options GetOptionsResult { get; set; }
+	static bool MockGetOptions(ref Options __result)
+	{
+		__result = GetOptionsResult;
 		return false;
 	}
 

@@ -20,5 +20,7 @@ public class HarmonyTestBase
 		HarmonySpriteFont.Setup(harmony);
 		HarmonyUtility.Setup(harmony);
 		HarmonySpriteBatch.Setup(harmony);
+		HarmonyGameMenu.Setup(harmony);
+		HarmonyOptions.Setup(harmony);
 	}
 }
