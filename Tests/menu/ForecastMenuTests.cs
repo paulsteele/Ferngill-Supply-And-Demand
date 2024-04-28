@@ -2,6 +2,7 @@
 using fse.core.menu;
 using fse.core.models;
 using fse.core.services;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Moq;
 using StardewModdingAPI;
@@ -68,6 +69,7 @@ public class ForecastMenuTests : HarmonyTestBase
 		_economyServiceMock.Setup(m => m.ItemValidForSeason(It.IsAny<ItemModel>(), It.IsAny<Seasons>())).Returns(true);
 
 		HarmonyGame.GetOptionsResult = new Options();
+		Game1.graphics = new GraphicsDeviceManager(null);
 
 		_batch = new SpriteBatch(null, 0);
 		_menu = new ForecastMenu(_helperMock.Object, _economyServiceMock.Object, _monitorMock.Object, _drawTextHelperMock.Object);
@@ -79,9 +81,28 @@ public class ForecastMenuTests : HarmonyTestBase
 		_batch.Dispose();
 	}
 
-	[Test]
-	public void ShouldDrawAtCorrectPlace()
+	[TestCase(1080, 620, 0, 0, 0, 0)]
+	public void ShouldSetupPositionAndSize
+	(
+		int screenWidth,
+		int screenHeight,
+		int expectedWidth,
+		int expectedHeight,
+		int expectedX,
+		int expectedY
+	)
 	{
+		Game1.uiViewport.Width = screenWidth;
+		Game1.uiViewport.Height = screenHeight;
+
 		_menu.draw(_batch);
+		
+		Assert.Multiple(() =>
+		{
+			Assert.That(_menu.width, Is.EqualTo(expectedWidth), "Menu width does not match expectation");
+			Assert.That(_menu.height, Is.EqualTo(expectedHeight), "Menu height does not match expectation");
+			Assert.That(_menu.xPositionOnScreen, Is.EqualTo(expectedX), "Menu x-coordinate does not match expectation");
+			Assert.That(_menu.yPositionOnScreen, Is.EqualTo(expectedY), "Menu y-coordinate does not match expectation");
+		});
 	}
 }

@@ -28,6 +28,16 @@ public class HarmonySpriteBatch
 			}),
 			prefix: new HarmonyMethod(typeof(HarmonySpriteBatch), nameof(MockDraw))
 		);
+		harmony.Patch(
+			AccessTools.Method(typeof(SpriteBatch), nameof(SpriteBatch.Draw),new []
+			{
+				typeof(Texture2D),
+				typeof(Rectangle),
+				typeof(Rectangle),
+				typeof(Color),
+			}),
+			prefix: new HarmonyMethod(typeof(HarmonySpriteBatch), nameof(MockDrawSmall))
+		);
 
 		DrawCalls = new();
 	}
@@ -38,6 +48,7 @@ public class HarmonySpriteBatch
 		List<(
 		Texture2D texture,
 		Vector2 position,
+		Rectangle? destinationRectangle,
 		Rectangle? sourceRectangle,
 		Color color,
 		float rotation,
@@ -65,7 +76,25 @@ public class HarmonySpriteBatch
 			DrawCalls.Add(__instance, []);
 		}
 		
-		DrawCalls[__instance].Add((texture, position, sourceRectangle, color, rotation, origin, scale, effects, layerDepth));
+		DrawCalls[__instance].Add((texture, position, null, sourceRectangle, color, rotation, origin, scale, effects, layerDepth));
+		
+		return false;
+	}
+	
+	static bool MockDrawSmall(
+		SpriteBatch __instance,
+		Texture2D texture,
+		Rectangle destinationRectangle,
+		Rectangle? sourceRectangle,
+		Color color
+	)
+	{
+		if (!DrawCalls.ContainsKey(__instance))
+		{
+			DrawCalls.Add(__instance, []);
+		}
+		
+		DrawCalls[__instance].Add((texture, Vector2.Zero, destinationRectangle, sourceRectangle, color, -1, Vector2.Zero, -1, SpriteEffects.None, -1));
 		
 		return false;
 	}

@@ -44,6 +44,10 @@
 				<HintPath Condition="Exists('C:\Program Files (x86)\Steam\steamapps\common\Stardew Valley\MonoGame.Framework.dll')">C:\Program Files (x86)\Steam\steamapps\common\Stardew Valley\MonoGame.Framework.dll</HintPath>
 				<HintPath Condition="Exists('../../../Library/Application Support/Steam/steamapps/common/Stardew Valley/Contents/MacOS/MonoGame.Framework.dll')">../../../Library/Application Support/Steam/steamapps/common/Stardew Valley/Contents/MacOS/MonoGame.Framework.dll</HintPath>
 			</Reference>
+			<Reference Include="xTile">
+				<HintPath Condition="Exists('C:\Program Files (x86)\Steam\steamapps\common\Stardew Valley\xTile.dll')">C:\Program Files (x86)\Steam\steamapps\common\Stardew Valley\xTile.dll</HintPath>
+				<HintPath Condition="Exists('../../../Library/Application Support/Steam/steamapps/common/Stardew Valley/Contents/MacOS/xTile.dll')">../../../Library/Application Support/Steam/steamapps/common/Stardew Valley/Contents/MacOS/xTile.dll</HintPath>
+			</Reference>
     </ItemGroup>
 
     <ItemGroup>

@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Tests.HarmonyMocks;
@@ -14,6 +15,13 @@ public class HarmonyTexture2D
 				typeof(int),
 				typeof(int),
 			}),
+			prefix: new HarmonyMethod(typeof(HarmonyTexture2D), nameof(MockConstructor))
+		);
+
+		harmony.Patch(
+			typeof(Texture2D).GetMethods()
+				.First(m => m.Name == nameof(Texture2D.SetData) && m.GetParameters().Length == 1)
+				.MakeGenericMethod(typeof(Color)),
 			prefix: new HarmonyMethod(typeof(HarmonyTexture2D), nameof(MockConstructor))
 		);
 	}

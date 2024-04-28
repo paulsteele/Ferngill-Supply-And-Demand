@@ -29,5 +29,6 @@ public class HarmonyTestBase
 		HarmonyLetterViewMenu.Setup(harmony);
 		HarmonyOptionsDropDown.Setup(harmony);
 		HarmonyOptionsCheckbox.Setup(harmony);
+		HarmonyGraphicsDeviceManager.Setup(harmony);
 	}
 }
