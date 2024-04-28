@@ -40,6 +40,10 @@ public static class HarmonyGame
 			prefix: new HarmonyMethod(typeof(HarmonyGame), nameof(MockGetSourceRectForStandardTileSheet))
 		);
 		harmony.Patch(
+			AccessTools.Method(typeof(Game1), nameof(Game1.playSound), new []{typeof(string), typeof(int?)}),
+			prefix: new HarmonyMethod(typeof(HarmonyGame), nameof(MockPlaySound))
+		);
+		harmony.Patch(
 			AccessTools.Method(
 				typeof(Game1), 
 				nameof(Game1.drawDialogueBox), 
@@ -125,6 +129,11 @@ public static class HarmonyGame
 	static bool MockGetSourceRectForStandardTileSheet(ref Rectangle __result)
 	{
 		__result = new Rectangle();
+		return false;
+	}
+	
+	static bool MockPlaySound(string cueName)
+	{
 		return false;
 	}
 }

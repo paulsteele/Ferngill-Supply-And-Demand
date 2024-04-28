@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewValley.Menus;
 
@@ -41,6 +42,7 @@ public class HarmonyOptionsCheckbox
 			int y
 		)
 	{
+		__instance.bounds = new Rectangle(x, y, 0, 0);
 		if (!ConstructorCalls.ContainsKey(__instance))
 		{
 			ConstructorCalls.Add(__instance, []);

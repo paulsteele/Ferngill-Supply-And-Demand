@@ -30,5 +30,6 @@ public class HarmonyTestBase
 		HarmonyOptionsDropDown.Setup(harmony);
 		HarmonyOptionsCheckbox.Setup(harmony);
 		HarmonyGraphicsDeviceManager.Setup(harmony);
+		HarmonyClickableTextureComponent.Setup(harmony);
 	}
 }

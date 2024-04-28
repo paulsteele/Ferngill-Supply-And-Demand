@@ -94,7 +94,7 @@ public class HarmonyIClickableMenu
 
 		DrawMouseCalls = new();
 		DrawHoverTextCalls = new();
-		DrawTextBoxCalls = new();
+		DrawTextureBoxCalls = new();
 		DrawHoriztonalPartitionCalls = new();
 		DrawVerticalPartitionCalls = new();
 	}
@@ -113,10 +113,12 @@ public class HarmonyIClickableMenu
 			float scale,
 			bool drawShadow,
 			float draw_layer
-		)>> DrawTextBoxCalls;
+		)>> DrawTextureBoxCalls;
 	
 	public static Dictionary<SpriteBatch, 
 		List<(
+			int height,
+			int yPositionOnScreen,
 			int yPosition,
 			bool small,
 			int red,
@@ -126,6 +128,8 @@ public class HarmonyIClickableMenu
 	
 	public static Dictionary<SpriteBatch, 
 		List<(
+			int height,
+			int yPositionOnScreen,
 			int xPosition,
 			bool small,
 			int red,
@@ -176,19 +180,20 @@ public class HarmonyIClickableMenu
 	)
 	{
 		#pragma warning disable CA1854
-		if (!DrawTextBoxCalls.ContainsKey(b))
+		if (!DrawTextureBoxCalls.ContainsKey(b))
 		#pragma warning restore CA1854
 		{
-			DrawTextBoxCalls.Add(b, []);
+			DrawTextureBoxCalls.Add(b, []);
 		}
 		
-		DrawTextBoxCalls[b].Add((texture, sourceRect, x, y, width, height, color, scale, drawShadow, draw_layer));
+		DrawTextureBoxCalls[b].Add((texture, sourceRect, x, y, width, height, color, scale, drawShadow, draw_layer));
 
 		return false;
 	}
 	
 	static bool MockDrawHorizontalPartition
 	(
+		IClickableMenu __instance,
 		SpriteBatch b,
 		int yPosition,
 		bool small,
@@ -204,13 +209,14 @@ public class HarmonyIClickableMenu
 			DrawHoriztonalPartitionCalls.Add(b, []);
 		}
 
-		DrawHoriztonalPartitionCalls[b].Add((yPosition, small, red, green, blue));
+		DrawHoriztonalPartitionCalls[b].Add((__instance.height, __instance.yPositionOnScreen, yPosition, small, red, green, blue));
 
 		return false;
 	}
 	
 	static bool MockDrawVerticalPartition
 	(
+		IClickableMenu __instance,
 		SpriteBatch b,
 		int xPosition,
 		bool small,
@@ -227,7 +233,7 @@ public class HarmonyIClickableMenu
 			DrawVerticalPartitionCalls.Add(b, []);
 		}
 
-		DrawVerticalPartitionCalls[b].Add((xPosition, small, red, green, blue, heightOverride));
+		DrawVerticalPartitionCalls[b].Add((__instance.height, __instance.yPositionOnScreen, xPosition, small, red, green, blue, heightOverride));
 
 		return false;
 	}
