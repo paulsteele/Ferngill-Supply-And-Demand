@@ -35,7 +35,7 @@ namespace fse.core.models
 		}
 
 		private static bool DictionariesContainSameKeys<TKey, TVal>(Dictionary<TKey, TVal> first,
-			Dictionary<TKey, TVal> second) => first.Count == second.Count && first.Keys.All(second.ContainsKey);
+			IReadOnlyDictionary<TKey, TVal> second) => first.Count == second.Count && first.Keys.All(second.ContainsKey);
 
 		public void ForAllItems(Action<ItemModel> action)
 		{
@@ -45,18 +45,11 @@ namespace fse.core.models
 			}
 		}
 
-		public ItemModel GetItem(Object obj)
-		{
-			if (!CategoryEconomies.ContainsKey(obj.Category))
-			{
-				return null;
-			}
+		public ItemModel GetItem(Object obj) => 
+			CategoryEconomies.TryGetValue(obj.Category, out var category) 
+				? category.GetValueOrDefault(obj.ItemId) 
+				: null;
 
-			var category = CategoryEconomies[obj.Category];
-			
-			return !category.ContainsKey(obj.ItemId) ? null : category[obj.ItemId];
-		}
-		
 		public void GenerateSeedMapping()
 		{
 			var cropData = Game1.content.Load<Dictionary<string, CropData>>("Data\\Crops");
@@ -100,9 +93,9 @@ namespace fse.core.models
 			}
 		}
 
-		public ItemModel GetItemModelFromSeedId(string seed) => SeedToItem.TryGetValue(seed, out var model) ? model : default;
-		public SeedModel GetSeedModelFromModelId(string modelId) => ItemToSeed.TryGetValue(modelId, out var model) ? model : default;
-		public FishModel GetFishModelFromModelId(string modelId) => ItemToFish.TryGetValue(modelId, out var model) ? model : default;
+		public ItemModel GetItemModelFromSeedId(string seed) => SeedToItem.GetValueOrDefault(seed);
+		public SeedModel GetSeedModelFromModelId(string modelId) => ItemToSeed.GetValueOrDefault(modelId);
+		public FishModel GetFishModelFromModelId(string modelId) => ItemToFish.GetValueOrDefault(modelId);
 
 		public void AdvanceOneDay()
 		{
