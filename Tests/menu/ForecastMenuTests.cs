@@ -178,7 +178,6 @@ public class ForecastMenuTests : HarmonyTestBase
 		{
 			models.Add(new ItemModel {DailyDelta = i * 100, ObjectId = i.ToString(), Supply = i * 100});
 		}
-
 		
 		_economyServiceMock.Setup(m => m.GetItemsForCategory(1)).Returns(models.ToArray);
 		_menu = new ForecastMenu(_helperMock.Object, _economyServiceMock.Object, _monitorMock.Object, _drawTextHelperMock.Object);
@@ -526,5 +525,233 @@ public class ForecastMenuTests : HarmonyTestBase
 			Assert.That(exitButton.bounds.X, Is.EqualTo(x));
 			Assert.That(exitButton.bounds.Y, Is.EqualTo(y)); 
 		}); 
+	}
+
+	[TestCase(1, 10, 100, 1000, 10, 92, 25, 229, 0, 0, 1, 0, 1008, 204, 582, 802)]
+	[TestCase(1, 20, 100, 1000, 10, 92, 25, 229, 0, 0, 2, 0, 998, 204, 582, 802)]
+	[TestCase(1, 30, 100, 1000, 10, 92, 25, 229, 0, 0, 3, 0, 988, 204, 582, 802)]
+	[TestCase(1, -10, 100, 1000, 10, 92, 25, 229, 0, 1, 0, 998, 0, 204, 582, 802)]
+	[TestCase(1, -20, 100, 1000, 10, 92, 25, 229, 0, 2, 0, 1008, 0, 204, 582, 802)]
+	[TestCase(1, -30, 100, 1000, 10, 92, 25, 229, 0, 3, 0, 1018, 0, 204, 582, 802)]
+	[TestCase(1, 10, 100, 100, -1, 92, 25, 229, 0, 0, 1, 0, 1008, 204, 582, 802)]
+	[TestCase(1, 10, 500, 1000, 10, 460, 127, 127, 0, 0, 1, 0, 1376, 204, 582, 802)]
+	[TestCase(2, 10, 100, 1000, 10, 92, 25, 229, 0, 0, 1, 0, 1008, 204, 582, 802)]
+	public void ShouldDrawRow
+	(
+		int expectedRows,
+		int delta,
+		int supply,
+		int sellPrice,
+		int sellPricePerDay,
+		int expectedBarWidth,
+		int expectedBarColorRed,
+		int expectedBarColorGreen,
+		int expectedBarColorBlue,
+		int expectedLeftArrowCalls,
+		int expectedRightArrowCalls,
+		int expectedLeftArrowLocation,
+		int expectedRightArrowLocation,
+		int expectedNameLocation,
+		int expectedPriceLocation,
+		int expectedPerDayLocation
+	)
+	{
+		ConfigModel.Instance.MinDelta = -1000;
+		Game1.uiViewport.Width = 2000;
+		Game1.uiViewport.Height = 620 * expectedRows;
+
+		var models = new List<ItemModel>
+		{
+			new ItemModel {DailyDelta = delta, ObjectId = sellPrice.ToString(), Supply = supply},
+			new ItemModel {DailyDelta = delta, ObjectId = sellPrice.ToString(), Supply = supply},
+		};
+
+		_economyServiceMock.Setup(m => m.GetPricePerDay(models[0])).Returns(sellPricePerDay);
+		_economyServiceMock.Setup(m => m.GetPricePerDay(models[1])).Returns(sellPricePerDay);
+
+		_economyServiceMock.Setup(m => m.GetItemsForCategory(1)).Returns(models.ToArray);
+		_menu = new ForecastMenu(_helperMock.Object, _economyServiceMock.Object, _monitorMock.Object, _drawTextHelperMock.Object);
+		
+		_menu.draw(_batch);
+
+		var drawIconLocation = HarmonyObject.DrawInMenuCalls[models[0].GetObjectInstance()].First();
+		Assert.Multiple(() =>
+		{
+		 Assert.That(drawIconLocation.X, Is.EqualTo(140f));
+		 Assert.That(drawIconLocation.Y, Is.EqualTo(370f));
+		});
+		
+		Assert.That(HarmonyIClickableMenu.DrawHoriztonalPartitionCalls[_batch], Has.Count.EqualTo(2 * expectedRows));
+
+		// ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+		var supplyBarCalls = HarmonySpriteBatch.DrawCalls[_batch].Where(b => b.texture != null).ToArray();
+		var backs = supplyBarCalls.Where((_, i) => i % 2 == 0).ToArray();
+		var fronts = supplyBarCalls.Where((_, i) => i % 2 == 1).ToArray();
+
+		Assert.Multiple(() =>
+		{ 
+			Assert.That(backs, Has.Length.EqualTo(expectedRows)); 
+			Assert.That(fronts, Has.Length.EqualTo(expectedRows));
+			
+			Assert.That(backs[0].destinationRectangle, Is.EqualTo(new Rectangle(930, 402, 920, 32)));
+			Assert.That(backs[0].sourceRectangle, Is.EqualTo(new Rectangle(0, 0, 920, 32)));
+			Assert.That(backs[0].color, Is.EqualTo(Color.White));
+			
+			Assert.That(fronts[0].destinationRectangle, Is.EqualTo(new Rectangle(930, 402, expectedBarWidth, 32)));
+			Assert.That(fronts[0].sourceRectangle, Is.EqualTo(new Rectangle(0, 0, expectedBarWidth, 32)));
+			Assert.That(fronts[0].color, Is.EqualTo(new Color(expectedBarColorRed, expectedBarColorGreen, expectedBarColorBlue, 255)));
+		});
+		if (expectedRows > 1)
+		{ 
+			Assert.Multiple(() => 
+			{
+				Assert.That(backs[1].destinationRectangle, Is.EqualTo(new Rectangle(930, 542, 920, 32)));
+				Assert.That(backs[1].sourceRectangle, Is.EqualTo(new Rectangle(0, 0, 920, 32)));
+				Assert.That(backs[1].color, Is.EqualTo(Color.White));
+
+				Assert.That(fronts[1].destinationRectangle, Is.EqualTo(new Rectangle(930, 542, expectedBarWidth, 32)));
+				Assert.That(fronts[1].sourceRectangle, Is.EqualTo(new Rectangle(0, 0, expectedBarWidth, 32)));
+				Assert.That(fronts[1].color, Is.EqualTo(new Color(expectedBarColorRed, expectedBarColorGreen, expectedBarColorBlue, 255)));
+			});
+		}
+
+		var negativeDeltaArrows = HarmonyClickableTextureComponent.DrawCalls.Keys.FirstOrDefault(c => c.name == "left-arrow");
+		
+		if (expectedLeftArrowCalls != 0)
+		{ 
+			Assert.Multiple(() => 
+			{
+				Assert.That(HarmonyClickableTextureComponent.DrawCalls[negativeDeltaArrows!], Is.EqualTo(expectedLeftArrowCalls));
+				Assert.That(negativeDeltaArrows!.bounds.X, Is.EqualTo(expectedLeftArrowLocation));
+				Assert.That(negativeDeltaArrows.bounds.Y, Is.EqualTo(370)); 
+			});
+		}
+		else
+		{
+			Assert.That(negativeDeltaArrows, Is.Null);
+		}
+		
+		var positiveDeltaArrows = HarmonyClickableTextureComponent.DrawCalls.Keys.FirstOrDefault(c => c.name == "right-arrow");
+		
+		if (expectedRightArrowCalls != 0)
+		{ 
+			Assert.Multiple(() => 
+			{
+				Assert.That(HarmonyClickableTextureComponent.DrawCalls[positiveDeltaArrows!], Is.EqualTo(expectedRightArrowCalls));
+				Assert.That(positiveDeltaArrows!.bounds.X, Is.EqualTo(expectedRightArrowLocation));
+				Assert.That(positiveDeltaArrows.bounds.Y, Is.EqualTo(370)); 
+			});
+		}
+		else
+		{
+			Assert.That(positiveDeltaArrows, Is.Null);
+		}
+
+		if (expectedRows > 1)
+		{
+			var negativeDeltaArrow2 = HarmonyClickableTextureComponent.DrawCalls.Keys.Where(c => c.name == "left-arrow").Skip(1).FirstOrDefault();
+			
+			if (expectedLeftArrowCalls != 0)
+			{ 
+				Assert.Multiple(() => 
+				{
+					Assert.That(HarmonyClickableTextureComponent.DrawCalls[negativeDeltaArrow2!], Is.EqualTo(expectedLeftArrowCalls));
+					Assert.That(negativeDeltaArrow2!.bounds.X, Is.EqualTo(expectedLeftArrowLocation));
+					Assert.That(negativeDeltaArrow2.bounds.Y, Is.EqualTo(510)); 
+				});
+			}
+			else
+			{
+				Assert.That(negativeDeltaArrow2, Is.Null);
+			}
+			
+			var positiveDeltaArrow2 = HarmonyClickableTextureComponent.DrawCalls.Keys.Where(c => c.name == "right-arrow").Skip(1).FirstOrDefault();
+			
+			if (expectedRightArrowCalls != 0)
+			{ 
+				Assert.Multiple(() => 
+				{
+					Assert.That(HarmonyClickableTextureComponent.DrawCalls[positiveDeltaArrow2!], Is.EqualTo(expectedRightArrowCalls));
+					Assert.That(positiveDeltaArrow2!.bounds.X, Is.EqualTo(expectedRightArrowLocation));
+					Assert.That(positiveDeltaArrow2.bounds.Y, Is.EqualTo(510)); 
+				});
+			}
+			else
+			{
+				Assert.That(positiveDeltaArrows, Is.Null);
+			}
+		}
+		
+		_drawTextHelperMock.Verify(m => m.DrawAlignedText
+			(
+				_batch,
+				expectedNameLocation,
+				410,
+				$"display-{sellPrice}",
+				DrawTextHelper.DrawTextAlignment.Start,
+				DrawTextHelper.DrawTextAlignment.Middle,
+				false
+			)
+		);
+		
+		_drawTextHelperMock.Verify(m => m.DrawAlignedText
+			(
+				_batch,
+				expectedPriceLocation,
+				410,
+				sellPrice.ToString(),
+				DrawTextHelper.DrawTextAlignment.Middle,
+				DrawTextHelper.DrawTextAlignment.Middle,
+				false
+			)
+		);
+		
+		_drawTextHelperMock.Verify(m => m.DrawAlignedText
+			(
+				_batch,
+				expectedPerDayLocation,
+				410,
+				sellPricePerDay != -1 ? sellPricePerDay.ToString() : "---",
+				DrawTextHelper.DrawTextAlignment.Middle,
+				DrawTextHelper.DrawTextAlignment.Middle,
+				false
+			)
+		);
+		
+		_drawTextHelperMock.Verify(m => m.DrawAlignedText
+			(
+				_batch,
+				expectedNameLocation,
+				550,
+				$"display-{sellPrice}",
+				DrawTextHelper.DrawTextAlignment.Start,
+				DrawTextHelper.DrawTextAlignment.Middle,
+				false
+			), Times.Exactly(expectedRows > 1 ? 1 : 0)
+		);
+		
+		_drawTextHelperMock.Verify(m => m.DrawAlignedText
+			(
+				_batch,
+				expectedPriceLocation,
+				550,
+				sellPrice.ToString(),
+				DrawTextHelper.DrawTextAlignment.Middle,
+				DrawTextHelper.DrawTextAlignment.Middle,
+				false
+			), Times.Exactly(expectedRows > 1 ? 1 : 0)
+		);
+		
+		_drawTextHelperMock.Verify(m => m.DrawAlignedText
+			(
+				_batch,
+				expectedPerDayLocation,
+				550,
+				sellPricePerDay != -1 ? sellPricePerDay.ToString() : "---",
+				DrawTextHelper.DrawTextAlignment.Middle,
+				DrawTextHelper.DrawTextAlignment.Middle,
+				false
+			), Times.Exactly(expectedRows > 1 ? 1 : 0)
+		);
 	}
 }

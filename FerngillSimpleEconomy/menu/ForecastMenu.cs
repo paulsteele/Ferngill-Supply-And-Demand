@@ -616,7 +616,7 @@ public class ForecastMenu : AbstractForecastMenu
 
 		if (model.DailyDelta < 0)
 		{
-			var leftArrow = new ClickableTextureComponent("up-arrow", location, "", "", Game1.mouseCursors,
+			var leftArrow = new ClickableTextureComponent("left-arrow", location, "", "", Game1.mouseCursors,
 				new Rectangle(352, 495, 12, 11), Game1.pixelZoom * .75f);
 			leftArrow.bounds.X -= 30;
 			if (model.DailyDelta < -20)
@@ -636,7 +636,7 @@ public class ForecastMenu : AbstractForecastMenu
 		}
 		else
 		{
-			var rightArrow = new ClickableTextureComponent("down-arrow", location, "", "", Game1.mouseCursors,
+			var rightArrow = new ClickableTextureComponent("right-arrow", location, "", "", Game1.mouseCursors,
 				new Rectangle(365, 495, 12, 11), Game1.pixelZoom * .75f);
 			if (model.DailyDelta > 20)
 			{
