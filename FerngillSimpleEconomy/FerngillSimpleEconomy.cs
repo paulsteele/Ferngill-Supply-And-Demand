@@ -15,12 +15,16 @@ namespace fse.core
 		private MultiplayerService _multiplayerService;
 		private EconomyService _economyService;
 		private ForecastMenuService _forecastMenuService;
+		private SeedService _seedService;
+		private FishService _fishService;
 
 		public override void Entry(IModHelper helper)
 		{
 			ConfigModel.Instance = helper.ReadConfig<ConfigModel>();
 			_multiplayerService = new MultiplayerService(helper);
-			_economyService = new EconomyService(helper, Monitor, _multiplayerService);
+			_seedService = new SeedService();
+			_fishService = new FishService();
+			_economyService = new EconomyService(helper, Monitor, _multiplayerService, _fishService, _seedService);
 			_forecastMenuService = new ForecastMenuService(helper, _economyService, Monitor, new DrawTextHelper());
 			RegisterPatches(helper);
 			RegisterHandlers(helper);

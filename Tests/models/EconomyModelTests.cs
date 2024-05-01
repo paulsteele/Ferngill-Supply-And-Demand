@@ -1,7 +1,5 @@
 ﻿using fse.core.models;
 using StardewValley;
-using StardewValley.GameData.Crops;
-using Tests.HarmonyMocks;
 using Object = StardewValley.Object;
 
 namespace Tests.models;
@@ -9,7 +7,7 @@ namespace Tests.models;
 [TestFixture]
 public class EconomyModelTests : HarmonyTestBase
 {
-	public EconomyModel _economyModel;
+	private EconomyModel _economyModel;
 	
 	private ItemModel _itemModel1;
 	private ItemModel _itemModel2;
@@ -81,10 +79,18 @@ public class EconomyModelTests : HarmonyTestBase
  }
 
 	[Test]
-	public void ShouldBeAbleToGetSeedFromItem()
+	public void ShouldBeAbleToActOnAllItems()
 	{
-		HarmonyLocalizedContentManager.LoadResult = new Dictionary<string, CropData>();
-		
-		_economyModel.GenerateSeedMapping();
+		var objSupply = 400;
+		_economyModel.ForAllItems(i => i.Supply = objSupply);
+
+		Assert.Multiple(() =>
+		{
+			Assert.That(_itemModel1.Supply, Is.EqualTo(objSupply));
+			Assert.That(_itemModel2.Supply, Is.EqualTo(objSupply));
+			Assert.That(_itemModel3.Supply, Is.EqualTo(objSupply));
+			Assert.That(_itemModel4.Supply, Is.EqualTo(objSupply));
+			Assert.That(_itemModel5.Supply, Is.EqualTo(objSupply));
+		});
 	}
 }

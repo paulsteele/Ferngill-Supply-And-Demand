@@ -28,9 +28,15 @@ public interface IEconomyService
 	int GetPricePerDay(ItemModel model);
 }
 
-public class EconomyService(IModHelper modHelper, IMonitor monitor, IMultiplayerService multiplayerService) : IEconomyService
+public class EconomyService(
+	IModHelper modHelper, 
+	IMonitor monitor, 
+	IMultiplayerService multiplayerService,
+	IFishService fishService,
+	ISeedService seedService
+) : IEconomyService
 {
-	private readonly Dictionary<int, List<int>> CategoryMapping = new();
+	private readonly Dictionary<int, List<int>> _categoryMapping = new();
 
 	public bool Loaded { get; private set; }
 
@@ -77,8 +83,8 @@ public class EconomyService(IModHelper modHelper, IMonitor monitor, IMultiplayer
 	private void EconomySetup()
 	{
 		ConsolidateEconomyCategories();
-		Economy.GenerateSeedMapping();
-		Economy.GenerateFishMapping();
+		seedService.GenerateSeedMapping(Economy);
+		fishService.GenerateFishMapping(Economy);
 		Economy.UpdateAllMultipliers();
 	}
 
@@ -95,7 +101,7 @@ public class EconomyService(IModHelper modHelper, IMonitor monitor, IMultiplayer
 			var key = categories[0];
 			var remainingCategories = categories.Skip(1).ToList();
 				
-			CategoryMapping.TryAdd(key, remainingCategories);
+			_categoryMapping.TryAdd(key, remainingCategories);
 		}
 	}
 
@@ -199,9 +205,9 @@ public class EconomyService(IModHelper modHelper, IMonitor monitor, IMultiplayer
 			: Array.Empty<ItemModel>();
 
 		return 
-			!CategoryMapping.ContainsKey(category) 
+			!_categoryMapping.ContainsKey(category) 
 				? items 
-				: CategoryMapping[category]
+				: _categoryMapping[category]
 					.Aggregate(items, (current, adjacentCategory) => current.Concat(Economy.CategoryEconomies[adjacentCategory].Values).ToArray());
 	}
 
@@ -298,9 +304,9 @@ public class EconomyService(IModHelper modHelper, IMonitor monitor, IMultiplayer
 		}
 	}
 
-	public ItemModel GetItemModelFromSeed(string seed) => Economy.GetItemModelFromSeedId(seed);
-	private SeedModel GetSeedModelFromItem(string item) => Economy.GetSeedModelFromModelId(item);
-	private FishModel GetFishModelFromItem(string item) => Economy.GetFishModelFromModelId(item);
+	public ItemModel GetItemModelFromSeed(string seed) => seedService.GetItemModelFromSeedId(seed);
+	private SeedModel GetSeedModelFromItem(string item) => seedService.GetSeedModelFromModelId(item);
+	private FishModel GetFishModelFromItem(string item) => fishService.GetFishModelFromModelId(item);
 
 	public bool ItemValidForSeason(ItemModel model, Seasons seasonsFilter)
 	{
