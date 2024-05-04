@@ -27,14 +27,14 @@ public class SeedModelTest
 	}
 
 	[Test]
-	public void Test_CropId()
+	public void ShouldSetCropId()
 	{
 		var model = new SeedModel(ObjectId, _cropEntry);
 		Assert.That(model.CropId, Is.EqualTo(_cropEntry.HarvestItemId));
 	}
 
 	[Test]
-	public void Test_DaysToGrow()
+	public void ShouldSetDaysToGrow()
 	{
 		var model = new SeedModel(ObjectId, _cropEntry);
 		Assert.That(model.DaysToGrow, Is.EqualTo(6));
@@ -45,7 +45,7 @@ public class SeedModelTest
 	[TestCase(new[] {Season.Spring, Season.Fall}, Seasons.Spring | Seasons.Fall)]
 	[TestCase(new[] {Season.Spring, Season.Winter}, Seasons.Spring | Seasons.Winter)]
 	[TestCase(new[] {Season.Spring, Season.Summer, Season.Fall, Season.Winter}, Seasons.Spring | Seasons.Summer | Seasons.Fall | Seasons.Winter)]
-	public void Test_Seasons(Season[] seasonList, Seasons expectedSeasons)
+	public void ShouldSetSseasons(Season[] seasonList, Seasons expectedSeasons)
 	{
 		_cropEntry = new CropData()
 		{
