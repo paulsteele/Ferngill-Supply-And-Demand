@@ -15,6 +15,7 @@ namespace fse.core
 		private MultiplayerService _multiplayerService;
 		private EconomyService _economyService;
 		private ForecastMenuService _forecastMenuService;
+		private NormalDistributionService _normalDistributionService;
 		private SeedService _seedService;
 		private FishService _fishService;
 
@@ -24,7 +25,8 @@ namespace fse.core
 			_multiplayerService = new MultiplayerService(helper);
 			_seedService = new SeedService();
 			_fishService = new FishService();
-			_economyService = new EconomyService(helper, Monitor, _multiplayerService, _fishService, _seedService);
+			_normalDistributionService = new NormalDistributionService();
+			_economyService = new EconomyService(helper, Monitor, _multiplayerService, _fishService, _seedService, _normalDistributionService);
 			_forecastMenuService = new ForecastMenuService(helper, _economyService, Monitor, new DrawTextHelper());
 			RegisterPatches(helper);
 			RegisterHandlers(helper);
@@ -35,7 +37,7 @@ namespace fse.core
 					return;
 				}
 
-				_economyService.SetupForNewYear();
+				_economyService.Reset();
 				_economyService.AdvanceOneDay();
 			});
 		}

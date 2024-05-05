@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using fse.core.helpers;
 using fse.core.models;
 using fse.core.multiplayer;
-using MathNet.Numerics.Distributions;
 using StardewModdingAPI;
 using StardewValley;
 using Object = StardewValley.Object;
@@ -18,6 +18,7 @@ public interface IEconomyService
 	void SendEconomyMessage();
 	void SetupForNewSeason();
 	void SetupForNewYear();
+	void Reset();
 	void AdvanceOneDay();
 	Dictionary<int, string> GetCategories();
 	ItemModel[] GetItemsForCategory(int category);
@@ -33,7 +34,8 @@ public class EconomyService(
 	IMonitor monitor, 
 	IMultiplayerService multiplayerService,
 	IFishService fishService,
-	ISeedService seedService
+	ISeedService seedService,
+	INormalDistributionService normalDistributionService
 ) : IEconomyService
 {
 	private readonly Dictionary<int, List<int>> _categoryMapping = new();
@@ -61,7 +63,7 @@ public class EconomyService(
 			}
 			else
 			{
-				RandomizeEconomy(newModel, true, true);
+				RandomizeEconomy(newModel, true, true, SeasonHelper.GetCurrentSeason());
 				
 				newModel.ForAllItems(i =>
 				{
@@ -81,7 +83,7 @@ public class EconomyService(
 		}
 		else
 		{
-			RandomizeEconomy(newModel, true, true);
+			RandomizeEconomy(newModel, true, true, SeasonHelper.GetCurrentSeason());
 			Economy = newModel;
 			needToSave = true;
 		}
@@ -157,7 +159,7 @@ public class EconomyService(
 		{
 			return;
 		}
-		RandomizeEconomy(Economy, false, true);
+		RandomizeEconomy(Economy, false, true, SeasonHelper.GetNextSeason());
 		Economy.ForAllItems(model => model.CapSupply());
 		QueueSave();
 	}
@@ -168,29 +170,46 @@ public class EconomyService(
 		{
 			return;
 		}
-		RandomizeEconomy(Economy, true, true);
+		RandomizeEconomy(Economy, true, true, SeasonHelper.GetNextSeason());
+		QueueSave();
+	}
+	
+	public void Reset()
+	{
+		if (IsClient)
+		{
+			return;
+		}
+		RandomizeEconomy(Economy, true, true, SeasonHelper.GetCurrentSeason());
 		QueueSave();
 	}
 
-	private static int MeanSupply => (ConfigModel.MinSupply + ConfigModel.Instance.MaxCalculatedSupply) / 2;
-	private static int MeanDelta => (ConfigModel.Instance.MinDelta + ConfigModel.Instance.MaxDelta) / 2;
 
-	private static void RandomizeEconomy(EconomyModel model, bool updateSupply, bool updateDelta)
+	private void RandomizeEconomy(EconomyModel model, bool updateSupply, bool updateDelta, Seasons season)
 	{
-		var rand = new Random();
-		var supplyNormal = new Normal(MeanSupply, ConfigModel.Instance.StdDevSupply, rand);
-		var deltaNormal = new Normal(MeanDelta, ConfigModel.Instance.StdDevDelta, rand);
+		normalDistributionService.Reset();
 
 		model.ForAllItems(item =>
 		{
 			if (updateSupply)
 			{
-				item.Supply = RoundDouble(supplyNormal.Sample());
+				item.Supply = RoundDouble(normalDistributionService.SampleSupply());
 			}
 
-			if (updateDelta)
+			if (!updateDelta)
 			{
-				item.DailyDelta = RoundDouble(deltaNormal.Sample());
+				return;
+			}
+
+			if (ItemIsSeasonal(item))
+			{
+				item.DailyDelta = ItemValidForSeason(item, season)
+					? RoundDouble(normalDistributionService.SampleInSeasonDelta())
+					: RoundDouble(normalDistributionService.SampleOutOfSeasonDelta());
+			}
+			else
+			{
+				item.DailyDelta = RoundDouble(normalDistributionService.SampleSeasonlessDelta());
 			}
 		});
 	}
@@ -343,6 +362,26 @@ public class EconomyService(
 		}
 
 		return (HardcodedSeasonsList.GetSeasonForItem(model.ObjectId) & seasonsFilter) != 0;
+	}
+
+	private bool ItemIsSeasonal(ItemModel model)
+	{
+		var seed = GetSeedModelFromItem(model.ObjectId);
+
+		if (seed != null && seed.Seasons != 0)
+		{
+			return true;
+		}
+		
+		var fish = GetFishModelFromItem(model.ObjectId);
+
+		// ReSharper disable once ConvertIfStatementToReturnStatement
+		if (fish != null && fish.Seasons != 0)
+		{
+			return true;
+		}
+
+		return false;
 	}
 
 	public int GetPricePerDay(ItemModel model)

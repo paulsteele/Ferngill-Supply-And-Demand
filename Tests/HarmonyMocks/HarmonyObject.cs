@@ -69,7 +69,9 @@ public class HarmonyObject
 
 		if (ObjectIdToPriceMapping.TryGetValue(itemId, out var price))
 		{
+			#pragma warning disable AvoidNetField
 			var priceField = AccessTools.Field(typeof(Object), nameof(Object.price));
+			#pragma warning restore AvoidNetField
 			priceField.SetValue(__instance, new NetInt(price));
 		}
 

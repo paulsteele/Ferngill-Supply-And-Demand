@@ -78,15 +78,9 @@ public class ForecastMenu : AbstractForecastMenu
 		_monitor = monitor;
 		_drawTextHelper = drawTextHelper;
 
-		_sortDisplayOptions = new List<string> { None, Name, Supply, DailyChange, MarketPrice, MarketPricePerDay };
+		_sortDisplayOptions = [None, Name, Supply, DailyChange, MarketPrice, MarketPricePerDay];
 
-		_chosenSeasons = Utility.getSeasonNumber(Game1.currentSeason) switch {
-			0 => Seasons.Spring,
-			1 => Seasons.Summer,
-			2 => Seasons.Fall,
-			3 => Seasons.Winter,
-			_ => _chosenSeasons,
-		};
+		_chosenSeasons = SeasonHelper.GetCurrentSeason();
 
 		_chosenSort = string.IsNullOrWhiteSpace(_cachedChosenSort) ? _sortOptions.First() : _cachedChosenSort ;
 			

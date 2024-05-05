@@ -210,7 +210,7 @@ namespace fse.core.handlers
 							{
 								if (_economyService.Loaded)
 								{
-									_economyService.SetupForNewYear();
+									_economyService.Reset();
 									_economyService.AdvanceOneDay();
 								}
 							}
