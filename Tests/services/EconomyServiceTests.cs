@@ -1288,6 +1288,41 @@ public class EconomyServiceTests : HarmonyTestBase
 		});
 	}
 
+	[Test]
+	public void ShouldGetConsolidatedItem()
+	{
+		Game1.objectData = new Dictionary<string, ObjectData>(new[]
+		{
+			GenerateObjectData("176", 1),
+			GenerateObjectData("174", 1),
+			GenerateObjectData("442", 2),
+			GenerateObjectData("307", 2),
+			GenerateObjectData("1", 2),
+		});
+		
+		_economyService = new EconomyService
+		(
+			_mockModHelper.Object,
+			_mockMonitor.Object,
+			_mockMultiplayerService.Object,
+			_mockFishService.Object,
+			_mockSeedService.Object,
+			_mockNormalDistributionService.Object
+		);
+		
+		_economyService.OnLoaded();
+
+		var itemModel = new ItemModel(){ObjectId = "2"};
+		var equivalentModel = new ItemModel() { ObjectId = "174" };
+		var artisanModel = new ItemModel() { ObjectId = "307" };
+		Assert.Multiple(() =>
+		{ 
+			Assert.That(_economyService.GetConsolidatedItem(itemModel), Is.EqualTo(itemModel)); 
+			Assert.That(_economyService.GetConsolidatedItem(equivalentModel).ObjectId, Is.EqualTo("176")); 
+			Assert.That(_economyService.GetConsolidatedItem(artisanModel).ObjectId, Is.EqualTo("442"));
+		});
+ }
+
 	private static KeyValuePair<string, ObjectData> GenerateObjectData(string itemId, int category)
 	{
 		HarmonyObject.ObjectIdCategoryMapping.TryAdd(itemId, category);

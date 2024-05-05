@@ -27,6 +27,7 @@ public interface IEconomyService
 	ItemModel GetItemModelFromSeed(string seed);
 	bool ItemValidForSeason(ItemModel model, Seasons seasonsFilter);
 	int GetPricePerDay(ItemModel model);
+	ItemModel GetConsolidatedItem(ItemModel original);
 }
 
 public class EconomyService(
@@ -283,6 +284,11 @@ public class EconomyService(
 	private Object GetArtisanBase(Object obj)
 	{
 		var preserveId = obj.preservedParentSheetIndex?.Get();
+		var hardcodedBase = HardcodedArtisanItemList.GetArtisanBase(obj.ItemId);
+		if (hardcodedBase != null)
+		{
+			return new Object(hardcodedBase, 1);
+		}
 		return string.IsNullOrWhiteSpace(preserveId)  ? null : new Object(preserveId, 1);
 	}
 
@@ -396,6 +402,25 @@ public class EconomyService(
 		}
 
 		return modelPrice / seed.DaysToGrow;
+	}
+
+	public ItemModel GetConsolidatedItem(ItemModel original)
+	{
+		var baseModel = Economy.GetItem(original.ObjectId);
+		if (baseModel == null)
+		{
+			return original;
+		}
+		var artisanBase = HardcodedArtisanItemList.GetArtisanBase(baseModel.ObjectId);
+
+		if (artisanBase == null)
+		{
+			return baseModel;
+		}
+
+		var baseItem = Economy.GetItem(artisanBase);
+
+		return baseItem ?? baseModel;
 	}
 
 	private static int RoundDouble(double d) => (int)Math.Round(d, 0, MidpointRounding.ToEven);

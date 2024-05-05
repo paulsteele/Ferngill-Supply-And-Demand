@@ -66,6 +66,8 @@ public class ForecastMenuTests : HarmonyTestBase
 			]
 		);
 
+		_economyServiceMock.Setup(m => m.GetConsolidatedItem(It.IsAny<ItemModel>())).Returns<ItemModel>(i => i);
+
 		_economyServiceMock.Setup(m => m.ItemValidForSeason(It.IsAny<ItemModel>(), It.IsAny<Seasons>())).Returns(true);
 
 		HarmonyGame.GetOptionsResult = new Options();

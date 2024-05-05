@@ -546,8 +546,9 @@ public class ForecastMenu : AbstractForecastMenu
 		_drawTextHelper.DrawAlignedText(batch, xPositionOnScreen + DividerWidth + Divider2 + ((Divider3 - Divider2) / 2), textCenterLine, pricePerDayDisplay, DrawTextHelper.DrawTextAlignment.Middle, DrawTextHelper.DrawTextAlignment.Middle, false);
 	}
 
-	public override void DrawSupplyBar(SpriteBatch batch, int startingX, int startingY, int endingX, int barHeight, ItemModel model)
+	public override void DrawSupplyBar(SpriteBatch batch, int startingX, int startingY, int endingX, int barHeight, ItemModel originalModel)
 	{
+		var model = _economyService.GetConsolidatedItem(originalModel);
 		var barWidth = ((endingX - startingX) / 10) * 10;
 		var percentage = Math.Min(model.Supply / (float)ConfigModel.Instance.MaxCalculatedSupply, 1);
 
@@ -607,7 +608,7 @@ public class ForecastMenu : AbstractForecastMenu
 	{
 		var location = new Rectangle(percentageRect.X + percentageRect.Width - (int)(Game1.tileSize * .3) + 15,
 			percentageRect.Y - barHeight, 5 * Game1.pixelZoom, 5 * Game1.pixelZoom);
-
+		
 		if (model.DailyDelta < 0)
 		{
 			var leftArrow = new ClickableTextureComponent("left-arrow", location, "", "", Game1.mouseCursors,
