@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json.Serialization;
+using fse.core.services;
 using Object = StardewValley.Object;
 
 namespace fse.core.models
@@ -41,14 +42,14 @@ namespace fse.core.models
 
 		public ItemModel GetItem(Object obj) => 
 			CategoryEconomies.TryGetValue(obj.Category, out var category) 
-				? category.GetValueOrDefault(obj.ItemId) 
+				? category.GetValueOrDefault(HardcodedEquivalentItemsList.GetEquivalentId(obj.ItemId)) 
 				: null;
 		
 		public ItemModel GetItem(string id)
 		{
 			foreach (var categoryEconomy in CategoryEconomies)
 			{
-				categoryEconomy.Value.TryGetValue(id, out var model);
+				categoryEconomy.Value.TryGetValue(HardcodedEquivalentItemsList.GetEquivalentId(id), out var model);
 				if (model != null)
 				{
 					return model;

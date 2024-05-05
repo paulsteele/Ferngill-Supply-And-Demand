@@ -98,6 +98,93 @@ public class EconomyModelTests : HarmonyTestBase
 		 Assert.That(itemModel6, Is.Null);
 		}); 
 	}
+	
+	[Test]
+	public void ShouldReturnItemModelForEquivalentIds()
+	{
+		_economyModel.CategoryEconomies = new Dictionary<int, Dictionary<string, ItemModel>>()
+		{
+			{
+				1, new Dictionary<string, ItemModel>()
+				{
+					{"176", _itemModel1},
+					{"174", _itemModel2},
+				}
+			},
+			{
+				2, new Dictionary<string, ItemModel>()
+				{
+					{"184", _itemModel3},
+					{"186", _itemModel4},
+					{"o5", _itemModel5},
+				}
+			},
+		};
+		
+		var o1 = new Object("176", 1) { Category = 1 };
+		var o2 = new Object("174", 1) { Category = 1 };
+		var o3 = new Object("184", 1) { Category = 2 };
+		var o4 = new Object("186", 1) { Category = 2 };
+		var o5 = new Object("o5", 1) { Category = 2 };
+		var o6 = new Object("o6", 1) { Category = 2 };
+
+		var itemModel1 = _economyModel.GetItem(o1);
+		var itemModel2 = _economyModel.GetItem(o2);
+		var itemModel3 = _economyModel.GetItem(o3);
+		var itemModel4 = _economyModel.GetItem(o4);
+		var itemModel5 = _economyModel.GetItem(o5);
+		var itemModel6 = _economyModel.GetItem(o6);
+
+		Assert.Multiple(() =>
+		{
+		 Assert.That(itemModel1, Is.EqualTo(_itemModel1));
+		 Assert.That(itemModel2, Is.EqualTo(_itemModel1));
+		 Assert.That(itemModel3, Is.EqualTo(_itemModel3));
+		 Assert.That(itemModel4, Is.EqualTo(_itemModel3));
+		 Assert.That(itemModel5, Is.EqualTo(_itemModel5));
+		 Assert.That(itemModel6, Is.Null);
+		}); 
+	}
+	
+	[Test]
+	public void ShouldReturnItemModelForIdForEquivalentIds()
+	{
+		_economyModel.CategoryEconomies = new Dictionary<int, Dictionary<string, ItemModel>>()
+		{
+			{
+				1, new Dictionary<string, ItemModel>()
+				{
+					{"176", _itemModel1},
+					{"174", _itemModel2},
+				}
+			},
+			{
+				2, new Dictionary<string, ItemModel>()
+				{
+					{"184", _itemModel3},
+					{"186", _itemModel4},
+					{"o5", _itemModel5},
+				}
+			},
+		};
+		var itemModel1 = _economyModel.GetItem("176");
+		var itemModel2 = _economyModel.GetItem("174");
+		var itemModel3 = _economyModel.GetItem("184");
+		var itemModel4 = _economyModel.GetItem("186");
+		var itemModel5 = _economyModel.GetItem("o5");
+		var itemModel6 = _economyModel.GetItem("o6");
+
+		Assert.Multiple(() =>
+		{
+		 Assert.That(itemModel1, Is.EqualTo(_itemModel1));
+		 Assert.That(itemModel2, Is.EqualTo(_itemModel1));
+		 Assert.That(itemModel3, Is.EqualTo(_itemModel3));
+		 Assert.That(itemModel4, Is.EqualTo(_itemModel3));
+		 Assert.That(itemModel5, Is.EqualTo(_itemModel5));
+		 Assert.That(itemModel6, Is.Null);
+		}); 
+	}
+
 
 	[Test]
 	public void ShouldBeAbleToActOnAllItems()
