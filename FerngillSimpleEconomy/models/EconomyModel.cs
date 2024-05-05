@@ -43,6 +43,20 @@ namespace fse.core.models
 			CategoryEconomies.TryGetValue(obj.Category, out var category) 
 				? category.GetValueOrDefault(obj.ItemId) 
 				: null;
+		
+		public ItemModel GetItem(string id)
+		{
+			foreach (var categoryEconomy in CategoryEconomies)
+			{
+				categoryEconomy.Value.TryGetValue(id, out var model);
+				if (model != null)
+				{
+					return model;
+				}
+			}
+
+			return null;
+		}
 
 		public void AdvanceOneDay()
 		{

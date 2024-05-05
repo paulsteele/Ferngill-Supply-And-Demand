@@ -75,8 +75,29 @@ public class EconomyModelTests : HarmonyTestBase
 		 Assert.That(itemModel4, Is.EqualTo(_itemModel4));
 		 Assert.That(itemModel5, Is.EqualTo(_itemModel5));
 		 Assert.That(itemModel6, Is.Null);
-		});
- }
+		}); 
+	}
+	
+	[Test]
+	public void ShouldReturnItemModelForId()
+	{
+		var itemModel1 = _economyModel.GetItem("o1");
+		var itemModel2 = _economyModel.GetItem("o2");
+		var itemModel3 = _economyModel.GetItem("o3");
+		var itemModel4 = _economyModel.GetItem("o4");
+		var itemModel5 = _economyModel.GetItem("o5");
+		var itemModel6 = _economyModel.GetItem("o6");
+
+		Assert.Multiple(() =>
+		{
+		 Assert.That(itemModel1, Is.EqualTo(_itemModel1));
+		 Assert.That(itemModel2, Is.EqualTo(_itemModel2));
+		 Assert.That(itemModel3, Is.EqualTo(_itemModel3));
+		 Assert.That(itemModel4, Is.EqualTo(_itemModel4));
+		 Assert.That(itemModel5, Is.EqualTo(_itemModel5));
+		 Assert.That(itemModel6, Is.Null);
+		}); 
+	}
 
 	[Test]
 	public void ShouldBeAbleToActOnAllItems()
@@ -92,5 +113,89 @@ public class EconomyModelTests : HarmonyTestBase
 			Assert.That(_itemModel4.Supply, Is.EqualTo(objSupply));
 			Assert.That(_itemModel5.Supply, Is.EqualTo(objSupply));
 		});
+	}
+
+	[Test]
+	public void ShouldIndicateEconomiesHaveSameItems()
+	{
+		var newModel = new EconomyModel
+		{
+			CategoryEconomies = new Dictionary<int, Dictionary<string, ItemModel>>()
+			{
+				{
+					1, new Dictionary<string, ItemModel>()
+					{
+						{"o1", _itemModel1},
+						{"o2", _itemModel2},
+					}
+				},
+				{
+					2, new Dictionary<string, ItemModel>()
+					{
+						{"o3", _itemModel3},
+						{"o4", _itemModel4},
+						{"o5", _itemModel5},
+					}
+				},
+			},
+		};
+		
+		Assert.That(_economyModel.HasSameItems(newModel), Is.True);
+	}
+	
+	[Test]
+	public void ShouldIndicateEconomiesHaveDifferentCategories()
+	{
+		var newModel = new EconomyModel
+		{
+			CategoryEconomies = new Dictionary<int, Dictionary<string, ItemModel>>()
+			{
+				{
+					1, new Dictionary<string, ItemModel>()
+					{
+						{"o1", _itemModel1},
+						{"o2", _itemModel2},
+					}
+				},
+				{
+					3, new Dictionary<string, ItemModel>()
+					{
+						{"o3", _itemModel3},
+						{"o4", _itemModel4},
+						{"o5", _itemModel5},
+					}
+				},
+			},
+		};
+		
+		Assert.That(_economyModel.HasSameItems(newModel), Is.False);
+	}
+	
+	[Test]
+	public void ShouldIndicateEconomiesHaveDifferentItems()
+	{
+		var newModel = new EconomyModel
+		{
+			CategoryEconomies = new Dictionary<int, Dictionary<string, ItemModel>>()
+			{
+				{
+					1, new Dictionary<string, ItemModel>()
+					{
+						{"o1", _itemModel1},
+						{"o2", _itemModel2},
+					}
+				},
+				{
+					2, new Dictionary<string, ItemModel>()
+					{
+						{"o3", _itemModel3},
+						{"o6", _itemModel4},
+						{"o5", _itemModel5},
+					}
+				},
+			},
+		};
+		
+		Assert.That(_economyModel.HasSameItems(newModel), Is.False);
 	}
 }

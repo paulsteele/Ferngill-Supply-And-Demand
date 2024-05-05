@@ -53,9 +53,31 @@ public class EconomyService(
 		var newModel = GenerateBlankEconomy();
 		var needToSave = false;
 
-		if (existingModel != null && existingModel.HasSameItems(newModel))
+		if (existingModel != null)
 		{
-			Economy = existingModel;
+			if (existingModel.HasSameItems(newModel))
+			{
+				Economy = existingModel;
+			}
+			else
+			{
+				RandomizeEconomy(newModel, true, true);
+				
+				newModel.ForAllItems(i =>
+				{
+					var old = existingModel.GetItem(i.ObjectId);
+					if (old == null)
+					{
+						return;
+					}
+
+					i.Supply = old.Supply;
+					i.DailyDelta = old.DailyDelta;
+				});
+				
+				Economy = newModel;
+				needToSave = true;
+			}
 		}
 		else
 		{

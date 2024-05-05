@@ -816,6 +816,88 @@ public class EconomyServiceTests : HarmonyTestBase
 		Assert.That(_economyService.GetItemModelFromSeed("seed"), Is.EqualTo(itemModel));
 	}
 
+	[Test, Retry(5)]
+	public void ShouldConsolidateEconomyModelWhenLoadingWithMismatches()
+	{
+		HarmonyObject.ObjectIdCategoryMapping.Clear();
+		Game1.objectData = new Dictionary<string, ObjectData>(new[]
+		{
+			GenerateObjectData("1", 1),
+			GenerateObjectData("22", 1),
+			GenerateObjectData("3", 3),
+			GenerateObjectData("4", 2),
+		});
+		
+		var model = new EconomyModel
+		{
+			CategoryEconomies = new Dictionary<int, Dictionary<string, ItemModel>>
+			{
+				{1, new Dictionary<string, ItemModel>()
+				{
+					{"1", new ItemModel(){ObjectId = "1", DailyDelta = 11, Supply = 110}},
+					{"2", new ItemModel(){ObjectId = "2", DailyDelta = 12, Supply = 120}},
+				}},
+				{2, new Dictionary<string, ItemModel>()
+				{
+					{"3", new ItemModel(){ObjectId = "3", DailyDelta = 21, Supply = 210}},
+					{"4", new ItemModel(){ObjectId = "4", DailyDelta = 22, Supply = 220}},
+				}},
+			},
+		};
+		HarmonyObject.CategoryIdToNameMapping.Add(3, "Cat3");
+		
+		_mockDataHelper.Setup(m => m.ReadSaveData<EconomyModel>(EconomyModel.ModelKey))
+			.Returns(model);
+
+		_economyService.OnLoaded();
+		
+		_mockMultiplayerService.Verify(m => m.SendMessageToPeers(It.IsAny<RequestEconomyModelMessage>()), Times.Exactly(0));
+		_mockDataHelper.Verify(m => m.WriteSaveData(EconomyModel.ModelKey, It.IsAny<EconomyModel>()), Times.Exactly(1));
+		_mockFishService.Verify(m => m.GenerateFishMapping(It.IsAny<EconomyModel>()), Times.Exactly(1));
+		_mockSeedService.Verify(m => m.GenerateSeedMapping(It.IsAny<EconomyModel>()), Times.Exactly(1));
+		Assert.That(_economyService.Loaded, Is.True);
+
+		var categories = _economyService.GetCategories();
+		
+		Assert.That(categories, Has.Count.EqualTo(3));
+		Assert.Multiple(() =>
+		{ 
+			Assert.That(categories[1], Is.EqualTo("Cat1")); 
+			Assert.That(categories[2], Is.EqualTo("Cat2"));
+			Assert.That(categories[3], Is.EqualTo("Cat3"));
+		});
+
+		var cat1Items = _economyService.GetItemsForCategory(1);
+		var cat2Items = _economyService.GetItemsForCategory(2);
+		var cat3Items = _economyService.GetItemsForCategory(3);
+		
+		Assert.Multiple(() =>
+		{ 
+			Assert.That(cat1Items, Has.Length.EqualTo(2)); 
+			Assert.That(cat2Items, Has.Length.EqualTo(1));
+			Assert.That(cat3Items, Has.Length.EqualTo(1));
+		});
+		Assert.Multiple(() =>
+		{ 
+			Assert.That(cat1Items[0].ObjectId, Is.EqualTo("1")); 
+			Assert.That(cat2Items[0].ObjectId, Is.EqualTo("4")); 
+			Assert.That(cat3Items[0].ObjectId, Is.EqualTo("3"));
+			Assert.That(cat1Items[1].ObjectId, Is.EqualTo("22")); 
+			
+			Assert.That(cat1Items[0].Supply, Is.EqualTo(110)); 
+			Assert.That(cat2Items[0].Supply, Is.EqualTo(220)); 
+			Assert.That(cat3Items[0].Supply, Is.EqualTo(210));
+			Assert.That(cat1Items[1].Supply, Is.Not.EqualTo(120)); 
+			Assert.That(cat1Items[1].Supply, Is.Not.EqualTo(0)); 
+			
+			Assert.That(cat1Items[0].DailyDelta, Is.EqualTo(11)); 
+			Assert.That(cat2Items[0].DailyDelta, Is.EqualTo(22)); 
+			Assert.That(cat3Items[0].DailyDelta, Is.EqualTo(21)); 
+			Assert.That(cat1Items[1].DailyDelta, Is.Not.EqualTo(12)); 
+			Assert.That(cat1Items[1].DailyDelta, Is.Not.EqualTo(0)); 
+		});
+	}
+
 	private static KeyValuePair<string, ObjectData> GenerateObjectData(string itemId, int category)
 	{
 		HarmonyObject.ObjectIdCategoryMapping.TryAdd(itemId, category);
