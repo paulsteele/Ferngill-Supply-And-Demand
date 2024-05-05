@@ -18,7 +18,7 @@
 			"350", // juice
 			"447", // aged roe
 			"775", // glacierfish
-			"683", // mutantcarp
+			"682", // mutantcarp
 			"812", // roe
 			"889", // qi fruit
 			"898", // son of crimsonfish
