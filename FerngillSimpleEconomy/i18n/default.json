@@ -30,5 +30,5 @@
 	"fse.config.ResetEconomy": "Reset Economy(In game only)",
 	"fse.config.Reset": "Reset",
 	"fse.config.category.header": "Categories in Economy",
-	"fse.config.category.subtitle": "The game must be restarted after this is changed. Names may appear duplicated as that is how the game references them. Check the wiki for specifics. It is recommended to leave artisan goods disabled. When disabled artisan goods will perform calculations using their base items supply preventing odd situations where it is not worth producing an item"
+	"fse.config.category.subtitle": "The game must be restarted after this is changed. Names may appear duplicated as that is how the game references them. Check the wiki for specifics."
 }

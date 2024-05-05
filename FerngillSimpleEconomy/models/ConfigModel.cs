@@ -29,6 +29,7 @@ public class ConfigModel
 		Object.EggCategory,
 		Object.MilkCategory,
 		Object.meatCategory,
+		Object.artisanGoodsCategory,
 		Object.VegetableCategory,
 		Object.FruitsCategory,
 		Object.flowersCategory,
