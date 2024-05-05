@@ -381,7 +381,7 @@ public class EconomyService(
 			return true;
 		}
 
-		return false;
+		return HardcodedSeasonsList.GetSeasonForItem(model.ObjectId) != (Seasons.Spring | Seasons.Summer | Seasons.Fall | Seasons.Winter);
 	}
 
 	public int GetPricePerDay(ItemModel model)

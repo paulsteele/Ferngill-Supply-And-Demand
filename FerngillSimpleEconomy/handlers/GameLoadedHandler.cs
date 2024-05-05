@@ -112,6 +112,22 @@ namespace fse.core.handlers
 			
 			configMenu.AddNumberOption(
 				mod: _manifest,
+				name: ()=> _helper.Translation.Get("fse.config.StdDevDeltaInSeason"),
+				getValue: () => ConfigModel.Instance.StdDevDeltaInSeason,
+				setValue: val => ConfigModel.Instance.StdDevDeltaInSeason = val,
+				min: 0
+			);
+			
+			configMenu.AddNumberOption(
+				mod: _manifest,
+				name: ()=> _helper.Translation.Get("fse.config.StdDevDeltaOutOfSeason"),
+				getValue: () => ConfigModel.Instance.StdDevDeltaOutOfSeason,
+				setValue: val => ConfigModel.Instance.StdDevDeltaOutOfSeason = val,
+				min: 0
+			);
+			
+			configMenu.AddNumberOption(
+				mod: _manifest,
 				name: ()=> _helper.Translation.Get("fse.config.MinPercentage"),
 				getValue: () => ConfigModel.Instance.MinPercentage,
 				setValue: val => ConfigModel.Instance.MinPercentage = val,
