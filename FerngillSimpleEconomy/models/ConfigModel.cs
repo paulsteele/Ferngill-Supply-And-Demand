@@ -14,7 +14,7 @@ public class ConfigModel
 	public int MaxDelta { get; set; } = 30;
 	public int StdDevSupply { get; set; } = 150;
 	public int StdDevDelta { get; set; } = 5;
-	public int StdDevDeltaInSeason { get; set; } = 15;
+	public int StdDevDeltaInSeason { get; set; } = 12;
 	public int StdDevDeltaOutOfSeason { get; set; } = 5;
 	public float MinPercentage { get; set; } = 0.2f;
 	public float MaxPercentage { get; set; } = 1.3f;
