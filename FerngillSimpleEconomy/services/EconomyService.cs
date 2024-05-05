@@ -149,9 +149,9 @@ public class EconomyService(
 		RandomizeEconomy(Economy, true, true);
 		QueueSave();
 	}
-		
-	public static int MeanSupply => (ConfigModel.MinSupply + ConfigModel.Instance.MaxCalculatedSupply) / 2;
-	public static int MeanDelta => (ConfigModel.Instance.MinDelta + ConfigModel.Instance.MaxDelta) / 2;
+
+	private static int MeanSupply => (ConfigModel.MinSupply + ConfigModel.Instance.MaxCalculatedSupply) / 2;
+	private static int MeanDelta => (ConfigModel.Instance.MinDelta + ConfigModel.Instance.MaxDelta) / 2;
 
 	private static void RandomizeEconomy(EconomyModel model, bool updateSupply, bool updateDelta)
 	{
@@ -200,14 +200,12 @@ public class EconomyService(
 
 	public ItemModel[] GetItemsForCategory(int category)
 	{
-		var items = Economy.CategoryEconomies.Keys.Contains(category)
-			? Economy.CategoryEconomies[category].Values.ToArray()
-			: Array.Empty<ItemModel>();
+		var items = Economy.CategoryEconomies.TryGetValue(category, out var economy) ? economy.Values.ToArray() : [];
 
 		return 
-			!_categoryMapping.ContainsKey(category) 
+			!_categoryMapping.TryGetValue(category, out var value) 
 				? items 
-				: _categoryMapping[category]
+				: value
 					.Aggregate(items, (current, adjacentCategory) => current.Concat(Economy.CategoryEconomies[adjacentCategory].Values).ToArray());
 	}
 
@@ -288,7 +286,6 @@ public class EconomyService(
 			return;
 		}
 
-		var prev = itemModel.Supply;
 		itemModel.Supply += amount;
 
 		// monitor.Log($"Adjusted {obj.name} supply from {prev} to {itemModel.Supply}", LogLevel.Trace);

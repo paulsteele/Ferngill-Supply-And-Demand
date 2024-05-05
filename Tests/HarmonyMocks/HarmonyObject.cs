@@ -36,11 +36,24 @@ public class HarmonyObject
 			AccessTools.Method(typeof(Object), nameof(Object.sellToStorePrice)),
 			prefix: new HarmonyMethod(typeof(HarmonyObject), nameof(MockSellToStorePrice))
 		);
+		
+		harmony.Patch(
+			AccessTools.Method(typeof(Object), nameof(Object.getCategoryName)),
+			prefix: new HarmonyMethod(typeof(HarmonyObject), nameof(MockGetCategoryName))
+		);
 
 		DrawInMenuCalls = new();
+		ObjectIdCategoryMapping = new();
+		CategoryIdToNameMapping = new();
+		ObjectIdToPriceMapping = new();
+		SellToStorePriceMapping = new();
 	}
 
 	public static Dictionary<Object, List<Vector2>> DrawInMenuCalls;
+	public static Dictionary<string, int> ObjectIdCategoryMapping;
+	public static Dictionary<int, string> CategoryIdToNameMapping;
+	public static Dictionary<string, int> ObjectIdToPriceMapping;
+	public static Dictionary<Object, int> SellToStorePriceMapping;
 
 	static bool MockConstructor(
 		ref Object __instance,
@@ -49,6 +62,20 @@ public class HarmonyObject
 	{
 		__instance.itemId = new NetString();
 		__instance.ItemId = itemId;
+		if (ObjectIdCategoryMapping.TryGetValue(itemId, out var category))
+		{
+			__instance.Category = category;
+		}
+
+		if (ObjectIdToPriceMapping.TryGetValue(itemId, out var price))
+		{
+			var priceField = AccessTools.Field(typeof(Object), nameof(Object.price));
+			priceField.SetValue(__instance, new NetInt(price));
+		}
+
+		var parentField = AccessTools.Field(typeof(Object), nameof(Object.preservedParentSheetIndex));
+		parentField.SetValue(__instance, new NetString());
+		
 		return false;
 	}
 	
@@ -73,6 +100,18 @@ public class HarmonyObject
 		)
 	{
 		__result = $"display-{__instance.ItemId}";
+		return false;
+	}
+	
+	static bool MockGetCategoryName(
+		ref Object __instance,
+		ref string __result
+		)
+	{
+		if (CategoryIdToNameMapping.TryGetValue(__instance.Category, out var name))
+		{
+			__result = name;
+		}
 		return false;
 	}
 	
