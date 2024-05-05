@@ -1,6 +1,6 @@
 ﻿namespace fse.core.services;
 
-public class HardcodedEquivalentItemsList
+public static class HardcodedEquivalentItemsList
 {
 		public static string GetEquivalentId(string id)
 		{
