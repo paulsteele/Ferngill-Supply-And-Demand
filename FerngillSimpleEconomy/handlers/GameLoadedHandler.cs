@@ -177,11 +177,6 @@ namespace fse.core.handlers
 			
 			foreach (var category in potentialCategories)
 			{
-				if (string.IsNullOrWhiteSpace(category.Name))
-				{
-					continue;
-				}
-				
 				configMenu.AddBoolOption(
 					mod: _manifest,
 					name: ()=> $"{category.Name} ({category.Category})",

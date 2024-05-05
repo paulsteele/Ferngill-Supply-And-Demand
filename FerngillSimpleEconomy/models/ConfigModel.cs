@@ -34,5 +34,7 @@ public class ConfigModel
 		Object.FruitsCategory,
 		Object.flowersCategory,
 		Object.GreensCategory,
+		-23, // Basic
+		-17, // Truffles / Gem Berry
 	};
 }

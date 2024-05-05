@@ -439,7 +439,7 @@ public class ForecastMenu : AbstractForecastMenu
 			)
 			{
 				dropDownOptions = _categories.Keys.Select(i => i.ToString()).ToList(),
-				dropDownDisplayOptions = _categories.Values.ToList(),
+				dropDownDisplayOptions = _categories.Values.Select(s => string.IsNullOrWhiteSpace(s) ? _helper.Translation.Get("fse.forecast.menu.basic.category") : s).ToList(),
 			};
 				
 			var index = _categoryDropdown.dropDownOptions.FindIndex(m => m.Equals(_chosenCategory.ToString()));
