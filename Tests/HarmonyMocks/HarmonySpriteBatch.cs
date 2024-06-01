@@ -33,6 +33,15 @@ public class HarmonySpriteBatch
 			{
 				typeof(Texture2D),
 				typeof(Rectangle),
+				typeof(Color),
+			}),
+			prefix: new HarmonyMethod(typeof(HarmonySpriteBatch), nameof(MockDrawTiny))
+		);
+		harmony.Patch(
+			AccessTools.Method(typeof(SpriteBatch), nameof(SpriteBatch.Draw),new []
+			{
+				typeof(Texture2D),
+				typeof(Rectangle),
 				typeof(Rectangle),
 				typeof(Color),
 			}),
@@ -95,6 +104,23 @@ public class HarmonySpriteBatch
 		}
 		
 		DrawCalls[__instance].Add((texture, Vector2.Zero, destinationRectangle, sourceRectangle, color, -1, Vector2.Zero, -1, SpriteEffects.None, -1));
+		
+		return false;
+	}
+	
+	static bool MockDrawTiny(
+		SpriteBatch __instance,
+		Texture2D texture,
+		Rectangle destinationRectangle,
+		Color color
+	)
+	{
+		if (!DrawCalls.ContainsKey(__instance))
+		{
+			DrawCalls.Add(__instance, []);
+		}
+		
+		DrawCalls[__instance].Add((texture, Vector2.Zero, destinationRectangle, null, color, -1, Vector2.Zero, -1, SpriteEffects.None, -1));
 		
 		return false;
 	}

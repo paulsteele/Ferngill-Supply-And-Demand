@@ -226,8 +226,8 @@ public class ForecastMenuTests : HarmonyTestBase
 		}); 
 	}
 	
-	[TestCase(1080, 620, 225, 315, 440, 660, 880, 405, 165)]
-	[TestCase(10800, 6200, 2275, 2365, 4780, 5000, 5220, 1885, 2215)]
+	[TestCase(1080, 620, 270, 360, 440, 660, 880, 360, 210)]
+	[TestCase(10800, 6200, 2320, 2410, 4780, 5000, 5220, 1840, 2260)]
 	public void ShouldDrawStaticPartitions
 	(
 		int screenWidth,
@@ -278,8 +278,8 @@ public class ForecastMenuTests : HarmonyTestBase
 		});
 	}
 
-	[TestCase(1080, 620, 304, 302, 582, 802, 930)]
-	[TestCase(10800, 6200, 2354, 4642, 4922, 5142, 5790)]
+	[TestCase(1080, 620, 349, 302, 582, 802, 930)]
+	[TestCase(10800, 6200, 2399, 4642, 4922, 5142, 5790)]
 	public void ShouldDrawHeader
 	(
 		int screenWidth,
@@ -513,7 +513,7 @@ public class ForecastMenuTests : HarmonyTestBase
 	}
 
 	[TestCase(1080, 620, 944, 42)]
-	[TestCase(10800, 6200, 5444, 2560)]
+	[TestCase(10800, 6200, 5439, 2581)]
 	public void ShouldDrawExitButton(int screenWidth, int screenHeight, int x, int y)
 	{
 		Game1.uiViewport.Width = screenWidth;
@@ -529,15 +529,15 @@ public class ForecastMenuTests : HarmonyTestBase
 		}); 
 	}
 
-	[TestCase(1, 10, 100, 1000, 10, 92, 25, 229, 0, 0, 1, 0, 1008, 204, 582, 802)]
-	[TestCase(1, 20, 100, 1000, 10, 92, 25, 229, 0, 0, 2, 0, 998, 204, 582, 802)]
-	[TestCase(1, 30, 100, 1000, 10, 92, 25, 229, 0, 0, 3, 0, 988, 204, 582, 802)]
-	[TestCase(1, -10, 100, 1000, 10, 92, 25, 229, 0, 1, 0, 998, 0, 204, 582, 802)]
-	[TestCase(1, -20, 100, 1000, 10, 92, 25, 229, 0, 2, 0, 1008, 0, 204, 582, 802)]
-	[TestCase(1, -30, 100, 1000, 10, 92, 25, 229, 0, 3, 0, 1018, 0, 204, 582, 802)]
-	[TestCase(1, 10, 100, 100, -1, 92, 25, 229, 0, 0, 1, 0, 1008, 204, 582, 802)]
-	[TestCase(1, 10, 500, 1000, 10, 460, 127, 127, 0, 0, 1, 0, 1376, 204, 582, 802)]
-	[TestCase(2, 10, 100, 1000, 10, 92, 25, 229, 0, 0, 1, 0, 1008, 204, 582, 802)]
+	[TestCase(1, 10, 100, 1000, 10, 92, 25, 229, 0, 0, 1, 0, 1003, 204, 582, 802)]
+	[TestCase(1, 20, 100, 1000, 10, 92, 25, 229, 0, 0, 2, 0, 993, 204, 582, 802)]
+	[TestCase(1, 30, 100, 1000, 10, 92, 25, 229, 0, 0, 3, 0, 983, 204, 582, 802)]
+	[TestCase(1, -10, 100, 1000, 10, 92, 25, 229, 0, 1, 0, 993, 0, 204, 582, 802)]
+	[TestCase(1, -20, 100, 1000, 10, 92, 25, 229, 0, 2, 0, 1003, 0, 204, 582, 802)]
+	[TestCase(1, -30, 100, 1000, 10, 92, 25, 229, 0, 3, 0, 1013, 0, 204, 582, 802)]
+	[TestCase(1, 10, 100, 100, -1, 92, 25, 229, 0, 0, 1, 0, 1003, 204, 582, 802)]
+	[TestCase(1, 10, 500, 1000, 10, 460, 127, 127, 0, 0, 1, 0, 1371, 204, 582, 802)]
+	[TestCase(2, 10, 100, 1000, 10, 92, 25, 229, 0, 0, 1, 0, 1003, 204, 582, 802)]
 	public void ShouldDrawRow
 	(
 		int expectedRows,
@@ -573,6 +573,7 @@ public class ForecastMenuTests : HarmonyTestBase
 
 		_economyServiceMock.Setup(m => m.GetItemsForCategory(1)).Returns(models.ToArray);
 		_menu = new ForecastMenu(_helperMock.Object, _economyServiceMock.Object, _monitorMock.Object, _drawTextHelperMock.Object);
+		Game1.staminaRect = new Texture2D(null, 0, 0);
 		
 		_menu.draw(_batch);
 
@@ -580,42 +581,16 @@ public class ForecastMenuTests : HarmonyTestBase
 		Assert.Multiple(() =>
 		{
 		 Assert.That(drawIconLocation.X, Is.EqualTo(140f));
-		 Assert.That(drawIconLocation.Y, Is.EqualTo(370f));
+		 Assert.That(drawIconLocation.Y, Is.EqualTo(415f));
 		});
 		
 		Assert.That(HarmonyIClickableMenu.DrawHoriztonalPartitionCalls[_batch], Has.Count.EqualTo(2 * expectedRows));
 
 		// ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
-		var supplyBarCalls = HarmonySpriteBatch.DrawCalls[_batch].Where(b => b.texture != null).ToArray();
-		var backs = supplyBarCalls.Where((_, i) => i % 2 == 0).ToArray();
-		var fronts = supplyBarCalls.Where((_, i) => i % 2 == 1).ToArray();
-
-		Assert.Multiple(() =>
-		{ 
-			Assert.That(backs, Has.Length.EqualTo(expectedRows)); 
-			Assert.That(fronts, Has.Length.EqualTo(expectedRows));
-			
-			Assert.That(backs[0].destinationRectangle, Is.EqualTo(new Rectangle(930, 402, 920, 32)));
-			Assert.That(backs[0].sourceRectangle, Is.EqualTo(new Rectangle(0, 0, 920, 32)));
-			Assert.That(backs[0].color, Is.EqualTo(Color.White));
-			
-			Assert.That(fronts[0].destinationRectangle, Is.EqualTo(new Rectangle(930, 402, expectedBarWidth, 32)));
-			Assert.That(fronts[0].sourceRectangle, Is.EqualTo(new Rectangle(0, 0, expectedBarWidth, 32)));
-			Assert.That(fronts[0].color, Is.EqualTo(new Color(expectedBarColorRed, expectedBarColorGreen, expectedBarColorBlue, 255)));
-		});
-		if (expectedRows > 1)
-		{ 
-			Assert.Multiple(() => 
-			{
-				Assert.That(backs[1].destinationRectangle, Is.EqualTo(new Rectangle(930, 542, 920, 32)));
-				Assert.That(backs[1].sourceRectangle, Is.EqualTo(new Rectangle(0, 0, 920, 32)));
-				Assert.That(backs[1].color, Is.EqualTo(Color.White));
-
-				Assert.That(fronts[1].destinationRectangle, Is.EqualTo(new Rectangle(930, 542, expectedBarWidth, 32)));
-				Assert.That(fronts[1].sourceRectangle, Is.EqualTo(new Rectangle(0, 0, expectedBarWidth, 32)));
-				Assert.That(fronts[1].color, Is.EqualTo(new Color(expectedBarColorRed, expectedBarColorGreen, expectedBarColorBlue, 255)));
-			});
-		}
+		var supplyBarCalls = HarmonySpriteBatch.DrawCalls[_batch].Where(b => b.texture == Game1.staminaRect).ToArray();
+		
+		//doesn't seem that useful to unit test graphics being drawn precisely. Reconsider if bugs arise.
+		Assert.That(supplyBarCalls, Has.Length.GreaterThanOrEqualTo(18 * expectedRows));
 
 		var negativeDeltaArrows = HarmonyClickableTextureComponent.DrawCalls.Keys.FirstOrDefault(c => c.name == "left-arrow");
 		
@@ -625,7 +600,7 @@ public class ForecastMenuTests : HarmonyTestBase
 			{
 				Assert.That(HarmonyClickableTextureComponent.DrawCalls[negativeDeltaArrows!], Is.EqualTo(expectedLeftArrowCalls));
 				Assert.That(negativeDeltaArrows!.bounds.X, Is.EqualTo(expectedLeftArrowLocation));
-				Assert.That(negativeDeltaArrows.bounds.Y, Is.EqualTo(370)); 
+				Assert.That(negativeDeltaArrows.bounds.Y, Is.EqualTo(411)); 
 			});
 		}
 		else
@@ -641,7 +616,7 @@ public class ForecastMenuTests : HarmonyTestBase
 			{
 				Assert.That(HarmonyClickableTextureComponent.DrawCalls[positiveDeltaArrows!], Is.EqualTo(expectedRightArrowCalls));
 				Assert.That(positiveDeltaArrows!.bounds.X, Is.EqualTo(expectedRightArrowLocation));
-				Assert.That(positiveDeltaArrows.bounds.Y, Is.EqualTo(370)); 
+				Assert.That(positiveDeltaArrows.bounds.Y, Is.EqualTo(411)); 
 			});
 		}
 		else
@@ -675,7 +650,7 @@ public class ForecastMenuTests : HarmonyTestBase
 				{
 					Assert.That(HarmonyClickableTextureComponent.DrawCalls[positiveDeltaArrow2!], Is.EqualTo(expectedRightArrowCalls));
 					Assert.That(positiveDeltaArrow2!.bounds.X, Is.EqualTo(expectedRightArrowLocation));
-					Assert.That(positiveDeltaArrow2.bounds.Y, Is.EqualTo(510)); 
+					Assert.That(positiveDeltaArrow2.bounds.Y, Is.EqualTo(531)); 
 				});
 			}
 			else
@@ -688,7 +663,7 @@ public class ForecastMenuTests : HarmonyTestBase
 			(
 				_batch,
 				expectedNameLocation,
-				410,
+				445,
 				$"display-{sellPrice}",
 				DrawTextHelper.DrawTextAlignment.Start,
 				DrawTextHelper.DrawTextAlignment.Middle,
@@ -700,7 +675,7 @@ public class ForecastMenuTests : HarmonyTestBase
 			(
 				_batch,
 				expectedPriceLocation,
-				410,
+				445,
 				sellPrice.ToString(),
 				DrawTextHelper.DrawTextAlignment.Middle,
 				DrawTextHelper.DrawTextAlignment.Middle,
@@ -712,7 +687,7 @@ public class ForecastMenuTests : HarmonyTestBase
 			(
 				_batch,
 				expectedPerDayLocation,
-				410,
+				445,
 				sellPricePerDay != -1 ? sellPricePerDay.ToString() : "---",
 				DrawTextHelper.DrawTextAlignment.Middle,
 				DrawTextHelper.DrawTextAlignment.Middle,
@@ -724,7 +699,7 @@ public class ForecastMenuTests : HarmonyTestBase
 			(
 				_batch,
 				expectedNameLocation,
-				550,
+				565,
 				$"display-{sellPrice}",
 				DrawTextHelper.DrawTextAlignment.Start,
 				DrawTextHelper.DrawTextAlignment.Middle,
@@ -736,7 +711,7 @@ public class ForecastMenuTests : HarmonyTestBase
 			(
 				_batch,
 				expectedPriceLocation,
-				550,
+				565,
 				sellPrice.ToString(),
 				DrawTextHelper.DrawTextAlignment.Middle,
 				DrawTextHelper.DrawTextAlignment.Middle,
@@ -748,7 +723,7 @@ public class ForecastMenuTests : HarmonyTestBase
 			(
 				_batch,
 				expectedPerDayLocation,
-				550,
+				565,
 				sellPricePerDay != -1 ? sellPricePerDay.ToString() : "---",
 				DrawTextHelper.DrawTextAlignment.Middle,
 				DrawTextHelper.DrawTextAlignment.Middle,

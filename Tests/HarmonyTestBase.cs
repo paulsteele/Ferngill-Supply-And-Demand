@@ -33,5 +33,7 @@ public class HarmonyTestBase
 		HarmonyClickableTextureComponent.Setup(harmony);
 		HarmonyItem.Setup(harmony);
 		HarmonyLocalizedContentManager.Setup(harmony);
+		HarmonyOptionsTextEntry.Setup(harmony);
+		HarmonyTextBox.Setup(harmony);
 	}
 }
