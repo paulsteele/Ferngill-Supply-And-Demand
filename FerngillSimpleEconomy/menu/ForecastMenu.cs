@@ -25,7 +25,7 @@ public class ForecastMenu : AbstractForecastMenu
 	private readonly IMonitor _monitor;
 	private readonly IDrawTextHelper _drawTextHelper;
 	private ItemModel[] _allItems;
-	private Dictionary<int, string> _categories;
+	private readonly Dictionary<int, string> _categories;
 	private int _itemIndex;
 	private int _maxNumberOfRows;
 	private bool _isScrolling;
@@ -38,6 +38,7 @@ public class ForecastMenu : AbstractForecastMenu
 	private int _bottomIndex;
 	private OptionsDropDown _categoryDropdown;
 	private OptionsDropDown _sortDropdown;
+	private OptionsTextEntry _optionsTextEntry;
 	private OptionsCheckbox[] _seasonsCheckboxes;
 	private ClickableTextureComponent _exitButton;
 	private bool _drawn;
@@ -58,6 +59,8 @@ public class ForecastMenu : AbstractForecastMenu
 
 	private static int? _cachedChosenCategory;
 	private static string _cachedChosenSort;
+	private static string _textFilter;
+	
 	private float? _breakEvenSupply;
 
 	private const int Divider1 = 340;
@@ -100,6 +103,7 @@ public class ForecastMenu : AbstractForecastMenu
 	{
 		base.gameWindowSizeChanged(oldBounds, newBounds);
 		_upArrow = null;
+		_optionsTextEntry = null;
 		_downArrow = null;
 		_scrollbar = null;
 		_scrollbarRunner = null;
@@ -129,6 +133,8 @@ public class ForecastMenu : AbstractForecastMenu
 		gameMenu.invisible = true;
 		gameMenu.upperRightCloseButton.visible = false;
 	}
+
+	public override bool readyToClose() => !_optionsTextEntry?.textBox.Selected ?? true;
 
 	public override void receiveLeftClick(int x, int y, bool playSound = true)
 	{
@@ -171,6 +177,7 @@ public class ForecastMenu : AbstractForecastMenu
 				Game1.activeClickableMenu = _hiddenMenu;
 			}
 		}
+		_optionsTextEntry?.receiveLeftClick(x, y);
 
 		var seasonsChanged = false;
 		for (var i = 0; i < _seasonsCheckboxes.Length; i++)
@@ -325,6 +332,7 @@ public class ForecastMenu : AbstractForecastMenu
 		DrawTitle(batch);
 		DrawScrollBar(batch);
 		DrawPartitions(batch);
+		DrawSearchBar(batch);
 
 		DrawHeader(batch);
 
@@ -350,7 +358,7 @@ public class ForecastMenu : AbstractForecastMenu
 		width = Math.Min(Game1.uiViewport.Width - 2 * xPadding, 1920);
 		height = Math.Min(Game1.uiViewport.Height - 2 * yPadding, 2000);
 
-		_maxNumberOfRows = (height - 310) / 140;
+		_maxNumberOfRows = (height - 355) / 120;
 		_bottomIndex = Math.Max(_allItems.Length - _maxNumberOfRows, 1);
 
 		xPositionOnScreen = (Game1.uiViewport.Width - width) / 2;
@@ -363,7 +371,7 @@ public class ForecastMenu : AbstractForecastMenu
 
 	private void DrawPartitions(SpriteBatch batch)
 	{
-		const int offset = 115;
+		const int offset = 160;
 
 		height -= offset;
 		yPositionOnScreen += offset;
@@ -378,7 +386,7 @@ public class ForecastMenu : AbstractForecastMenu
 			
 	private void DrawHeader(SpriteBatch batch)
 	{
-		var yLoc = yPositionOnScreen + 254;
+		var yLoc = yPositionOnScreen + 299;
 			
 		_drawTextHelper.DrawAlignedText(batch, xPositionOnScreen + DividerWidth + (Divider1 / 2), yLoc, _helper.Translation.Get("fse.forecast.menu.header.item"), DrawTextHelper.DrawTextAlignment.Middle, DrawTextHelper.DrawTextAlignment.Middle, false);
 		_drawTextHelper.DrawAlignedText(batch, xPositionOnScreen + DividerWidth + Divider1 + ((Divider2 - Divider1) / 2), yLoc, _helper.Translation.Get("fse.forecast.menu.header.sellPrice"), DrawTextHelper.DrawTextAlignment.Middle, DrawTextHelper.DrawTextAlignment.Middle, false);
@@ -507,12 +515,38 @@ public class ForecastMenu : AbstractForecastMenu
 		_sortDropdown.draw(batch, 0, 0);
 	}
 
-	private void DrawRow(SpriteBatch batch, ItemModel model, int rowNumber, int startingX, int startingY, int rowWidth, int rowHeight = 100, int padding = 40)
+	private void DrawSearchBar(SpriteBatch batch)
+	{
+		_optionsTextEntry ??= new OptionsTextEntry(string.Empty, 0, 0, 0)
+		{
+			textBox =
+			{
+				Text = _textFilter,
+			},
+		};
+		var x = xPositionOnScreen + (width / 2) - (_optionsTextEntry.textBox.Width / 2);
+		
+		_optionsTextEntry.bounds.X = x;
+		_optionsTextEntry.bounds.Y = 250;
+		
+		_optionsTextEntry.draw(batch, 0, 0);
+
+		if (_optionsTextEntry.textBox.Text == _textFilter)
+		{
+			return;
+		}
+
+		_textFilter = _optionsTextEntry.textBox.Text;
+		SetupItemsWithSort();
+		_itemIndex = 0;
+	}
+
+	private void DrawRow(SpriteBatch batch, ItemModel model, int rowNumber, int startingX, int startingY, int rowWidth, int rowHeight = 80, int padding = 40)
 	{
 		var obj = model.GetObjectInstance();
 
 		var x = startingX + padding;
-		var y = startingY + 270 + padding + (rowHeight + padding) * rowNumber;
+		var y = startingY + 315 + padding + (rowHeight + padding) * rowNumber;
 
 		var textCenterLine = y + rowHeight / 2;
 
@@ -715,6 +749,12 @@ public class ForecastMenu : AbstractForecastMenu
 	private void SetupItemsWithSort()
 	{
 		var items = _economyService.GetItemsForCategory(_chosenCategory).ToList();
+
+		if (!string.IsNullOrWhiteSpace(_textFilter))
+		{
+			var filter = _textFilter.ToLower().Trim();
+			items = items.Where(i => i.GetObjectInstance().DisplayName.ToLower().Trim().Contains(filter)).ToList();
+		}
 
 		switch (_chosenSort)
 		{
