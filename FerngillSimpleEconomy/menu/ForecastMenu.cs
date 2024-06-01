@@ -31,10 +31,6 @@ public class ForecastMenu : AbstractForecastMenu
 	private bool _isScrolling;
 	private bool _isInCategoryDropdown;
 	private bool _isInSortDropdown;
-	private Texture2D _barBackgroundTexture;
-	private Texture2D _barForegroundTexture;
-	private Texture2D _barTickTexture;
-	private Texture2D _breakEvenTexture;
 	private ClickableTextureComponent _upArrow;
 	private ClickableTextureComponent _downArrow;
 	private ClickableTextureComponent _scrollbar;
@@ -62,7 +58,7 @@ public class ForecastMenu : AbstractForecastMenu
 
 	private static int? _cachedChosenCategory;
 	private static string _cachedChosenSort;
-	private float _breakEvenSupply = -1f;
+	private float? _breakEvenSupply;
 
 	private const int Divider1 = 340;
 	private const int Divider2 = 560;
@@ -103,10 +99,6 @@ public class ForecastMenu : AbstractForecastMenu
 	public override void gameWindowSizeChanged(Rectangle oldBounds, Rectangle newBounds)
 	{
 		base.gameWindowSizeChanged(oldBounds, newBounds);
-		_barBackgroundTexture = null;
-		_barForegroundTexture = null;
-		_barTickTexture = null;
-		_breakEvenTexture = null;
 		_upArrow = null;
 		_downArrow = null;
 		_scrollbar = null;
@@ -531,8 +523,7 @@ public class ForecastMenu : AbstractForecastMenu
 			drawHorizontalPartition(batch, y + rowHeight - 5, true );
 		}
 
-		DrawSupplyBar(batch,x + Divider3 + 10, y + 10,  x + rowWidth - 10 - padding * 2, (Game1.tileSize / 2), model);
-
+		DrawSupplyBar(batch,x + Divider3 + 5, y + 10,  x + rowWidth - 15 - padding * 2, (Game1.tileSize / 2), model);
 		var splitPoint = obj.DisplayName.LastIndexOf(" ", StringComparison.Ordinal);
 		if (splitPoint == -1)
 		{
@@ -565,100 +556,60 @@ public class ForecastMenu : AbstractForecastMenu
 		var barWidth = ((endingX - startingX) / 10) * 10;
 		var percentage = Math.Min(model.Supply / (float)ConfigModel.Instance.MaxCalculatedSupply, 1);
 
-		if (_barBackgroundTexture == null || _barForegroundTexture == null || _barTickTexture == null)
-		{
-			_barBackgroundTexture = new Texture2D(Game1.graphics.GraphicsDevice, barWidth, barHeight);
-			_barForegroundTexture = new Texture2D(Game1.graphics.GraphicsDevice, barWidth, barHeight);
-			_barTickTexture = new Texture2D(Game1.graphics.GraphicsDevice, barWidth, barHeight);
-			
-			var borderColor = new Color(130, 54, 5);
-			var foregroundColor = new Color(150, 150, 150);
-			const int borderSize = 4;
-			
-			var backgroundColors = new Color[barWidth * barHeight];
-			var foregroundColors = new Color[barWidth * barHeight];
-			var tickColors = new Color[barWidth * barHeight];
-
-			for (var x = 0; x < barWidth; x++)
-			{
-				for (var y = 0; y < barHeight; y++)
-				{
-					var background = Color.Transparent;
-					var foreground = Color.Transparent;
-					var tick = Color.Transparent;
-					
-					if (x < borderSize || y < borderSize || x > barWidth - (borderSize + 1) || y > barHeight - (borderSize + 1))
-					{
-						background = borderColor;
-					}
-					else
-					{
-						foreground = foregroundColor;
-					}
-					
-					if (
-						x % (barWidth / 10) == 0 ||
-						x % (barWidth / 10) == 1 ||
-						x % (barWidth / 10) == 2 ||
-						x % (barWidth / 10) == 3
-					)
-					{
-						tick = borderColor;
-					}
-					
-					backgroundColors[x + y * barWidth] = background;
-					foregroundColors[x + y * barWidth] = foreground;
-					tickColors[x + y * barWidth] = tick;
-				}
-			}
-			
-			_barBackgroundTexture.SetData(backgroundColors);
-			_barForegroundTexture.SetData(foregroundColors);
-			_barTickTexture.SetData(tickColors);
-		}
-
-		var barColor = new Color((byte)(255 * percentage), (byte)(255 * (1 - percentage)), 0);
-
-		var fullRect = new Rectangle(startingX, startingY + Game1.tileSize / 2, barWidth,  barHeight);
 		var percentageRect = new Rectangle(startingX, startingY + Game1.tileSize / 2, (int) (barWidth * percentage), barHeight);
-		batch.Draw(_barBackgroundTexture, fullRect, new Rectangle(0, 0, barWidth, barHeight), Color.White);
-		batch.Draw(_barForegroundTexture, percentageRect, new Rectangle(0, 0, percentageRect.Width, barHeight), barColor);
-		batch.Draw(_barTickTexture, fullRect, new Rectangle(0, 0, barWidth, barHeight), Color.White);
+		var percentageWidth = (int)(barWidth * percentage);
+			
+		var color1 = new Color((int)(60 + percentage * 120), (int)(180 - percentage * 120), (int)(80 - percentage * 80));
+		var color2 = new Color((int)(percentage * 113), (int)(113 - percentage * 113), (int)(62 - percentage * 62));
+		var color3 = new Color((int)(percentage * 80), (int)(80 - percentage * 80), (int)(50 - percentage * 50));
+		var color4 = new Color((int)(percentage * 60), (int)(60 - percentage * 60), (int)(30 - percentage * 30));
+		
+		var y = startingY + 32;
+		
+		// bar background
+		batch.Draw(Game1.staminaRect, new Rectangle(startingX  - 1, y + 4, barWidth + 4, 40), Color.Black * 0.35f);
+		batch.Draw(Game1.staminaRect, new Rectangle(startingX + 4, y , barWidth + 4, 40), new Color(60, 60, 25));
+		batch.Draw(Game1.staminaRect, new Rectangle(startingX + 8, y + 4, barWidth + 4 - 12, 32), new Color(173, 129, 79));
 
-		if (_breakEvenSupply > 0f)
+		y += 4;
+		
+		// bar foreground
+		if (percentageWidth > 4)
 		{
-			const int evenWidth = 8;
-			
-			if (_breakEvenTexture == null)
-			{
-				_breakEvenTexture = new Texture2D(Game1.graphics.GraphicsDevice, evenWidth, barHeight);
-				var breakEvenColors = new Color[evenWidth * barHeight];
-				// var tick = new Color(120, 120, 120);
-				var tick = Color.Aqua;
-				
-				for (var x = 0; x < evenWidth; x++)
-				{
-					for (var y = 0; y < barHeight; y++)
-					{
-						breakEvenColors[x + y * evenWidth] = tick;
-					}
-				}
-				
-				_breakEvenTexture.SetData(breakEvenColors);
-			}
-			var evenX = (int) Math.Floor((startingX + barWidth * _breakEvenSupply / ConfigModel.Instance.MaxCalculatedSupply) - (evenWidth / 2f));
-			
-			var evenRect = new Rectangle(evenX, startingY + Game1.tileSize / 2, evenWidth, barHeight);
-			batch.Draw(_breakEvenTexture, evenRect, new Rectangle(0, 0, evenWidth, barHeight), Color.White);
+			batch.Draw(Game1.staminaRect, new Rectangle(startingX + 8, y , percentageWidth, 32), color2);
+			batch.Draw(Game1.staminaRect, new Rectangle(startingX + 8, y + 4, 4, 28), color3);
+			batch.Draw(Game1.staminaRect, new Rectangle(startingX + 8, y + 28, percentageWidth - 8, 4), color3);
+			batch.Draw(Game1.staminaRect, new Rectangle(startingX + 12, y , percentageWidth - 4, 4), color1);
+			batch.Draw(Game1.staminaRect, new Rectangle(startingX + percentageWidth, y, 4, 28), color1);
+			batch.Draw(Game1.staminaRect, new Rectangle(startingX + 4 + percentageWidth, y, 4, 32), color4);
 		}
+
+		// ticks 
+		for (var i = 1; i < 10; i++)
+		{
+			var tickX = startingX + ((barWidth / 10) * i);
+			if (percentageRect.X + percentageRect.Width > tickX)
+			{
+				batch.Draw(Game1.staminaRect, new Rectangle(tickX , y, 4, 28), color1);
+			}
+			batch.Draw(Game1.staminaRect, new Rectangle(tickX + 4, y, 4, 32), color4);
+		}
+
+		_breakEvenSupply ??= _economyService.GetBreakEvenSupply();
+		
+		if (_breakEvenSupply.Value > 0)
+		{
+			var evenX = (int) Math.Floor((startingX + barWidth * _breakEvenSupply.Value / ConfigModel.Instance.MaxCalculatedSupply));
 			
+			batch.Draw(Game1.mouseCursors, new Rectangle(evenX, startingY + 12, 18, 16), new Rectangle(232, 347, 9, 8), Color.White);
+		}
 		DrawDeltaArrows(batch, model, percentageRect, barHeight);
 	}
 
 	private static void DrawDeltaArrows(SpriteBatch batch, ItemModel model, Rectangle percentageRect, int barHeight)
 	{
 		var location = new Rectangle(percentageRect.X + percentageRect.Width - (int)(Game1.tileSize * .3) + 15,
-			percentageRect.Y - barHeight, 5 * Game1.pixelZoom, 5 * Game1.pixelZoom);
+			percentageRect.Y - barHeight - 4, 5 * Game1.pixelZoom, 5 * Game1.pixelZoom);
 		
 		if (model.DailyDelta < 0)
 		{
