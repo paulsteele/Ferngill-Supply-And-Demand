@@ -33,6 +33,8 @@ public class ForecastMenu : AbstractForecastMenu
 	private bool _isInSortDropdown;
 	private Texture2D _barBackgroundTexture;
 	private Texture2D _barForegroundTexture;
+	private Texture2D _barTickTexture;
+	private Texture2D _breakEvenTexture;
 	private ClickableTextureComponent _upArrow;
 	private ClickableTextureComponent _downArrow;
 	private ClickableTextureComponent _scrollbar;
@@ -60,6 +62,7 @@ public class ForecastMenu : AbstractForecastMenu
 
 	private static int? _cachedChosenCategory;
 	private static string _cachedChosenSort;
+	private float _breakEvenSupply = -1f;
 
 	private const int Divider1 = 340;
 	private const int Divider2 = 560;
@@ -102,6 +105,8 @@ public class ForecastMenu : AbstractForecastMenu
 		base.gameWindowSizeChanged(oldBounds, newBounds);
 		_barBackgroundTexture = null;
 		_barForegroundTexture = null;
+		_barTickTexture = null;
+		_breakEvenTexture = null;
 		_upArrow = null;
 		_downArrow = null;
 		_scrollbar = null;
@@ -305,7 +310,15 @@ public class ForecastMenu : AbstractForecastMenu
 
 		var relativeMousePos = y - _scrollbarRunner.Value.Y;
 
-		_itemIndex = BoundsHelper.EnsureBounds(relativeMousePos / step, 0, _bottomIndex);
+
+		if (step == 0)
+		{
+			// should not be possible but a user report has a stacktrace that says it is.
+
+			return;
+		}
+
+		_itemIndex = BoundsHelper.EnsureBounds(relativeMousePos / step , 0, _bottomIndex);
 
 		if (_itemIndex != startingIndex)
 		{
@@ -552,17 +565,19 @@ public class ForecastMenu : AbstractForecastMenu
 		var barWidth = ((endingX - startingX) / 10) * 10;
 		var percentage = Math.Min(model.Supply / (float)ConfigModel.Instance.MaxCalculatedSupply, 1);
 
-		if (_barBackgroundTexture == null || _barForegroundTexture == null)
+		if (_barBackgroundTexture == null || _barForegroundTexture == null || _barTickTexture == null)
 		{
 			_barBackgroundTexture = new Texture2D(Game1.graphics.GraphicsDevice, barWidth, barHeight);
 			_barForegroundTexture = new Texture2D(Game1.graphics.GraphicsDevice, barWidth, barHeight);
-			var borderColor = Color.DarkGoldenrod;
+			_barTickTexture = new Texture2D(Game1.graphics.GraphicsDevice, barWidth, barHeight);
+			
+			var borderColor = new Color(130, 54, 5);
 			var foregroundColor = new Color(150, 150, 150);
-			var backgroundTick = new Color(50, 50, 50);
-			var foregroundTick = new Color(120, 120, 120);
+			const int borderSize = 4;
 			
 			var backgroundColors = new Color[barWidth * barHeight];
 			var foregroundColors = new Color[barWidth * barHeight];
+			var tickColors = new Color[barWidth * barHeight];
 
 			for (var x = 0; x < barWidth; x++)
 			{
@@ -570,28 +585,36 @@ public class ForecastMenu : AbstractForecastMenu
 				{
 					var background = Color.Transparent;
 					var foreground = Color.Transparent;
+					var tick = Color.Transparent;
 					
-					if (x < 2 || y < 2 || x > barWidth - 3 || y > barHeight - 3)
+					if (x < borderSize || y < borderSize || x > barWidth - (borderSize + 1) || y > barHeight - (borderSize + 1))
 					{
 						background = borderColor;
-					}
-					else if (x % (barWidth/ 10) == 0)
-					{
-						background = backgroundTick;
-						foreground = foregroundTick;
 					}
 					else
 					{
 						foreground = foregroundColor;
 					}
 					
+					if (
+						x % (barWidth / 10) == 0 ||
+						x % (barWidth / 10) == 1 ||
+						x % (barWidth / 10) == 2 ||
+						x % (barWidth / 10) == 3
+					)
+					{
+						tick = borderColor;
+					}
+					
 					backgroundColors[x + y * barWidth] = background;
 					foregroundColors[x + y * barWidth] = foreground;
+					tickColors[x + y * barWidth] = tick;
 				}
 			}
 			
 			_barBackgroundTexture.SetData(backgroundColors);
 			_barForegroundTexture.SetData(foregroundColors);
+			_barTickTexture.SetData(tickColors);
 		}
 
 		var barColor = new Color((byte)(255 * percentage), (byte)(255 * (1 - percentage)), 0);
@@ -600,6 +623,34 @@ public class ForecastMenu : AbstractForecastMenu
 		var percentageRect = new Rectangle(startingX, startingY + Game1.tileSize / 2, (int) (barWidth * percentage), barHeight);
 		batch.Draw(_barBackgroundTexture, fullRect, new Rectangle(0, 0, barWidth, barHeight), Color.White);
 		batch.Draw(_barForegroundTexture, percentageRect, new Rectangle(0, 0, percentageRect.Width, barHeight), barColor);
+		batch.Draw(_barTickTexture, fullRect, new Rectangle(0, 0, barWidth, barHeight), Color.White);
+
+		if (_breakEvenSupply > 0f)
+		{
+			const int evenWidth = 8;
+			
+			if (_breakEvenTexture == null)
+			{
+				_breakEvenTexture = new Texture2D(Game1.graphics.GraphicsDevice, evenWidth, barHeight);
+				var breakEvenColors = new Color[evenWidth * barHeight];
+				// var tick = new Color(120, 120, 120);
+				var tick = Color.Aqua;
+				
+				for (var x = 0; x < evenWidth; x++)
+				{
+					for (var y = 0; y < barHeight; y++)
+					{
+						breakEvenColors[x + y * evenWidth] = tick;
+					}
+				}
+				
+				_breakEvenTexture.SetData(breakEvenColors);
+			}
+			var evenX = (int) Math.Floor((startingX + barWidth * _breakEvenSupply / ConfigModel.Instance.MaxCalculatedSupply) - (evenWidth / 2f));
+			
+			var evenRect = new Rectangle(evenX, startingY + Game1.tileSize / 2, evenWidth, barHeight);
+			batch.Draw(_breakEvenTexture, evenRect, new Rectangle(0, 0, evenWidth, barHeight), Color.White);
+		}
 			
 		DrawDeltaArrows(batch, model, percentageRect, barHeight);
 	}
@@ -748,5 +799,6 @@ public class ForecastMenu : AbstractForecastMenu
 		items = items.Where(i => _economyService.ItemValidForSeason(i, _chosenSeasons)).ToList();
 
 		_allItems = items.ToArray();
+		_breakEvenSupply = _economyService.GetBreakEvenSupply();
 	}
 }

@@ -1323,6 +1323,28 @@ public class EconomyServiceTests : HarmonyTestBase
 		});
  }
 
+	[TestCase(1000, .2f, 1f, 0)]
+	[TestCase(1000, .2f, .2f, -1)]
+	[TestCase(1000, 1.1f, 2.0f, -1)]
+	[TestCase(1000, .2f, .9f, -1)]
+	[TestCase(1000, .2f, 1.3f, 272.72f)]
+	[TestCase(10000, .2f, 1.3f, 2727.27f)]
+	[TestCase(1000, .1f, 1.8f, 470.58f)]
+	public void ShouldGetBreakEvenSupply
+	(
+		int maxCalculatedSupply,
+		float minPercentage,
+		float maxPercentage,
+		float expectedSupply
+		)
+	{
+		ConfigModel.Instance.MaxCalculatedSupply = maxCalculatedSupply;
+		ConfigModel.Instance.MinPercentage = minPercentage;
+		ConfigModel.Instance.MaxPercentage = maxPercentage;
+
+		Assert.That(_economyService.GetBreakEvenSupply(), Is.EqualTo(expectedSupply).Within(.1f));
+	}
+
 	private static KeyValuePair<string, ObjectData> GenerateObjectData(string itemId, int category)
 	{
 		HarmonyObject.ObjectIdCategoryMapping.TryAdd(itemId, category);

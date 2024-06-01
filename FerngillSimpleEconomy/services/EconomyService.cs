@@ -28,6 +28,7 @@ public interface IEconomyService
 	bool ItemValidForSeason(ItemModel model, Seasons seasonsFilter);
 	int GetPricePerDay(ItemModel model);
 	ItemModel GetConsolidatedItem(ItemModel original);
+	float GetBreakEvenSupply();
 }
 
 public class EconomyService(
@@ -279,6 +280,30 @@ public class EconomyService(
 		// monitor.Log($"Altered {obj.name} from {basePrice} to {adjustedPrice}", LogLevel.Trace);
 
 		return adjustedPrice;
+	}
+
+	public float GetBreakEvenSupply()
+	{
+		if (ConfigModel.Instance.MaxPercentage < 1f)
+		{
+			return -1;
+		}
+
+		if (ConfigModel.Instance.MinPercentage > 1f)
+		{
+			return -1;
+		}
+		
+		var den = ConfigModel.Instance.MaxPercentage - ConfigModel.Instance.MinPercentage;
+
+		if (den == 0)
+		{
+			return -1;
+		}
+
+		var num = (ConfigModel.Instance.MinPercentage * ConfigModel.Instance.MaxCalculatedSupply) - ConfigModel.Instance.MaxCalculatedSupply;
+
+		return (num / den) + ConfigModel.Instance.MaxCalculatedSupply;
 	}
 
 	private Object GetArtisanBase(Object obj)
