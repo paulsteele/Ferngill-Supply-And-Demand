@@ -163,6 +163,13 @@ namespace fse.core.handlers
 				setValue: val => ConfigModel.Instance.EnableShopDisplay = val
 			);
 			
+			configMenu.AddKeybindList(
+				mod: _manifest,
+				name: ()=> _helper.Translation.Get("fse.config.hotkey.openMenu"),
+				getValue: () => ConfigModel.Instance.ShowMenuHotkey,
+				setValue: val => ConfigModel.Instance.ShowMenuHotkey = val
+			);
+			
 			configMenu.AddSectionTitle(
 				mod: _manifest,
 				text: ()=> _helper.Translation.Get("fse.config.category.header")

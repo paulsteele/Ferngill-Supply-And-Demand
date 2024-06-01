@@ -176,6 +176,10 @@ public class ForecastMenu : AbstractForecastMenu
 
 				Game1.activeClickableMenu = _hiddenMenu;
 			}
+			else
+			{
+				exitThisMenu();
+			}
 		}
 		_optionsTextEntry?.receiveLeftClick(x, y);
 

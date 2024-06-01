@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using StardewModdingAPI.Utilities;
 using StardewValley;
 
 namespace fse.core.models;
@@ -21,6 +22,7 @@ public class ConfigModel
 	public int MenuTabOffset { get; set; } = 0;
 	public bool EnableMenuTab { get; set; } = true;
 	public bool EnableShopDisplay { get; set; } = true;
+	public KeybindList ShowMenuHotkey { get; set; } = KeybindList.Parse("H");
 
 	public List<int> ValidCategories { get; set; } = new()
 	{

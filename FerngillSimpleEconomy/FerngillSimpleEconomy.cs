@@ -58,6 +58,7 @@ namespace fse.core
 			new GameLoadedHandler(helper, Monitor, ModManifest, _economyService).Register();
 			new GameMenuLoadedHandler(helper, Monitor, _forecastMenuService).Register();
 			new MultiplayerHandler(helper, _economyService, _multiplayerService).Register();
+			new HotkeyHandler(helper, Monitor, _forecastMenuService).Register();
 		}
 	}
 }
