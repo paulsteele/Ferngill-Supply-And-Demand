@@ -29,6 +29,7 @@ public interface IEconomyService
 	int GetPricePerDay(ItemModel model);
 	ItemModel GetConsolidatedItem(ItemModel original);
 	float GetBreakEvenSupply();
+  ItemModel GetItemModelById(string item);
 }
 
 public class EconomyService(
@@ -446,6 +447,16 @@ public class EconomyService(
 		var baseItem = Economy.GetItem(artisanBase);
 
 		return baseItem ?? baseModel;
+	}
+
+	public ItemModel GetItemModelById(string item)
+	{
+	 ItemModel model = Economy.GetItem(item);
+	 if (model != null)
+	 {
+		return GetConsolidatedItem(model); ;
+	 }
+	 return null;
 	}
 
 	private static int RoundDouble(double d) => (int)Math.Round(d, 0, MidpointRounding.ToEven);
