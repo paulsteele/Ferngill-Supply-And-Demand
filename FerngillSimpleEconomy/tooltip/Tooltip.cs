@@ -7,15 +7,9 @@ using StardewValley.Menus;
 using StardewValley;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using fse.core.menu;
 using fse.core.models;
 using fse.core.services;
-using fse.core.patches;
-using HarmonyLib;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace fse.core.tooltip
 {
@@ -25,15 +19,17 @@ namespace fse.core.tooltip
 	private static AbstractForecastMenu _forecastMenu;
 	private static IEconomyService _econService;
 	private static IForecastMenuService _forecastMenuService;
+	private static IMonitor _monitor;
 	private Item toolbarItem;
 	private bool isUiInfoSuiteLoaded;
 
 	//Constructor
-	public Tooltip(IModHelper helper, IEconomyService econService, IForecastMenuService forecastMenuService)
+	public Tooltip(IModHelper helper, IEconomyService econService, IForecastMenuService forecastMenuService, IMonitor monitor)
 	{
 	 _helper = helper;
 	 _econService = econService;
 	 _forecastMenuService = forecastMenuService;
+	 _monitor = monitor;
 
 	 _forecastMenu = _forecastMenuService.CreateMenu();
 
@@ -63,7 +59,7 @@ namespace fse.core.tooltip
 	{
 	 if (Game1.activeClickableMenu == null && toolbarItem != null)
 	 {
-		PopulateHoverTextBoxAndDraw(toolbarItem, true);
+		PopulateHoverTextBoxAndDraw(toolbarItem);
 		toolbarItem = null;
 	 }
 	}
@@ -75,7 +71,7 @@ namespace fse.core.tooltip
 	 {
 		Item item = this.GetHoveredItemFromMenu(Game1.activeClickableMenu);
 		if (item != null)
-		 PopulateHoverTextBoxAndDraw(item, false);
+		 PopulateHoverTextBoxAndDraw(item);
 	 }
 	}
 
@@ -99,10 +95,18 @@ namespace fse.core.tooltip
 	}
 
 	//Populate and draw
-	private void PopulateHoverTextBoxAndDraw(Item item, bool fromToolbar)
+	private void PopulateHoverTextBoxAndDraw(Item item)
 	{
-	 String itemid = item.ItemId;
-	 String itemname = item.DisplayName;
+	 String itemid = item.QualifiedItemId;
+
+	 //determine parent item id from tag (for wine,juice,etc.)
+	 HashSet<string> itemtags = item.GetContextTags();
+	 foreach (string tag in itemtags)
+	 {
+		 if (tag.StartsWith("preserve_sheet_index_")){
+			itemid = tag.Split("_")[3];
+		 }
+	 }
 
 	 ItemModel model = _econService.GetItemModelById(itemid);
 	 if (model != null)
@@ -110,20 +114,18 @@ namespace fse.core.tooltip
 		Seasons allSeasons = Seasons.Spring | Seasons.Summer | Seasons.Fall | Seasons.Winter;
 		if (_econService.ItemValidForSeason(model, allSeasons))
 		{
-		 this.DrawHoverTextBox(Game1.smallFont, fromToolbar, model);
+		 this.DrawHoverTextBox(model);
 		}
 	 }
 
 	}
 
 	//Draw
-	private void DrawHoverTextBox(SpriteFont font, bool fromToolbar, ItemModel model)
+	private void DrawHoverTextBox(ItemModel model)
 	{
 	 int width = 240;
 	 int height = 110;
 
-	 //int x = (int)(Mouse.GetState().X - width / Game1.options.zoomLevel) - Game1.tileSize / 2;
-	 //int y = (int)(Mouse.GetState().Y / Game1.options.zoomLevel) + Game1.tileSize / 2;
 	 int x = (int)(Mouse.GetState().X / Game1.options.uiScale) - Game1.tileSize / 2 - width;
 	 int y = (int)(Mouse.GetState().Y / Game1.options.uiScale) + Game1.tileSize / 3;
 

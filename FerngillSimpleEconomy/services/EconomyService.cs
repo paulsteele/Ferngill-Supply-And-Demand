@@ -451,12 +451,17 @@ public class EconomyService(
 
 	public ItemModel GetItemModelById(string item)
 	{
-	 ItemModel model = Economy.GetItem(item);
-	 if (model != null)
+	 Object obj = new Object(item, 1);
+	 if (obj.Category == Object.artisanGoodsCategory)
 	 {
-		return GetConsolidatedItem(model); ;
+		obj = GetArtisanBase(obj);
 	 }
-	 return null;
+	 ItemModel model = Economy.GetItem(obj);
+	 if (model == null)
+	 {
+		return null;
+	 }
+	 return GetConsolidatedItem(model);
 	}
 
 	private static int RoundDouble(double d) => (int)Math.Round(d, 0, MidpointRounding.ToEven);
