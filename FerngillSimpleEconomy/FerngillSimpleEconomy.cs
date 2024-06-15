@@ -3,6 +3,7 @@ using fse.core.helpers;
 using fse.core.models;
 using fse.core.patches;
 using fse.core.services;
+using fse.core.tooltip;
 using HarmonyLib;
 using StardewModdingAPI;
 using StardewValley;
@@ -18,6 +19,7 @@ namespace fse.core
 		private NormalDistributionService _normalDistributionService;
 		private SeedService _seedService;
 		private FishService _fishService;
+		private Tooltip _tooltip;
 
 		public override void Entry(IModHelper helper)
 		{
@@ -28,6 +30,7 @@ namespace fse.core
 			_normalDistributionService = new NormalDistributionService();
 			_economyService = new EconomyService(helper, Monitor, _multiplayerService, _fishService, _seedService, _normalDistributionService);
 			_forecastMenuService = new ForecastMenuService(helper, _economyService, Monitor, new DrawTextHelper());
+			_tooltip = new Tooltip(helper, _economyService, _forecastMenuService, Monitor);
 			RegisterPatches(helper);
 			RegisterHandlers(helper);
 			helper.ConsoleCommands.Add("fse_reset", "Fully Resets Ferngill Simple Economy", (_, _) =>
