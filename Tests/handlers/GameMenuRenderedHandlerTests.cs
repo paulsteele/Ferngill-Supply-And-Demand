@@ -26,6 +26,7 @@ public class GameMenuRenderedHandlerTests : HarmonyTestBase
 	private Mock<IModContentHelper> _mockModContent;
 	private Mock<IModRegistry> _mockModRegistry;
 	private Mock<IInputHelper> _mockInputHelper;
+	private Mock<ITooltipMenu> _mockTooltipService;
 
 	private GameMenuLoadedHandler _gameMenuLoadedHandler;
 	private GameMenu _gameMenu;
@@ -47,6 +48,7 @@ public class GameMenuRenderedHandlerTests : HarmonyTestBase
 		_mockModContent = new Mock<IModContentHelper>();
 		_mockModRegistry = new Mock<IModRegistry>();
 		_mockInputHelper = new Mock<IInputHelper>();
+		_mockTooltipService = new Mock<ITooltipMenu>();
 		
 		var mockEvents = new Mock<IModEvents>();
 		mockEvents.Setup(m => m.Display).Returns(_mockDisplayEvents);
@@ -83,7 +85,7 @@ public class GameMenuRenderedHandlerTests : HarmonyTestBase
 		_mockForecastMenuService.Setup(m => m.CreateMenu()).Returns(_mockForecastMenu.Object);
 		_mockModContent.Setup(m => m.Load<Texture2D>(It.IsAny<string>())).Returns(_assetTexture);
 
-		_gameMenuLoadedHandler = new GameMenuLoadedHandler(_mockModHelper.Object, _mockMonitor.Object, _mockForecastMenuService.Object);
+		_gameMenuLoadedHandler = new GameMenuLoadedHandler(_mockModHelper.Object, _mockMonitor.Object, _mockForecastMenuService.Object, _mockTooltipService.Object);
 		_gameMenuLoadedHandler.Register();
 	}
 

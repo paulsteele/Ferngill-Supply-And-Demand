@@ -158,6 +158,13 @@ namespace fse.core.handlers
 			
 			configMenu.AddBoolOption(
 				mod: _manifest,
+				name: ()=> _helper.Translation.Get("fse.config.EnableTooltip"),
+				getValue: () => ConfigModel.Instance.EnableTooltip,
+				setValue: val => ConfigModel.Instance.EnableTooltip = val
+			);
+			
+			configMenu.AddBoolOption(
+				mod: _manifest,
 				name: ()=> _helper.Translation.Get("fse.config.EnableShopDisplay"),
 				getValue: () => ConfigModel.Instance.EnableShopDisplay,
 				setValue: val => ConfigModel.Instance.EnableShopDisplay = val

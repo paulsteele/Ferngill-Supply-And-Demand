@@ -17,18 +17,21 @@ public class GameMenuLoadedHandler : IHandler
 	private readonly IModHelper _helper;
 	private readonly IMonitor _monitor;
 	private readonly IForecastMenuService _forecastMenuService;
+	private readonly ITooltipMenu _tooltipMenu;
 	private Texture2D _menuTexture;
 	public readonly ClickableComponent Tab;
 
 	public GameMenuLoadedHandler(
 		IModHelper helper,
 		IMonitor monitor,
-		IForecastMenuService forecastMenuService
+		IForecastMenuService forecastMenuService,
+		ITooltipMenu tooltipMenu
 	)
 	{
 		_helper = helper;
 		_monitor = monitor;
 		_forecastMenuService = forecastMenuService;
+		_tooltipMenu = tooltipMenu;
 
 		Tab = new ClickableComponent(
 			new Rectangle(0, 0, 64, 64), 
@@ -41,6 +44,9 @@ public class GameMenuLoadedHandler : IHandler
 	{
 		_helper.Events.Display.RenderedActiveMenu += (_, args) => SafeAction.Run(() => DrawTab(args.SpriteBatch), _monitor, nameof(DrawTab));
 		_helper.Events.Input.ButtonPressed += (_, args) => SafeAction.Run(() => HandleLeftClick(args), _monitor, nameof(HandleLeftClick));
+		_helper.Events.Display.RenderingHud += (_, args) => SafeAction.Run(() => _tooltipMenu.PreRenderHud(args), _monitor, nameof(_tooltipMenu.PreRenderHud));
+		_helper.Events.Display.RenderedHud += (_, args) => SafeAction.Run(() => _tooltipMenu.PostRenderHud(args), _monitor, nameof(_tooltipMenu.PostRenderHud));
+		_helper.Events.Display.RenderedActiveMenu += (_, args) => SafeAction.Run(() => _tooltipMenu.PostRenderGui(args), _monitor, nameof(_tooltipMenu.PostRenderHud));
 	}
 
 	public void HandleLeftClick(ButtonPressedEventArgs buttonPressedEventArgs)

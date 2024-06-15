@@ -27,6 +27,7 @@
 	"fse.config.MaxPercentage": "Maximum Price Multiplier",
 	"fse.config.MenuTabOffset": "Menu Tab X Offset",
 	"fse.config.EnableMenuTab": "Show Tab In Menu",
+	"fse.config.EnableTooltip": "Show Hover Tooltip",
 	"fse.config.EnableShopDisplay": "Show Preview In Shop",
 	"fse.config.ResetEconomy": "Reset Economy(In game only)",
 	"fse.config.hotkey.openMenu": "Open Forecast",
