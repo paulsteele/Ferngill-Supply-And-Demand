@@ -40,10 +40,17 @@ namespace fse.core.models
 			}
 		}
 
-		public ItemModel GetItem(Object obj) => 
-			CategoryEconomies.TryGetValue(obj.Category, out var category) 
+		public ItemModel GetItem(Object obj)
+		{
+			if (obj == null)
+			{
+				return null;
+			}
+			
+			return CategoryEconomies.TryGetValue(obj.Category, out var category) 
 				? category.GetValueOrDefault(HardcodedEquivalentItemsList.GetEquivalentId(obj.ItemId)) 
 				: null;
+		}
 		
 		public ItemModel GetItem(string id)
 		{
