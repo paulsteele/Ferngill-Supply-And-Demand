@@ -29,7 +29,7 @@ public interface IEconomyService
 	int GetPricePerDay(ItemModel model);
 	ItemModel GetConsolidatedItem(ItemModel original);
 	float GetBreakEvenSupply();
-	ItemModel GetItemModelById(string item);
+	ItemModel GetItemModelFromObject(Object obj);
 }
 
 public class EconomyService(
@@ -449,9 +449,8 @@ public class EconomyService(
 		return baseItem ?? baseModel;
 	}
 
-	public ItemModel GetItemModelById(string item)
+	public ItemModel GetItemModelFromObject(Object obj)
 	{
-		var obj = new Object(item, 1);
 		if (obj.Category == Object.artisanGoodsCategory)
 		{ 
 			obj = GetArtisanBase(obj);

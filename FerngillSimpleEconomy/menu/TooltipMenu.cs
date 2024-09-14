@@ -118,21 +118,18 @@ namespace fse.core.menu
 
 	//Populate and draw
 	private void PopulateHoverTextBoxAndDraw(Item item)
-	{ 
-		var itemId = item.ItemId;
+	{
+		if (item is not Object obj)
+		{
+			return;
+		}
+		var model = _econService.GetItemModelFromObject(obj);
 
-		//determine parent item id from tag (for wine,juice,etc.)
-		var itemTags = item.GetContextTags(); 
-		foreach (var tag in itemTags.Where(tag => tag.StartsWith("preserve_sheet_index_"))) 
-		{ 
-			itemId = tag.Split("_")[3]; 
+		if (model == null)
+		{
+			return;
 		}
-		
-		var model = _econService.GetItemModelById(itemId); 
-		if (model == null) 
-		{ 
-			return; 
-		}
+
 		DrawHoverTextBox(model);
 	}
 
