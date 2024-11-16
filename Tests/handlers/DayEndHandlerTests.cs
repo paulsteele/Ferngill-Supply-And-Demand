@@ -216,10 +216,12 @@ internal class MockInventory : List<Item>, IInventory
 	public int CountId(string itemId) => throw new NotImplementedException();
 
 	public IEnumerable<Item> GetById(string itemId) => throw new NotImplementedException();
+	public int Reduce(Item item, int count, bool reduceRemainderFromInventory = false) => throw new NotImplementedException();
 
 	public int ReduceId(string itemId, int count) => throw new NotImplementedException();
 
 	public bool RemoveButKeepEmptySlot(Item item) => throw new NotImplementedException();
+	public bool IsLocalPlayerInventory { get; set; }
 
 	public long LastTickSlotChanged { get; }
 }

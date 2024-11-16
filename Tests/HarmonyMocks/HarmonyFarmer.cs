@@ -26,6 +26,12 @@ public class HarmonyFarmer
 			AccessTools.PropertyGetter(typeof(Farmer), nameof(Farmer.team)),
 			prefix: new HarmonyMethod(typeof(HarmonyFarmer), nameof(MockGetTeam))
 		);
+
+		harmony.Patch(
+			AccessTools.PropertyGetter(typeof(Farmer), nameof(Farmer.Gender)),
+			prefix: new HarmonyMethod(typeof(HarmonyFarmer), nameof(MockGetGender))
+
+		);
 		
 		UniqueMultiplayerIdDictionary.Clear();
 	}
@@ -61,6 +67,16 @@ public class HarmonyFarmer
 	)
 	{
 		__result = FarmerTeamDictionary[__instance];
+		
+		return false;
+	}
+	
+	static bool MockGetGender(
+		Farmer __instance,
+		ref Gender __result
+	)
+	{
+		__result = Gender.Undefined;
 		
 		return false;
 	}

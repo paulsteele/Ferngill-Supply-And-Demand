@@ -57,7 +57,8 @@ public class HarmonyObject
 
 	static bool MockConstructor(
 		ref Object __instance,
-		string itemId
+		string itemId,
+		int initialStack
 		)
 	{
 		__instance.itemId = new NetString();
@@ -66,6 +67,11 @@ public class HarmonyObject
 		{
 			__instance.Category = category;
 		}
+		
+		#pragma warning disable AvoidNetField
+		var stackField = AccessTools.Field(typeof(Object), nameof(Object.stack));
+		#pragma warning restore AvoidNetField
+		stackField.SetValue(__instance, new NetInt(initialStack));
 
 		if (ObjectIdToPriceMapping.TryGetValue(itemId, out var price))
 		{
