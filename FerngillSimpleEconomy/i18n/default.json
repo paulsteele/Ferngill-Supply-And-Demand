@@ -16,6 +16,7 @@
 	"fse.forecast.menu.header.supplyDescriptor": "(Low to High)",
 	"fse.forecast.menu.tab.title": "Forecast",
 	"fse.forecast.menu.basic.category": "Basic",
+	"fse.forecast.menu.allCategory": "All",
 	"fse.config.MaxCalculatedSupply": "Max Calculated Supply",
 	"fse.config.MinDelta": "Minimum Supply Change Per Day",
 	"fse.config.MaxDelta": "Maximum Supply Change Per Day",

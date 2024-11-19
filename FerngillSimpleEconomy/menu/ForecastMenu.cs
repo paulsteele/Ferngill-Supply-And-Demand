@@ -90,8 +90,16 @@ public class ForecastMenu : AbstractForecastMenu
 			
 		if (economyService.Loaded)
 		{
-			_categories = economyService.GetCategories().GroupBy(pair => pair.Value).ToDictionary(pairs => pairs.First().Key, pairs => pairs.First().Value);
-			_chosenCategory = _cachedChosenCategory ?? economyService.GetCategories().Keys.First();
+			_categories = new Dictionary<int, string>
+			{
+				{ int.MinValue, helper.Translation.Get("fse.forecast.menu.allCategory") },
+			};
+				
+			economyService.GetCategories();
+			_categories = _categories.Concat(economyService.GetCategories()).ToDictionary(g => g.Key, g => g.Value);
+				
+			_categories = _categories.GroupBy(pair => pair.Value).ToDictionary(pairs => pairs.First().Key, pairs => pairs.First().Value);
+			_chosenCategory = _cachedChosenCategory ?? int.MinValue;
 			SetupItemsWithSort();
 		}
 		else
@@ -391,7 +399,7 @@ public class ForecastMenu : AbstractForecastMenu
 		}
 			
 		var totalBarLength = _scrollbarRunner.Value.Height - _scrollbar.bounds.Height;
-		var step = totalBarLength / _bottomIndex;
+		var step = totalBarLength / (float)_bottomIndex;
 
 		var relativeMousePos = y - _scrollbarRunner.Value.Y;
 
@@ -403,7 +411,7 @@ public class ForecastMenu : AbstractForecastMenu
 			return;
 		}
 
-		_itemIndex = BoundsHelper.EnsureBounds(relativeMousePos / step , 0, _bottomIndex);
+		_itemIndex = BoundsHelper.EnsureBounds((int)Math.Round(relativeMousePos / step) , 0, _bottomIndex);
 
 		if (_itemIndex != startingIndex)
 		{
@@ -785,7 +793,7 @@ public class ForecastMenu : AbstractForecastMenu
 		}
 			
 		var totalBarLength = _scrollbarRunner.Value.Height - _scrollbar.bounds.Height;
-		var step = totalBarLength / _bottomIndex;
+		var step = totalBarLength / (float)_bottomIndex;
 
 		if (_itemIndex == _bottomIndex)
 		{
@@ -793,7 +801,7 @@ public class ForecastMenu : AbstractForecastMenu
 		}
 		else
 		{
-			_scrollbar.bounds.Y = _upArrow.bounds.Y + _upArrow.bounds.Height + Game1.pixelZoom + (step * _itemIndex);
+			_scrollbar.bounds.Y = _upArrow.bounds.Y + _upArrow.bounds.Height + Game1.pixelZoom + (int)Math.Round(step * _itemIndex);
 		}
 			
 		drawTextureBox(
@@ -834,7 +842,18 @@ public class ForecastMenu : AbstractForecastMenu
 
 	private void SetupItemsWithSort()
 	{
-		var items = _economyService.GetItemsForCategory(_chosenCategory).ToList();
+		List<ItemModel> items;
+
+		if (_chosenCategory == int.MinValue)
+		{
+			items = _economyService.GetCategories()
+				.SelectMany(c => _economyService.GetItemsForCategory(c.Key))
+				.ToList();
+		}
+		else
+		{
+			items = _economyService.GetItemsForCategory(_chosenCategory).ToList();
+		}
 
 		if (!string.IsNullOrWhiteSpace(_textFilter))
 		{
