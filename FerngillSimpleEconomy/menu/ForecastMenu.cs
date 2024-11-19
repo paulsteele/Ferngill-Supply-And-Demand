@@ -6,6 +6,7 @@ using fse.core.models;
 using fse.core.services;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Menus;
@@ -50,16 +51,17 @@ public class ForecastMenu : AbstractForecastMenu
 	private string Supply => _helper.Translation.Get("fse.forecast.menu.sort.supply");
 	private string DailyChange => _helper.Translation.Get("fse.forecast.menu.sort.delta");
 		
-	private readonly List<string> _sortOptions = new() { "None", nameof(Name), nameof(Supply), nameof(DailyChange), nameof(MarketPrice), nameof(MarketPricePerDay) };
+	private readonly List<string> _sortOptions = ["None", nameof(Name), nameof(Supply), nameof(DailyChange), nameof(MarketPrice), nameof(MarketPricePerDay)];
 	private readonly List<string> _sortDisplayOptions;
 	private string _chosenSort;
 	private int _chosenCategory;
-	private Seasons _chosenSeasons = Seasons.Spring | Seasons.Summer | Seasons.Fall | Seasons.Winter;
+	private Seasons _chosenSeasons;
 	private GameMenu _hiddenMenu;
 
 	private static int? _cachedChosenCategory;
 	private static string _cachedChosenSort;
 	private static string _textFilter;
+	private static int _controllerIndex;
 	
 	private float? _breakEvenSupply;
 
@@ -136,6 +138,61 @@ public class ForecastMenu : AbstractForecastMenu
 
 	public override bool readyToClose() => !_optionsTextEntry?.textBox.Selected ?? true;
 
+	public override void receiveGamePadButton(Buttons button)
+	{
+		// ReSharper disable once SwitchStatementMissingSomeEnumCasesNoDefault
+		switch (button)
+		{
+			case Buttons.LeftTrigger:
+				GoBackToPreviousMenu();
+				break;
+			case Buttons.LeftThumbstickRight:
+			case Buttons.DPadRight:
+				if (_isInCategoryDropdown || _isInSortDropdown)
+				{
+					break;
+				}
+				NavigateToNextControllerElement(true);
+				break;
+			case Buttons.LeftThumbstickLeft:
+			case Buttons.DPadLeft:
+				if (_isInCategoryDropdown || _isInSortDropdown)
+				{
+					break;
+				}
+				NavigateToNextControllerElement(false);
+				break;
+			case Buttons.LeftThumbstickDown:
+			case Buttons.DPadDown:
+				if (_isInCategoryDropdown)
+				{
+					_categoryDropdown.selectedOption = (_categoryDropdown.selectedOption + 1 + _categoryDropdown.dropDownOptions.Count) % _categoryDropdown.dropDownOptions.Count;
+				}
+
+				if (_isInSortDropdown)
+				{
+					_sortDropdown.selectedOption = (_sortDropdown.selectedOption + 1 + _sortDropdown.dropDownOptions.Count) % _sortDropdown.dropDownOptions.Count;
+				}
+
+				break;
+			case Buttons.LeftThumbstickUp:
+			case Buttons.DPadUp:
+				if (_isInCategoryDropdown)
+				{
+					_categoryDropdown.selectedOption = (_categoryDropdown.selectedOption - 1 + _categoryDropdown.dropDownOptions.Count) % _categoryDropdown.dropDownOptions.Count;
+				}
+
+				if (_isInSortDropdown)
+				{
+					_sortDropdown.selectedOption = (_sortDropdown.selectedOption - 1 + _sortDropdown.dropDownOptions.Count) % _sortDropdown.dropDownOptions.Count;
+				}
+
+				break;
+		}
+
+		base.receiveGamePadButton(button);
+	}
+
 	public override void receiveLeftClick(int x, int y, bool playSound = true)
 	{
 		base.receiveLeftClick(x, y, playSound);
@@ -169,17 +226,7 @@ public class ForecastMenu : AbstractForecastMenu
 		}
 		else if (_exitButton.containsPoint(x, y))
 		{
-			if (_hiddenMenu != null)
-			{
-				_hiddenMenu.invisible = false;
-				_hiddenMenu.upperRightCloseButton.visible = true;
-
-				Game1.activeClickableMenu = _hiddenMenu;
-			}
-			else
-			{
-				exitThisMenu();
-			}
+			GoBackToPreviousMenu();
 		}
 		_optionsTextEntry?.receiveLeftClick(x, y);
 
@@ -223,6 +270,41 @@ public class ForecastMenu : AbstractForecastMenu
 		{
 			Game1.playSound("shwip");
 		}
+	}
+
+	private void NavigateToNextControllerElement(bool forward)
+	{
+		(Rectangle baseRect, int xOffset, int yOffset)[] elements = [ 
+			(_categoryDropdown.bounds, _categoryDropdown.bounds.Width - 32, _categoryDropdown.bounds.Height / 2), 
+			(_seasonsCheckboxes[0].bounds, _seasonsCheckboxes[0].bounds.Width / 2, _seasonsCheckboxes[0].bounds.Height / 2),
+			(_seasonsCheckboxes[1].bounds, _seasonsCheckboxes[1].bounds.Width / 2, _seasonsCheckboxes[1].bounds.Height / 2),
+			(_seasonsCheckboxes[2].bounds, _seasonsCheckboxes[2].bounds.Width / 2, _seasonsCheckboxes[2].bounds.Height / 2),
+			(_seasonsCheckboxes[3].bounds,_seasonsCheckboxes[2].bounds.Width / 2, _seasonsCheckboxes[2].bounds.Height / 2),
+			(_sortDropdown.bounds, _sortDropdown.bounds.Width - 32, _sortDropdown.bounds.Height / 2),
+		];
+		
+		var offset = forward ? 1 : -1;
+
+		_controllerIndex = (_controllerIndex + offset + elements.Length) % elements.Length;
+		
+		var element = elements[_controllerIndex];
+
+		Mouse.SetPosition(element.baseRect.X + element.xOffset, element.baseRect.Y + element.yOffset);
+	}
+
+	private void GoBackToPreviousMenu()
+	{
+			if (_hiddenMenu != null)
+			{
+				_hiddenMenu.invisible = false;
+				_hiddenMenu.upperRightCloseButton.visible = true;
+
+				Game1.activeClickableMenu = _hiddenMenu;
+			}
+			else
+			{
+				exitThisMenu();
+			}
 	}
 
 	public override void releaseLeftClick(int x, int y)

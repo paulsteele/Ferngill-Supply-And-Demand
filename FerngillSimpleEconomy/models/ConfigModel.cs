@@ -25,8 +25,8 @@ public class ConfigModel
 	public bool EnableTooltip { get; set; } = true;
 	public KeybindList ShowMenuHotkey { get; set; } = KeybindList.Parse("H");
 
-	public List<int> ValidCategories { get; set; } = new()
-	{
+	public List<int> ValidCategories { get; set; } =
+	[
 		Object.GemCategory,
 		Object.FishCategory,
 		Object.EggCategory,
@@ -39,5 +39,5 @@ public class ConfigModel
 		Object.GreensCategory,
 		-23, // Basic
 		-17, // Truffles / Gem Berry
-	};
+	];
 }

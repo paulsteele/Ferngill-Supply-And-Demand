@@ -5,6 +5,7 @@ using fse.core.models;
 using fse.core.services;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
@@ -43,13 +44,13 @@ public class GameMenuLoadedHandler : IHandler
 	public void Register()
 	{
 		_helper.Events.Display.RenderedActiveMenu += (_, args) => SafeAction.Run(() => DrawTab(args.SpriteBatch), _monitor, nameof(DrawTab));
-		_helper.Events.Input.ButtonPressed += (_, args) => SafeAction.Run(() => HandleLeftClick(args), _monitor, nameof(HandleLeftClick));
+		_helper.Events.Input.ButtonPressed += (_, args) => SafeAction.Run(() => HandleButtonPressed(args), _monitor, nameof(HandleButtonPressed));
 		_helper.Events.Display.RenderingHud += (_, args) => SafeAction.Run(() => _tooltipMenu.PreRenderHud(args), _monitor, nameof(_tooltipMenu.PreRenderHud));
 		_helper.Events.Display.RenderedHud += (_, args) => SafeAction.Run(() => _tooltipMenu.PostRenderHud(args), _monitor, nameof(_tooltipMenu.PostRenderHud));
 		_helper.Events.Display.RenderedActiveMenu += (_, args) => SafeAction.Run(() => _tooltipMenu.PostRenderGui(args), _monitor, nameof(_tooltipMenu.PostRenderHud));
 	}
 
-	public void HandleLeftClick(ButtonPressedEventArgs buttonPressedEventArgs)
+	public void HandleButtonPressed(ButtonPressedEventArgs buttonPressedEventArgs)
 	{
 		if (Game1.activeClickableMenu is not GameMenu gameMenu)
 		{
@@ -60,20 +61,59 @@ public class GameMenuLoadedHandler : IHandler
 		{
 			return;
 		}
-
-		if (buttonPressedEventArgs.Button != SButton.MouseLeft)
+		
+		if (gameMenu.pages[gameMenu.currentTab] is AbstractForecastMenu)
 		{
 			return;
 		}
 		
-		if (!Tab.bounds.Contains(buttonPressedEventArgs.Cursor.GetUiScaledPosition()))
+		// ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
+		switch (buttonPressedEventArgs.Button)
 		{
-			return;
-		}
+			case SButton.ControllerA:
+			case SButton.MouseLeft:
+			{
+				if (!Tab.bounds.Contains(buttonPressedEventArgs.Cursor.GetUiScaledPosition()))
+				{
+					return;
+				}
 
-		if (gameMenu.pages[gameMenu.currentTab] is AbstractForecastMenu)
-		{
-			return;
+				break;
+			}
+			case SButton.RightTrigger:
+			{
+				if (gameMenu.currentTab != gameMenu.pages.Count - 1)
+				{
+					return;
+				}
+
+				break;
+			}
+			// TODO: these do not work
+			case SButton.LeftThumbstickRight:
+			case SButton.DPadRight:
+			{
+				if (gameMenu.tabs[^1].bounds.Contains(buttonPressedEventArgs.Cursor.GetUiScaledPosition()))
+				{
+					var element = Tab;
+					Mouse.SetPosition(element.bounds.X + element.bounds.Width / 2, element.bounds.Y + element.bounds.Height / 2);
+				}
+
+				return;
+			}
+			case SButton.LeftThumbstickLeft:
+			case SButton.DPadLeft:
+			{
+				if (Tab.bounds.Contains(buttonPressedEventArgs.Cursor.GetUiScaledPosition()))
+				{
+					var element = gameMenu.tabs[^1];
+					Mouse.SetPosition(element.bounds.X + element.bounds.Width / 2, element.bounds.Y + element.bounds.Height / 2);
+				}
+
+				return;
+			}
+			default:
+				return;
 		}
 
 		_forecastMenuService.CreateMenu().TakeOverMenuTab(gameMenu);
@@ -101,9 +141,12 @@ public class GameMenuLoadedHandler : IHandler
 		_menuTexture ??= _helper.ModContent.Load<Texture2D>("assets/stock-menu.png");
 
 		var offset = ConfigModel.Instance.MenuTabOffset;
-		if (offset == 0 && _helper.ModRegistry.Get("Annosz.UiInfoSuite2") != null)
+		if (_helper.ModRegistry.Get("Annosz.UiInfoSuite2") != null)
 		{
-			offset += 70;
+			if (gameMenu.pages[^1] is not ExitPage)
+			{
+				offset += 70;
+			}
 		}
 		
 		Tab.bounds = new Rectangle(
