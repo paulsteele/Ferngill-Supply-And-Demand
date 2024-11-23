@@ -39,6 +39,10 @@ public static class HardcodedArtisanItemList
 				// Vapius Goose
 				"Lumisteria.MtVapius_GooseMayonnaise" => "Lumisteria.MtVapius_GooseEgg",
 				"Lumisteria.MtVapius_StellarGooseMayonnaise" => "Lumisteria.MtVapius_StellarGooseEgg",
+				// SVE Butter
+				"FlashShifter.StardewValleyExpandedCP_Butter" => "184",
+				// SVE Yarn
+				"FlashShifter.StardewValleyExpandedCP_Yarn" => "FlashShifter.StardewValleyExpandedCP_Camel_Wool",
 				// SVE Goose
 				"FlashShifter.StardewValleyExpandedCP_Goose_Mayonnaise" => "FlashShifter.StardewValleyExpandedCP_Goose_Egg",
 				// Vapius speckled

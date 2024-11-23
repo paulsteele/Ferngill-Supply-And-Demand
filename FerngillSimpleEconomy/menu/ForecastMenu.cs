@@ -892,7 +892,7 @@ public class ForecastMenu : AbstractForecastMenu
 			}
 		}
 
-		items = items.Where(i => _economyService.ItemValidForSeason(i, _chosenSeasons)).ToList();
+		items = items.Where(i => _economyService.ItemValidForSeason(i, _chosenSeasons)).DistinctBy(i => i.ObjectId).ToList();
 
 		_allItems = items.ToArray();
 		_breakEvenSupply = _economyService.GetBreakEvenSupply();

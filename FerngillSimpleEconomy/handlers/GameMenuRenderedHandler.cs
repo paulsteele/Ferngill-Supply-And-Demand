@@ -130,6 +130,11 @@ public class GameMenuLoadedHandler : IHandler
 		{
 			return;
 		}
+
+		if (gameMenu.GetChildMenu() != null)
+		{
+			return;
+		}
 		
 		switch (gameMenu.pages[gameMenu.currentTab])
 		{
