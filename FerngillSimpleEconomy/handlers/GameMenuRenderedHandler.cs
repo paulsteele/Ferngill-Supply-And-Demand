@@ -139,16 +139,13 @@ public class GameMenuLoadedHandler : IHandler
 		}
 
 		_menuTexture ??= _helper.ModContent.Load<Texture2D>("assets/stock-menu.png");
-
 		var offset = ConfigModel.Instance.MenuTabOffset;
-		if (_helper.ModRegistry.Get("Annosz.UiInfoSuite2") != null)
-		{
-			if (gameMenu.pages[^1] is not ExitPage)
-			{
-				offset += 70;
-			}
-		}
 		
+		if (gameMenu.pages[^1] is not ExitPage)
+		{
+			offset += 70;
+		}
+
 		Tab.bounds = new Rectangle(
 			gameMenu.xPositionOnScreen + (64 * 11) + offset,
 			gameMenu.yPositionOnScreen + IClickableMenu.tabYPositionRelativeToMenuY + 64,

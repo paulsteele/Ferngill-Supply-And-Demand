@@ -162,30 +162,30 @@ public class GameMenuRenderedHandlerTests : HarmonyTestBase
 		
 		_mockForecastMenu.Verify(m => m.TakeOverMenuTab(_gameMenu), Times.Never);
 	}
-
-	[TestCase(0, 0, 0, false, 704, 16)]
-	[TestCase(0, 0, 0, true, 774, 16)]
-	[TestCase(0, 0, 1, false, 705, 16)]
-	[TestCase(0, 0, 1, true, 705, 16)]
-	[TestCase(50, 50, 0, false, 754, 66)]
-	[TestCase(50, 50, 50, false, 804, 66)]
-	public void ShouldDrawTabInCorrectPosition(
-		int menuX,
-		int menuY,
-		int offset,
-		bool infoSuiteExists,
-		int expectedX,
-		int expectedY
-		)
+[TestCase(0, 0, 0, true, 704, 16)]
+[TestCase(0, 0, 0, false, 774, 16)]
+[TestCase(0, 0, 1, true, 705, 16)]
+[TestCase(0, 0, 1, false, 775, 16)]
+[TestCase(50, 50, 0, true, 754, 66)]
+[TestCase(50, 50, 50, true, 804, 66)]
+public void ShouldDrawTabInCorrectPosition(
+	int menuX,
+	int menuY,
+	int offset,
+	bool isExitPageLastTab,
+	int expectedX,
+	int expectedY
+	)
 	{
 		_gameMenu.xPositionOnScreen = menuX;
 		_gameMenu.yPositionOnScreen = menuY;
 		ConfigModel.Instance.MenuTabOffset = offset;
 
-		if (infoSuiteExists)
+		if (isExitPageLastTab)
 		{
-			_mockModRegistry.Setup(m => m.Get("Annosz.UiInfoSuite2")).Returns(new Mock<IModInfo>().Object);
-		}
+			var exitPage = new ExitPage(0, 0, 0, 0);
+			_gameMenu.pages.Add(exitPage);
+		}	
 		_mockDisplayEvents.InvokeRenderedActiveMenu(new RenderedActiveMenuEventArgs());
 
 		var calls = HarmonySpriteBatch.DrawCalls[_batch];

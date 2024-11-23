@@ -1,6 +1,5 @@
 ﻿using HarmonyLib;
 using Tests.HarmonyMocks;
-
 namespace Tests;
 
 public class HarmonyTestBase
@@ -35,5 +34,6 @@ public class HarmonyTestBase
 		HarmonyLocalizedContentManager.Setup(harmony);
 		HarmonyOptionsTextEntry.Setup(harmony);
 		HarmonyTextBox.Setup(harmony);
+		HarmonyExitPage.Setup(harmony);
 	}
 }
