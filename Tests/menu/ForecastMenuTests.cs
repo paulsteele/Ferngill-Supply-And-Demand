@@ -146,7 +146,7 @@ public class ForecastMenuTests : HarmonyTestBase
 	[TestCase(10800, 6200, 2, 0, 6375, 2179, 44, 48, 6375, 4036, 44, 48, 6387, 2231, 24, 40, 6387, 2231, 24, 1798)]
 	[TestCase(1080, 620, 10, 0, 995, 129, 44, 48, 995, 506, 44, 48, 1007, 181, 24, 40, 1007, 181, 24, 318)]
 	[TestCase(10800, 6200, 10, 0, 6375, 2179, 44, 48, 6375, 4036, 44, 48, 6387, 2231, 24, 40, 6387, 2231, 24, 1798)]
-	[TestCase(1080, 620, 10, 3, 995, 129, 44, 48, 995, 506, 44, 48, 1007, 271, 24, 40, 1007, 181, 24, 318)]
+	[TestCase(1080, 620, 10, 3, 995, 129, 44, 48, 995, 506, 44, 48, 1007, 245, 24, 40, 1007, 181, 24, 318)]
 	[TestCase(10800, 6200, 10, 3, 6375, 2179, 44, 48, 6375, 4036, 44, 48, 6387, 3989, 24, 40, 6387, 2231, 24, 1798)]
 	public void ShouldDrawScrollBarElementsInCorrectPosition
 	(
@@ -376,12 +376,12 @@ public class ForecastMenuTests : HarmonyTestBase
 
 		var dropDown = HarmonyOptionsDropDown.DrawCalls.First().Key;
 		
-		
 		Assert.Multiple(() =>
 		{
-			Assert.That(dropDown.dropDownOptions, Is.EqualTo(new [] {"1", "2", "3"})); 
+			Assert.That(dropDown.dropDownOptions, Is.EqualTo(new [] {int.MinValue.ToString(), "1", "2", "3"})); 
 			Assert.That(dropDown.dropDownDisplayOptions, Is.EqualTo(new[] 
 			{
+				"translation-fse.forecast.menu.allCategory",
 				"Category1",
 				"Category2",
 				"Category3",
@@ -577,6 +577,22 @@ public class ForecastMenuTests : HarmonyTestBase
 		
 		_menu.draw(_batch);
 
+		var dropDown = HarmonyOptionsDropDown.DrawCalls.First().Key;
+		dropDown.selectedOption = 1;
+
+		dropDown.bounds.Width = 10;
+		dropDown.bounds.Height = 10;
+		
+		_menu.receiveLeftClick(dropDown.bounds.Center.X, dropDown.bounds.Center.Y);
+		_menu.releaseLeftClick(dropDown.bounds.Center.X, dropDown.bounds.Center.Y);
+		
+		HarmonyObject.DrawInMenuCalls.Clear();
+		HarmonyIClickableMenu.DrawHoriztonalPartitionCalls.Clear();
+		HarmonySpriteBatch.DrawCalls.Clear();
+		_drawTextHelperMock.Invocations.Clear();
+		
+		_menu.draw(_batch);
+		
 		var drawIconLocation = HarmonyObject.DrawInMenuCalls[models[0].GetObjectInstance()].First();
 		Assert.Multiple(() =>
 		{

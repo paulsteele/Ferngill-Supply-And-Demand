@@ -19,8 +19,31 @@ public class HarmonyTextBox
 			}),
 			prefix: new HarmonyMethod(typeof(HarmonyTextBox), nameof(MockConstructor))
 		);
+		
+		harmony.Patch(
+			original: AccessTools.PropertySetter(typeof(TextBox), nameof(TextBox.Selected)),
+			prefix: new HarmonyMethod(typeof(HarmonyTextBox), nameof(MockSelected))
+		);
+
+		harmony.Patch(
+			original: AccessTools.PropertyGetter(typeof(TextBox), nameof(TextBox.Selected)), 
+			prefix: new HarmonyMethod(typeof(HarmonyTextBox), nameof(MockSelected))
+		);
+
+		harmony.Patch(
+			original: AccessTools.Method(typeof(TextBox), nameof(TextBox.SelectMe)),
+			prefix: new HarmonyMethod(typeof(HarmonyTextBox), nameof(MockSelectMe))
+		);
+
+		harmony.Patch(
+			original: AccessTools.Method(typeof(TextBox), nameof(TextBox.Update)),
+			prefix: new HarmonyMethod(typeof(HarmonyTextBox), nameof(MockUpdate))
+		);
 	}
 
-	
 	static bool MockConstructor() => false;
+
+	private static bool MockSelected() => false;
+	private static bool MockSelectMe() => false;
+	private static bool MockUpdate() => false;
 }

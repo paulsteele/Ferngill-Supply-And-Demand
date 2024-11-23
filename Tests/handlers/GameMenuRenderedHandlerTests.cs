@@ -287,7 +287,7 @@ public void ShouldDrawTabInCorrectPosition(
 	{
 		_gameMenu.hoverText = "test text";
 		
-		_mockCursor.SetupGet(m => m.ScreenPixels).Returns(new Vector2(710, 32));
+		_mockCursor.SetupGet(m => m.ScreenPixels).Returns(new Vector2(780, 32));
 		
 		_mockDisplayEvents.InvokeRenderedActiveMenu(new RenderedActiveMenuEventArgs());
 
