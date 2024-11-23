@@ -747,4 +747,33 @@ public class ForecastMenuTests : HarmonyTestBase
 			), Times.Exactly(expectedRows > 1 ? 1 : 0)
 		);
 	}
+
+	[TestCase(0, 6)]
+	[TestCase(1, 2)]
+	[TestCase(2, 3)]
+	[TestCase(3, 1)]
+	public void ShouldDrawCorrectNumberOfRowsForCategory(int selectedOption, int expectedRows)
+	{
+		ConfigModel.Instance.MinDelta = -1000;
+		Game1.uiViewport.Width = 2000;
+		Game1.uiViewport.Height = 6200;
+		
+		_menu = new ForecastMenu(_helperMock.Object, _economyServiceMock.Object, _monitorMock.Object, _drawTextHelperMock.Object);
+		
+		_menu.draw(_batch);
+
+		var dropDown = HarmonyOptionsDropDown.DrawCalls.First().Key;
+		dropDown.selectedOption = selectedOption;
+
+		dropDown.bounds.Width = 10;
+		dropDown.bounds.Height = 10;
+		
+		_menu.receiveLeftClick(dropDown.bounds.Center.X, dropDown.bounds.Center.Y);
+		_menu.releaseLeftClick(dropDown.bounds.Center.X, dropDown.bounds.Center.Y);
+		
+		HarmonyIClickableMenu.DrawHoriztonalPartitionCalls.Clear();
+		_menu.draw(_batch);
+		
+		Assert.That(HarmonyIClickableMenu.DrawHoriztonalPartitionCalls[_batch], Has.Count.EqualTo (expectedRows + 2));
+	}
 }
