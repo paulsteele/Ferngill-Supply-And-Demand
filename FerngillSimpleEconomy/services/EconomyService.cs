@@ -38,6 +38,7 @@ public class EconomyService(
 	IMultiplayerService multiplayerService,
 	IFishService fishService,
 	ISeedService seedService,
+	IArtisanService artisanService,
 	INormalDistributionService normalDistributionService
 ) : IEconomyService
 {
@@ -112,6 +113,7 @@ public class EconomyService(
 		ConsolidateEconomyCategories();
 		seedService.GenerateSeedMapping(Economy);
 		fishService.GenerateFishMapping(Economy);
+		artisanService.GenerateArtisanMapping(Economy);
 		Economy.UpdateAllMultipliers();
 	}
 
@@ -261,9 +263,11 @@ public class EconomyService(
 			return basePrice;
 		}
 
-		if (obj.Category == Object.artisanGoodsCategory)
+		var artisanBase = GetArtisanBase(obj);
+
+		if (artisanBase != null)
 		{
-			var price = GetArtisanGoodPrice(obj, basePrice);
+			var price = GetArtisanGoodPrice(artisanBase, basePrice);
 			if (price > 0)
 			{
 				return price;
@@ -310,23 +314,16 @@ public class EconomyService(
 	private Object GetArtisanBase(Object obj)
 	{
 		var preserveId = obj.preservedParentSheetIndex?.Get();
-		var hardcodedBase = HardcodedArtisanItemList.GetArtisanBase(obj.ItemId);
-		if (hardcodedBase != null)
+		var artisanBase = artisanService.GetBaseFromArtisanGood(obj.ItemId);
+		if (artisanBase != null)
 		{
-			return new Object(hardcodedBase, 1);
+			return artisanBase.GetObjectInstance();
 		}
-		return string.IsNullOrWhiteSpace(preserveId)  ? null : new Object(preserveId, 1);
+		return string.IsNullOrWhiteSpace(preserveId) ? null : new Object(preserveId, 1);
 	}
 
-	private int GetArtisanGoodPrice(Object obj, int price)
+	private int GetArtisanGoodPrice(Object artisanBase, int price)
 	{
-		var artisanBase = GetArtisanBase(obj);
-
-		if (artisanBase == null)
-		{
-			return -1;
-		}
-
 		var basePrice = GetPrice(artisanBase, artisanBase.Price);
 
 		if (artisanBase.Price < 1)
@@ -437,16 +434,10 @@ public class EconomyService(
 		{
 			return original;
 		}
-		var artisanBase = HardcodedArtisanItemList.GetArtisanBase(baseModel.ObjectId);
 
-		if (artisanBase == null)
-		{
-			return baseModel;
-		}
+		var artisanBase = artisanService.GetBaseFromArtisanGood(baseModel.ObjectId);
 
-		var baseItem = Economy.GetItem(artisanBase);
-
-		return baseItem ?? baseModel;
+		return artisanBase ?? baseModel;
 	}
 
 	public ItemModel GetItemModelFromObject(Object obj)

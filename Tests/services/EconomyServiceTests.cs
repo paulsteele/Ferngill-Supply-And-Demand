@@ -19,6 +19,7 @@ public class EconomyServiceTests : HarmonyTestBase
 	private Mock<IMultiplayerService> _mockMultiplayerService;
 	private Mock<IFishService> _mockFishService;
 	private Mock<ISeedService> _mockSeedService;
+	private Mock<IArtisanService> _mockArtisanService;
 	private Mock<INormalDistributionService> _mockNormalDistributionService;
 	private Farmer _player;
 
@@ -40,6 +41,7 @@ public class EconomyServiceTests : HarmonyTestBase
 		_mockMultiplayerService = new Mock<IMultiplayerService>();
 		_mockFishService = new Mock<IFishService>();
 		_mockSeedService = new Mock<ISeedService>();
+		_mockArtisanService = new Mock<IArtisanService>();
 		_mockNormalDistributionService = new Mock<INormalDistributionService>();
 		_player = new Farmer();
 
@@ -73,6 +75,7 @@ public class EconomyServiceTests : HarmonyTestBase
 			_mockMultiplayerService.Object,
 			_mockFishService.Object,
 			_mockSeedService.Object,
+			_mockArtisanService.Object,
 			_mockNormalDistributionService.Object
 		);
 	}
@@ -1307,6 +1310,7 @@ public class EconomyServiceTests : HarmonyTestBase
 			_mockMultiplayerService.Object,
 			_mockFishService.Object,
 			_mockSeedService.Object,
+			_mockArtisanService.Object,
 			_mockNormalDistributionService.Object
 		);
 		

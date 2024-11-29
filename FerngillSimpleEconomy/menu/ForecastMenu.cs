@@ -872,17 +872,22 @@ public class ForecastMenu : AbstractForecastMenu
 			}
 			case nameof(Supply):
 			{
-				items.Sort((a, b) => a.Supply - b.Supply);
+				items.Sort((a, b) => _economyService.GetConsolidatedItem(a).Supply - _economyService.GetConsolidatedItem(b).Supply);
 				break;
 			}
 			case nameof(DailyChange):
 			{
-				items.Sort((a, b) => a.DailyDelta - b.DailyDelta);
+				items.Sort((a, b) => _economyService.GetConsolidatedItem(a).DailyDelta - _economyService.GetConsolidatedItem(b).DailyDelta);
 				break;
 			}
 			case nameof(MarketPrice):
 			{
-				items.Sort((a, b) => b.GetPrice(b.GetObjectInstance().Price) - a.GetPrice(a.GetObjectInstance().Price));
+				items.Sort((a, b) =>
+				{
+					var aObj = a.GetObjectInstance();
+					var bObj = b.GetObjectInstance();
+					return _economyService.GetPrice(bObj, bObj.sellToStorePrice()) - _economyService.GetPrice(aObj, aObj.sellToStorePrice());
+				});
 				break;
 			}
 			case nameof(MarketPricePerDay):

@@ -66,6 +66,8 @@ namespace fse.core.models
 			return null;
 		}
 
+		public bool HasItem(string id) => GetItem(id) != null;
+
 		public void AdvanceOneDay()
 		{
 			ForAllItems(model => model.AdvanceOneDay());

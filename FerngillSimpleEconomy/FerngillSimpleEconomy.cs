@@ -19,6 +19,7 @@ public class FerngillSimpleEconomy : Mod
 	private NormalDistributionService _normalDistributionService;
 	private SeedService _seedService;
 	private FishService _fishService;
+	private ArtisanService _artisanService;
 	private TooltipMenu _tooltipMenu;
 
 	public override void Entry(IModHelper helper)
@@ -27,8 +28,9 @@ public class FerngillSimpleEconomy : Mod
 		_multiplayerService = new MultiplayerService(helper);
 		_seedService = new SeedService();
 		_fishService = new FishService(Monitor);
+		_artisanService = new ArtisanService(Monitor);
 		_normalDistributionService = new NormalDistributionService();
-		_economyService = new EconomyService(helper, Monitor, _multiplayerService, _fishService, _seedService, _normalDistributionService);
+		_economyService = new EconomyService(helper, Monitor, _multiplayerService, _fishService, _seedService, _artisanService, _normalDistributionService);
 		_forecastMenuService = new ForecastMenuService(helper, _economyService, Monitor, new DrawTextHelper());
 		_tooltipMenu = new TooltipMenu(helper, _economyService, _forecastMenuService);
 		RegisterPatches(helper);
