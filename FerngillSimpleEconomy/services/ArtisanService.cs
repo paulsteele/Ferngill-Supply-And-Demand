@@ -13,14 +13,19 @@ public interface IArtisanService
 	ItemModel GetBaseFromArtisanGood(string modelId);
 }
 
-public class ArtisanService(IMonitor monitor) : IArtisanService
+public class ArtisanService(IMonitor monitor, IModHelper helper) : IArtisanService
 {
 	private Dictionary<string, string> _artisanGoodToBase;
 	private EconomyModel _economyModel;
 	
 	public void GenerateArtisanMapping(EconomyModel economyModel)
 	{
-		var machineData = Game1.content.Load<Dictionary<string, MachineData>>("Data\\Machines");
+		var machineData = helper.GameContent.Load<Dictionary<string, MachineData>>("Data\\Machines");
+
+		if (machineData == null)
+		{
+			return;
+		}
 
 		_artisanGoodToBase = machineData.Values
 			.Where(m => m.OutputRules != null)
@@ -81,13 +86,14 @@ public class ArtisanService(IMonitor monitor) : IArtisanService
 			
 			while (_artisanGoodToBase.TryGetValue(id, out var mappedItem))
 			{
-				if (seen.Contains(mappedItem))
+				if (!seen.Add(mappedItem))
 				{
-					var path = string.Join(" > ", seen) + " > " + mappedItem;
+					var path = string.Join(" < ", seen) + " < " + mappedItem;
 					monitor.LogOnce($"Artisan good cycle detected for {key}. Item economy will be unique. This may be intended by the mod author. Please report an issue if the following chain looks suspect.\n{path}", LogLevel.Warn);
 					_artisanGoodToBase.Remove(key);
 					break;
 				}
+
 				id = mappedItem;
 			}
 		}

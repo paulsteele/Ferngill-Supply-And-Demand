@@ -28,7 +28,7 @@ public class FerngillSimpleEconomy : Mod
 		_multiplayerService = new MultiplayerService(helper);
 		_seedService = new SeedService();
 		_fishService = new FishService(Monitor);
-		_artisanService = new ArtisanService(Monitor);
+		_artisanService = new ArtisanService(Monitor, helper);
 		_normalDistributionService = new NormalDistributionService();
 		_economyService = new EconomyService(helper, Monitor, _multiplayerService, _fishService, _seedService, _artisanService, _normalDistributionService);
 		_forecastMenuService = new ForecastMenuService(helper, _economyService, Monitor, new DrawTextHelper());

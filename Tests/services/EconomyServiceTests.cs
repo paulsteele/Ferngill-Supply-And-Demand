@@ -54,6 +54,8 @@ public class EconomyServiceTests : HarmonyTestBase
 		_mockNormalDistributionService.Setup(m => m.SampleInSeasonDelta()).Returns(26);
 		_mockNormalDistributionService.Setup(m => m.SampleOutOfSeasonDelta()).Returns(25);
 
+		_mockArtisanService.Setup(m => m.GetBaseFromArtisanGood("307")).Returns(new ItemModel{ ObjectId = "442"});
+
 		Game1.objectData = new Dictionary<string, ObjectData>(new[]
 		{
 			GenerateObjectData("1", 1),
