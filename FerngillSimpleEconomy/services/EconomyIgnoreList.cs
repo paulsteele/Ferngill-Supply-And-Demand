@@ -5,8 +5,6 @@
 		public static string[] IgnoreList =
 		{
 			"74", // prismatic shard
-			"88", // coconut
-			"90", // cactus fruit
 			"92", // sap
 			"259", // fiddlehead fern
 			"159", // crimsonfish

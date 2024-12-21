@@ -344,10 +344,7 @@ public class EconomyService(
 			return;
 		}
 
-		if (obj.Category == Object.artisanGoodsCategory)
-		{
-			obj = GetArtisanBase(obj) ?? obj;
-		}
+		obj = GetArtisanBase(obj) ?? obj;
 			
 		var itemModel = Economy.GetItem(obj);
 		if (itemModel == null)
@@ -442,10 +439,12 @@ public class EconomyService(
 
 	public ItemModel GetItemModelFromObject(Object obj)
 	{
-		if (obj.Category == Object.artisanGoodsCategory)
-		{ 
-			obj = GetArtisanBase(obj);
+		var artisanBase = GetArtisanBase(obj);
+		if (artisanBase != null)
+		{
+			obj = artisanBase;
 		}
+		
 		var model = Economy.GetItem(obj);
 		return model == null ? null : GetConsolidatedItem(model);
 	}
