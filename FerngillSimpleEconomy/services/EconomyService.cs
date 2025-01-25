@@ -259,7 +259,7 @@ public class EconomyService(
 	{
 		if (Economy == null)
 		{
-			monitor.Log($"Economy not generated to determine item model for {obj.name}", LogLevel.Error);
+			monitor.LogOnce($"Economy not generated to determine item model for {obj.name}", LogLevel.Trace);
 			return basePrice;
 		}
 
