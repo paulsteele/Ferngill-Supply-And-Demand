@@ -6,7 +6,6 @@
 		{
 			"74", // prismatic shard
 			"92", // sap
-			"259", // fiddlehead fern
 			"159", // crimsonfish
 			"160", // anglerfish
 			"163", // legendfish
