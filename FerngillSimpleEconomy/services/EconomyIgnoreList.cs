@@ -2,8 +2,8 @@
 {
 	public static class EconomyIgnoreList
 	{
-		public static string[] IgnoreList =
-		{
+		public static readonly string[] IgnoreList =
+		[
 			"74", // prismatic shard
 			"92", // sap
 			"159", // crimsonfish
@@ -26,6 +26,6 @@
 			"SmokedFish",
 			"DriedFruit", 
 			"DriedMushrooms",
-		};
+		];
 	}
 }

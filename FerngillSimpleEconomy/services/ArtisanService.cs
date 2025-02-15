@@ -32,6 +32,12 @@ public class ArtisanService(IMonitor monitor, IModHelper helper) : IArtisanServi
 			.SelectMany(m => m.OutputRules)
 			.Where(r => r.OutputItem != null && r.Triggers != null)
 			.SelectMany(r => r.OutputItem.SelectMany(output => r.Triggers.Select(trigger => (output, trigger))))
+			.Select(t =>
+			{
+				t.trigger.RequiredItemId ??= t.trigger.RequiredTags?.Select(tag => ContextTagItemMapping.Mapping.GetValueOrDefault(tag))
+					.FirstOrDefault(item => !string.IsNullOrWhiteSpace(item));
+				return t;
+			})
 			.Where(t => !string.IsNullOrWhiteSpace(t.trigger.RequiredItemId))
 			.Where(t => !string.IsNullOrWhiteSpace(t.output.ItemId))
 			.Select(t => (
@@ -39,6 +45,7 @@ public class ArtisanService(IMonitor monitor, IModHelper helper) : IArtisanServi
 				input: t.trigger.RequiredItemId.Replace("(O)", string.Empty))
 			)
 			.Where(t => !t.input.Equals(t.output))
+			.Where(t => !ArtisanMappingIgnoreList.IgnoreList.Contains(t.input))
 			.Where(t => economyModel.HasItem(t.output) && economyModel.HasItem(t.input))
 			.GroupBy(t => t.output)
 			.Select(g =>
@@ -47,6 +54,12 @@ public class ArtisanService(IMonitor monitor, IModHelper helper) : IArtisanServi
 				return (first.output, first.input);
 			})
 			.ToDictionary(t => t.output, t => t.input);
+
+		monitor.LogOnce("Artisan Good Mapping Trace");
+		foreach (var mapping in _artisanGoodToBase)
+		{
+			monitor.LogOnce($"{mapping.Key} based on {mapping.Value}");
+		}
 		
 		_economyModel = economyModel;
 		
