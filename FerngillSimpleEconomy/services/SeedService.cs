@@ -23,7 +23,11 @@ public class SeedService : ISeedService
 
 		foreach (var seed in cropData.Keys)
 		{
-			var seedModel = new SeedModel(seed, cropData[seed]);
+			if (!cropData.TryGetValue(seed, out var data))
+			{
+				continue;
+			}
+			var seedModel = new SeedModel(seed, data);
 			var obj = new Object(seedModel.CropId, 1);
 			if (!economyModel.CategoryEconomies.TryGetValue(obj.Category, out var category))
 			{

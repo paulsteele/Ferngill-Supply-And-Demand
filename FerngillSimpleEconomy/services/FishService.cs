@@ -27,7 +27,11 @@ public class FishService(IMonitor monitor) : IFishService
 		{
 			try
 			{
-				var fishModel = new FishModel(fish, fishData[fish]);
+				if (!fishData.TryGetValue(fish, out var data))
+				{
+					continue;
+				}
+				var fishModel = new FishModel(fish, data);
 				var obj = new Object(fishModel.ObjectId, 1);
 				if (!economyModel.CategoryEconomies.TryGetValue(obj.Category, out var category))
 				{
