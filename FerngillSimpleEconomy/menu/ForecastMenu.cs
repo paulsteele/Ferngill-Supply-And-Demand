@@ -744,13 +744,13 @@ public class ForecastMenu : AbstractForecastMenu
 			var leftArrow = new ClickableTextureComponent("left-arrow", location, "", "", Game1.mouseCursors,
 				new Rectangle(352, 495, 12, 11), Game1.pixelZoom * .75f);
 			leftArrow.bounds.X -= 30;
-			if (model.DailyDelta < -20)
+			if (model.DailyDelta < -2 * ConfigModel.Instance.DeltaArrow)
 			{
 				leftArrow.bounds.X += 10;
 				leftArrow.draw(batch);
 			}
 
-			if (model.DailyDelta < -10)
+			if (model.DailyDelta < -1 * ConfigModel.Instance.DeltaArrow)
 			{
 				leftArrow.bounds.X += 10;
 				leftArrow.draw(batch);
@@ -763,13 +763,13 @@ public class ForecastMenu : AbstractForecastMenu
 		{
 			var rightArrow = new ClickableTextureComponent("right-arrow", location, "", "", Game1.mouseCursors,
 				new Rectangle(365, 495, 12, 11), Game1.pixelZoom * .75f);
-			if (model.DailyDelta > 20)
+			if (model.DailyDelta > 2 * ConfigModel.Instance.DeltaArrow)
 			{
 				rightArrow.bounds.X -= 10;
 				rightArrow.draw(batch);
 			}
 
-			if (model.DailyDelta > 10)
+			if (model.DailyDelta > ConfigModel.Instance.DeltaArrow)
 			{
 				rightArrow.bounds.X -= 10;
 				rightArrow.draw(batch);

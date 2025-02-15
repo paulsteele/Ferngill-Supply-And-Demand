@@ -96,6 +96,13 @@ namespace fse.core.handlers
 			
 			configMenu.AddNumberOption(
 				mod: _manifest,
+				name: ()=> _helper.Translation.Get("fse.config.DeltaArrow"),
+				getValue: () => ConfigModel.Instance.DeltaArrow,
+				setValue: val => ConfigModel.Instance.DeltaArrow = val
+			);
+			
+			configMenu.AddNumberOption(
+				mod: _manifest,
 				name: ()=> _helper.Translation.Get("fse.config.StdDevSupply"),
 				getValue: () => ConfigModel.Instance.StdDevSupply,
 				setValue: val => ConfigModel.Instance.StdDevSupply = val,
