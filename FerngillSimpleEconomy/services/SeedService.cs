@@ -23,6 +23,11 @@ public class SeedService : ISeedService
 
 		foreach (var seed in cropData.Keys)
 		{
+			if (seed == null)
+			{
+				continue;
+			}
+
 			if (!cropData.TryGetValue(seed, out var data))
 			{
 				continue;

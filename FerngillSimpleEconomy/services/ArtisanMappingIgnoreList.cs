@@ -9,5 +9,10 @@ public static class ArtisanMappingIgnoreList
 		"928", // Golden Egg (Mayo)
 		"388", // Wood (coal)
 		"709", // Hardwood (syrup)
+		"910", // Radioactive bar (slot machine)
+		"337", // Iridium bar (slot machine)
+		"336", // Gold bar (slot machine)
+		"335", // Iron bar (slot machine)
+		"334", // Copper bar (slot machine)
 	];
 }

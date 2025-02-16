@@ -27,6 +27,10 @@ public class FishService(IMonitor monitor) : IFishService
 		{
 			try
 			{
+				if (fish == null)
+				{
+					continue;
+				}
 				if (!fishData.TryGetValue(fish, out var data))
 				{
 					continue;
