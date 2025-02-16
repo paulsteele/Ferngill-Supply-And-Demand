@@ -26,7 +26,7 @@ public class FerngillSimpleEconomy : Mod
 	{
 		ConfigModel.Instance = helper.ReadConfig<ConfigModel>();
 		_multiplayerService = new MultiplayerService(helper);
-		_seedService = new SeedService();
+		_seedService = new SeedService(Monitor);
 		_fishService = new FishService(Monitor);
 		_artisanService = new ArtisanService(Monitor, helper);
 		_normalDistributionService = new NormalDistributionService();

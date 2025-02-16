@@ -59,7 +59,7 @@ public class FishService(IMonitor monitor) : IFishService
 		if (mostRecentException != null)
 		{
 			monitor.Log($"Failed generating {failCount} fish mappings.", LogLevel.Error);
-			monitor.Log(mostRecentException.Message, LogLevel.Error);
+			monitor.Log(mostRecentException.ToString(), LogLevel.Error);
 		}
 	}
 
