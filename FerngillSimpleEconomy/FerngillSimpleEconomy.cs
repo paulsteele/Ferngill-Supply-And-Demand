@@ -21,6 +21,7 @@ public class FerngillSimpleEconomy : Mod
 	private FishService _fishService;
 	private ArtisanService _artisanService;
 	private TooltipMenu _tooltipMenu;
+	private BetterGameMenuService _betterGameMenuService;
 
 	public override void Entry(IModHelper helper)
 	{
@@ -32,7 +33,8 @@ public class FerngillSimpleEconomy : Mod
 		_normalDistributionService = new NormalDistributionService();
 		_economyService = new EconomyService(helper, Monitor, _multiplayerService, _fishService, _seedService, _artisanService, _normalDistributionService);
 		_forecastMenuService = new ForecastMenuService(helper, _economyService, Monitor, new DrawTextHelper());
-		_tooltipMenu = new TooltipMenu(helper, _economyService, _forecastMenuService);
+		_betterGameMenuService = new BetterGameMenuService(ModManifest, helper, _forecastMenuService);
+		_tooltipMenu = new TooltipMenu(helper, _economyService, _forecastMenuService, _betterGameMenuService);
 		RegisterPatches(helper);
 		RegisterHandlers(helper);
 		helper.ConsoleCommands.Add("fse_reset", "Fully Resets Ferngill Simple Economy", (_, _) =>
@@ -60,7 +62,7 @@ public class FerngillSimpleEconomy : Mod
 	{
 		new DayEndHandler(helper, Monitor, _economyService).Register();
 		new SaveLoadedHandler(helper, Monitor, _economyService).Register();
-		new GameLoadedHandler(helper, Monitor, ModManifest, _economyService).Register();
+		new GameLoadedHandler(helper, Monitor, ModManifest, _economyService, _betterGameMenuService).Register();
 		new GameMenuLoadedHandler(helper, Monitor, _forecastMenuService, _tooltipMenu).Register();
 		new MultiplayerHandler(helper, _economyService, _multiplayerService).Register();
 		new HotkeyHandler(helper, Monitor, _forecastMenuService).Register();

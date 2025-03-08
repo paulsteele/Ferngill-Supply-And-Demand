@@ -4,6 +4,9 @@ using fse.core.extensions;
 using fse.core.models;
 using fse.core.services;
 using GenericModConfigMenu;
+
+using Leclair.Stardew.BetterGameMenu;
+
 using MailFrameworkMod.Api;
 using Microsoft.Xna.Framework;
 using StardewModdingAPI;
@@ -18,18 +21,21 @@ namespace fse.core.handlers
 		private readonly IMonitor _monitor;
 		private readonly IManifest _manifest;
 		private readonly IEconomyService _economyService;
+		private readonly IBetterGameMenuService _betterGameMenuService;
 
 		public GameLoadedHandler(
 			IModHelper helper, 
 			IMonitor monitor,
 			IManifest manifest,
-			IEconomyService economyService
+			IEconomyService economyService,
+			IBetterGameMenuService betterGameMenuService
 		)
 		{
 			_helper = helper;
 			_monitor = monitor;
 			_manifest = manifest;
 			_economyService = economyService;
+			_betterGameMenuService = betterGameMenuService;
 		}
 
 		public void Register()
@@ -40,8 +46,20 @@ namespace fse.core.handlers
 
 		private void OnLaunched()
 		{
+			RegisterBetterGameMenu();
 			RegisterMailFramework();
 			RegisterGenericConfig();
+		}
+
+		private void RegisterBetterGameMenu()
+		{
+			var betterGameMenuApi = _helper.ModRegistry.GetApi<IBetterGameMenuApi>("leclair.bettergamemenu");
+			if (betterGameMenuApi is null)
+			{
+				return;
+			}
+
+			_betterGameMenuService.Register(betterGameMenuApi);
 		}
 		
 		private void RegisterMailFramework()

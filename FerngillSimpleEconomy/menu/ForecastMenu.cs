@@ -16,6 +16,9 @@ namespace fse.core.menu;
 public abstract class AbstractForecastMenu : IClickableMenu
 {
 	public abstract void TakeOverMenuTab(GameMenu gameMenu);
+
+	public abstract void SetBetterGameMenu(IBetterGameMenuService service);
+
 	public abstract void DrawSupplyBar(SpriteBatch batch, int startingX, int startingY, int endingX, int barHeight, ItemModel model);
 }
 
@@ -25,6 +28,7 @@ public class ForecastMenu : AbstractForecastMenu
 	private readonly IEconomyService _economyService;
 	private readonly IMonitor _monitor;
 	private readonly IDrawTextHelper _drawTextHelper;
+	private IBetterGameMenuService _betterGameMenuService;
 	private ItemModel[] _allItems;
 	private readonly Dictionary<int, string> _categories;
 	private int _itemIndex;
@@ -108,6 +112,12 @@ public class ForecastMenu : AbstractForecastMenu
 			_allItems = [];
 		}
 	}
+
+	public override void SetBetterGameMenu(IBetterGameMenuService service)
+	{
+		_betterGameMenuService = service;
+	}
+
 
 	public override void gameWindowSizeChanged(Rectangle oldBounds, Rectangle newBounds)
 	{
@@ -308,6 +318,10 @@ public class ForecastMenu : AbstractForecastMenu
 				_hiddenMenu.upperRightCloseButton.visible = true;
 
 				Game1.activeClickableMenu = _hiddenMenu;
+			}
+			else if (_betterGameMenuService != null)
+			{
+				_betterGameMenuService.SwitchToLastTab();
 			}
 			else
 			{
