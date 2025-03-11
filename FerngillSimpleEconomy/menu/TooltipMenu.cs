@@ -23,18 +23,20 @@ namespace fse.core.menu
 	private static IModHelper _helper;
 	private static AbstractForecastMenu _forecastMenu;
 	private static IEconomyService _econService;
+	private static IBetterGameMenuService _betterGameMenuService;
 	private Item _toolbarItem;
 	private readonly bool _isUiInfoSuiteLoaded;
 
 	//Constructor
-	public TooltipMenu(IModHelper helper, IEconomyService econService, IForecastMenuService forecastMenuService)
+	public TooltipMenu(IModHelper helper, IEconomyService econService, IForecastMenuService forecastMenuService, IBetterGameMenuService betterGameMenuService)
 	{
 		_helper = helper;
-	 _econService = econService;
+		_econService = econService;
+		_betterGameMenuService = betterGameMenuService;
 
-	 _forecastMenu = forecastMenuService.CreateMenu();
+		_forecastMenu = forecastMenuService.CreateMenu();
 
-	 _isUiInfoSuiteLoaded = _helper.ModRegistry.IsLoaded("Annosz.UiInfoSuite2"); 
+		_isUiInfoSuiteLoaded = _helper.ModRegistry.IsLoaded("Annosz.UiInfoSuite2"); 
 	}
 
 	//Get hovered toolbar item
@@ -95,22 +97,17 @@ namespace fse.core.menu
 	//Get hovered menu item
 	private static Item GetHoveredItemFromMenu(IClickableMenu menu)
 	{
-		switch (menu)
+		// game menu
+		var page = _betterGameMenuService?.GetCurrentPage(menu);
+		if (page is InventoryPage inventoryPage)
 		{
-			// game menu
-			case GameMenu gameMenu:
-			{
-				var page = _helper.Reflection.GetField<List<IClickableMenu>>(gameMenu, "pages").GetValue()[gameMenu.currentTab];
-				if (page is InventoryPage)
-				{
-					return _helper.Reflection.GetField<Item>(page, "hoveredItem").GetValue();
-				}
+			return inventoryPage.hoveredItem;
+		}
 
-				break;
-			}
-			// from inventory UI (so things like shops and so on)
-			case MenuWithInventory inventoryMenu:
-				return inventoryMenu.hoveredItem;
+		// from inventory UI (so things like shops and so on)
+		if (menu is MenuWithInventory inventoryMenu)
+		{
+			return inventoryMenu.hoveredItem;
 		}
 
 		return null;
