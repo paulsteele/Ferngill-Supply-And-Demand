@@ -195,6 +195,13 @@ namespace fse.core.handlers
 				setValue: val => ConfigModel.Instance.EnableShopDisplay = val
 			);
 			
+			configMenu.AddBoolOption(
+				mod: _manifest,
+				name: ()=> _helper.Translation.Get("fse.config.DisableArtisanMapping"),
+				getValue: () => ConfigModel.Instance.DisableArtisanMapping,
+				setValue: val => ConfigModel.Instance.DisableArtisanMapping = val
+			);
+			
 			configMenu.AddKeybindList(
 				mod: _manifest,
 				name: ()=> _helper.Translation.Get("fse.config.hotkey.openMenu"),

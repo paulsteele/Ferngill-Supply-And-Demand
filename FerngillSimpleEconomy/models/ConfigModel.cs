@@ -24,6 +24,7 @@ public class ConfigModel
 	public bool EnableMenuTab { get; set; } = true;
 	public bool EnableShopDisplay { get; set; } = true;
 	public bool EnableTooltip { get; set; } = true;
+	public bool DisableArtisanMapping { get; set; } = false;
 	public KeybindList ShowMenuHotkey { get; set; } = KeybindList.Parse("H");
 
 	public List<int> ValidCategories { get; set; } =

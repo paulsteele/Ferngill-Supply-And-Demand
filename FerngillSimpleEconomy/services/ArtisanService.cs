@@ -20,6 +20,14 @@ public class ArtisanService(IMonitor monitor, IModHelper helper) : IArtisanServi
 	
 	public void GenerateArtisanMapping(EconomyModel economyModel)
 	{
+		if (ConfigModel.Instance.DisableArtisanMapping)
+		{
+			monitor.LogOnce("Artisan Good Mapping disabled by config", LogLevel.Info);
+			_economyModel = economyModel;
+			_artisanGoodToBase = new Dictionary<string, string>();
+			return;
+		}
+		
 		var machineData = helper.GameContent.Load<Dictionary<string, MachineData>>("Data\\Machines");
 
 		if (machineData == null)
