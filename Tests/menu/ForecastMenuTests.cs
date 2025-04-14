@@ -608,7 +608,7 @@ public class ForecastMenuTests : HarmonyTestBase
 			Assert.That(drawIconLocation.Y, Is.EqualTo(415f));
 		});
 
-		Assert.That(HarmonyIClickableMenu.DrawHoriztonalPartitionCalls[_batch], Has.Count.EqualTo(2 * expectedRows));
+		Assert.That(HarmonyIClickableMenu.DrawHoriztonalPartitionCalls[_batch], Has.Count.EqualTo(1 + expectedRows));
 
 		// ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
 		var supplyBarCalls = HarmonySpriteBatch.DrawCalls[_batch].Where(b => b.texture == Game1.staminaRect).ToArray();
