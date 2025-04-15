@@ -33,6 +33,11 @@ public static class HarmonyUtility
 		);
 		DrawTextWithShadowCalls.Clear();
 	}
+	
+	public static void TearDown()
+	{
+		DrawTextWithShadowCalls.Clear();
+	}
 
 	public static List<(SpriteBatch b, string text, SpriteFont font, Vector2 position, Color color)>
 		DrawTextWithShadowCalls { get; } = [];

@@ -35,6 +35,13 @@ public class HarmonyFarmer
 		
 		UniqueMultiplayerIdDictionary.Clear();
 	}
+	
+	public static void TearDown()
+	{
+		UniqueMultiplayerIdDictionary.Clear();
+		IsMainPlayerDictionary.Clear();
+		FarmerTeamDictionary.Clear();
+	}
 
 	static bool MockConstructor() => false;
 

@@ -28,6 +28,11 @@ public class HarmonyFarmerCollection
 			prefix: new HarmonyMethod(typeof(HarmonyFarmerCollection), nameof(MockEnumeratorMoveNext))
 		);
 	}
+	
+	public static void TearDown()
+	{
+		CollectionEnumerator = null;
+	}
 
 	public static IEnumerator CollectionEnumerator;
 

@@ -21,6 +21,11 @@ public class HarmonyModMessageReceivedEventArgs
 		);
 	}
 	
+	public static void TearDown()
+	{
+		ReadAsMessage = null;
+	}
+	
 	static bool MockConstructor() => false;
 	
 	public static IMessage ReadAsMessage { get; set; }

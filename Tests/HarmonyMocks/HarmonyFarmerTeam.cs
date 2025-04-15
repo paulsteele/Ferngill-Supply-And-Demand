@@ -15,6 +15,11 @@ public static class HarmonyFarmerTeam
 			prefix: new HarmonyMethod(typeof(HarmonyFarmerTeam), nameof(MockConstructor))
 		);
 	}
+	
+	public static void TearDown()
+	{
+		// No static fields to reset
+	}
 
 	static bool MockConstructor() => false;
 

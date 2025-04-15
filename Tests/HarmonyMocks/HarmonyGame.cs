@@ -67,6 +67,17 @@ public static class HarmonyGame
 		);
 		DrawDialogueBoxCalls.Clear();
 	}
+	
+	public static void TearDown()
+	{
+		GetPlayerResult = null;
+		GetOnlineFarmersResults = null;
+		GetAllFarmersResults = null;
+		GetFarmResult = null;
+		GetActiveClickableMenuResult = null;
+		GetOptionsResult = null;
+		DrawDialogueBoxCalls.Clear();
+	}
 
 	public static Farmer GetPlayerResult { get; set; }
 	static bool MockGetPlayer(ref Farmer __result)

@@ -48,6 +48,15 @@ public class HarmonyObject
 		ObjectIdToPriceMapping = new();
 		SellToStorePriceMapping = new();
 	}
+	
+	public static void TearDown()
+	{
+		DrawInMenuCalls.Clear();
+		ObjectIdCategoryMapping.Clear();
+		CategoryIdToNameMapping.Clear();
+		ObjectIdToPriceMapping.Clear();
+		SellToStorePriceMapping.Clear();
+	}
 
 	public static Dictionary<Object, List<Vector2>> DrawInMenuCalls;
 	public static Dictionary<string, int> ObjectIdCategoryMapping;

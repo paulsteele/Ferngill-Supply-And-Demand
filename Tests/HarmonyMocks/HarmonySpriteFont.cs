@@ -33,6 +33,11 @@ public class HarmonySpriteFont
 		);
 	}
 	
+	public static void TearDown()
+	{
+		MeasureStringResult = default;
+	}
+	
 	static bool MockConstructor() => false;
 	
 	public static Vector2 MeasureStringResult { get; set; }

@@ -51,6 +51,11 @@ public class HarmonySpriteBatch
 		DrawCalls = new();
 	}
 	
+	public static void TearDown()
+	{
+		DrawCalls.Clear();
+	}
+	
 	static bool MockConstructor() => false;
 
 	public static Dictionary<SpriteBatch,

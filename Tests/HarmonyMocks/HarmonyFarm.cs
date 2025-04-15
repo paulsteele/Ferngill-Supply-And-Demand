@@ -18,6 +18,11 @@ public static class HarmonyFarm
 			prefix: new HarmonyMethod(typeof(HarmonyFarm), nameof(MockGetShippingBin))
 		);
 	}
+	
+	public static void TearDown()
+	{
+		GetShippingBinDictionary.Clear();
+	}
 
 	static bool MockConstructor() => false;
 	
