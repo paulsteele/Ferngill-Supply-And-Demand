@@ -36,6 +36,13 @@ public class HarmonyOptionsDropDown
 		RecalculateCalls = new();
 		DrawCalls = new();
 	}
+	
+	public static void TearDown()
+	{
+		ConstructorCalls.Clear();
+		RecalculateCalls.Clear();
+		DrawCalls.Clear();
+	}
 
 	public static Dictionary<OptionsDropDown, List<(string label, int whichOption, int x, int y)>> ConstructorCalls;
 	public static Dictionary<OptionsDropDown, int> RecalculateCalls;

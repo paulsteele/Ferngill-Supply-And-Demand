@@ -29,6 +29,12 @@ public class HarmonyOptionsCheckbox
 		ConstructorCalls = new();
 		DrawCalls = new();
 	}
+	
+	public static void TearDown()
+	{
+		ConstructorCalls.Clear();
+		DrawCalls.Clear();
+	}
 
 	public static Dictionary<OptionsCheckbox, List<(string label, int whichOption, int x, int y)>> ConstructorCalls;
 	public static Dictionary<OptionsCheckbox, int> DrawCalls;

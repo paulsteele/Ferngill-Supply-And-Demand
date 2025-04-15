@@ -13,6 +13,11 @@ public class HarmonyMapPage
 			prefix: new HarmonyMethod(typeof(HarmonyMapPage), nameof(MockConstructor))
 		);
 	}
+	
+	public static void TearDown()
+	{
+		// No static fields to reset
+	}
 
 	static bool MockConstructor() => false;
 }

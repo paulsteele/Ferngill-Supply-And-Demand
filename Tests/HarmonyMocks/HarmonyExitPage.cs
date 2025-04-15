@@ -14,6 +14,11 @@ public class HarmonyExitPage
 			prefix: new HarmonyMethod(typeof(HarmonyExitPage), nameof(MockConstructor))
 		);
 	}
+	
+	public static void TearDown()
+	{
+		// No static fields to reset
+	}
 
 	static bool MockConstructor() => false;
 }

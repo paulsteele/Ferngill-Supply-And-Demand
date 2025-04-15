@@ -19,6 +19,11 @@ public static class HarmonyGameMenu
 			prefix: new HarmonyMethod(typeof(HarmonyGameMenu), nameof(MockConstructor))
 		);
 	}
+	
+	public static void TearDown()
+	{
+		// No static fields to reset
+	}
 
 	static bool MockConstructor() => false;
 }

@@ -13,6 +13,11 @@ public class HarmonyLetterViewMenu
 			prefix: new HarmonyMethod(typeof(HarmonyLetterViewMenu), nameof(MockConstructor))
 		);
 	}
+	
+	public static void TearDown()
+	{
+		// No static fields to reset
+	}
 
 	static bool MockConstructor() => false;
 }

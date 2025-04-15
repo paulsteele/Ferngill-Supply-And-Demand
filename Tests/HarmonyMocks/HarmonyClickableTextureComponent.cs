@@ -16,6 +16,11 @@ public class HarmonyClickableTextureComponent
 
 		DrawCalls = new();
 	}
+	
+	public static void TearDown()
+	{
+		DrawCalls.Clear();
+	}
 
 	public static Dictionary<ClickableTextureComponent, int> DrawCalls;
 	

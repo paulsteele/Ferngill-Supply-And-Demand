@@ -28,6 +28,12 @@ public class HarmonyOptionsTextEntry
 		ConstructorCalls = new();
 		DrawCalls = new();
 	}
+	
+	public static void TearDown()
+	{
+		ConstructorCalls.Clear();
+		DrawCalls.Clear();
+	}
 
 	public static Dictionary<OptionsTextEntry, List<(string label, int whichOption, int x, int y)>> ConstructorCalls;
 	public static Dictionary<OptionsTextEntry, int> DrawCalls;

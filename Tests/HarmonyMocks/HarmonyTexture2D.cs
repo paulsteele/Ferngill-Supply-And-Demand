@@ -25,6 +25,11 @@ public class HarmonyTexture2D
 			prefix: new HarmonyMethod(typeof(HarmonyTexture2D), nameof(MockConstructor))
 		);
 	}
+	
+	public static void TearDown()
+	{
+		// No static fields to reset
+	}
 
 	static bool MockConstructor() => false;
 }

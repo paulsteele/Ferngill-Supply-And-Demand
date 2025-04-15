@@ -13,6 +13,11 @@ public class HarmonyCollectionsPage
 			prefix: new HarmonyMethod(typeof(HarmonyCollectionsPage), nameof(MockConstructor))
 		);
 	}
+	
+	public static void TearDown()
+	{
+		// No static fields to reset
+	}
 
 	static bool MockConstructor() => false;
 }

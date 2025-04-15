@@ -23,6 +23,11 @@ public class HarmonyItem
 
 		CategoryMapping = new();
 	}
+	
+	public static void TearDown()
+	{
+		CategoryMapping.Clear();
+	}
 
 	public static Dictionary<Item, int> CategoryMapping;
 

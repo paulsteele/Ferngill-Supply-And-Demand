@@ -25,6 +25,11 @@ public class HarmonyLocalizedContentManager
 			prefix: new HarmonyMethod(typeof(HarmonyLocalizedContentManager), nameof(MockLoad))
 		);
 	}
+	
+	public static void TearDown()
+	{
+		LoadResult = null;
+	}
 
 	static bool MockConstructor() => false;
 	

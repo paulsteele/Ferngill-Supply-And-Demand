@@ -31,6 +31,13 @@ public static class HarmonyOptions
 		GetZoomLevelResult = 1f;
 		GetHardwareCursor = false;
 	}
+	
+	public static void TearDown()
+	{
+		GetUiScaleResult = 1f;
+		GetZoomLevelResult = 1f;
+		GetHardwareCursor = false;
+	}
 
 	public static float GetUiScaleResult { get; set; } = 1f;
 	public static float GetZoomLevelResult { get; set; } = 1f;

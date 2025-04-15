@@ -40,6 +40,11 @@ public class HarmonyTextBox
 			prefix: new HarmonyMethod(typeof(HarmonyTextBox), nameof(MockUpdate))
 		);
 	}
+	
+	public static void TearDown()
+	{
+		// No static fields to reset
+	}
 
 	static bool MockConstructor() => false;
 

@@ -98,6 +98,15 @@ public class HarmonyIClickableMenu
 		DrawHoriztonalPartitionCalls = new();
 		DrawVerticalPartitionCalls = new();
 	}
+	
+	public static void TearDown()
+	{
+		DrawMouseCalls.Clear();
+		DrawHoverTextCalls.Clear();
+		DrawTextureBoxCalls.Clear();
+		DrawHoriztonalPartitionCalls.Clear();
+		DrawVerticalPartitionCalls.Clear();
+	}
 
 	public static Dictionary<SpriteBatch, int> DrawMouseCalls;
 	public static Dictionary<SpriteBatch, string> DrawHoverTextCalls;
