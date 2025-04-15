@@ -36,4 +36,35 @@ public class HarmonyTestBase
 		HarmonyTextBox.Setup(harmony);
 		HarmonyExitPage.Setup(harmony);
 	}
+	
+	[TearDown]
+	public virtual void TearDown()
+	{
+		HarmonyFarmer.TearDown();
+		HarmonyGame.TearDown();
+		HarmonyFarmerCollection.TearDown();
+		HarmonyFarmerTeam.TearDown();
+		HarmonyFarm.TearDown();
+		HarmonyObject.TearDown();
+		HarmonyModMessageReceivedEventArgs.TearDown();
+		HarmonySpriteFont.TearDown();
+		HarmonyUtility.TearDown();
+		HarmonySpriteBatch.TearDown();
+		HarmonyGameMenu.TearDown();
+		HarmonyOptions.TearDown();
+		HarmonyTexture2D.TearDown();
+		HarmonyIClickableMenu.TearDown();
+		HarmonyMapPage.TearDown();
+		HarmonyCollectionsPage.TearDown();
+		HarmonyLetterViewMenu.TearDown();
+		HarmonyOptionsDropDown.TearDown();
+		HarmonyOptionsCheckbox.TearDown();
+		HarmonyGraphicsDeviceManager.TearDown();
+		HarmonyClickableTextureComponent.TearDown();
+		HarmonyItem.TearDown();
+		HarmonyLocalizedContentManager.TearDown();
+		HarmonyOptionsTextEntry.TearDown();
+		HarmonyTextBox.TearDown();
+		HarmonyExitPage.TearDown();
+	}
 }
