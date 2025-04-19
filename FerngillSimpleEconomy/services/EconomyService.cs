@@ -149,7 +149,7 @@ public class EconomyService(
 			.Where(key => !EconomyIgnoreList.IgnoreList.Contains(key))
 			.Select(id => new Object(id, 1))
 			.Where(obj => ConfigModel.Instance.ValidCategories.Contains(obj.Category))
-			.GroupBy(obj => obj.Category, obj => new ItemModel { ObjectId = obj.ItemId })
+			.GroupBy(obj => obj.Category, obj => new ItemModel(obj.ItemId))
 			.ToDictionary(grouping => grouping.Key, grouping => grouping.ToDictionary(item => item.ObjectId));
 
 		return new EconomyModel(validItems);

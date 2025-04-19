@@ -20,21 +20,19 @@ public class ArtisanServiceTests
 		_mockMonitor = new Mock<IMonitor>();
 		_mockHelper = new Mock<IModHelper>();
 		_gameContentHelper = new Mock<IGameContentHelper>();
-		_economyModel = new EconomyModel
-		{
-			CategoryEconomies = new Dictionary<int, Dictionary<string, ItemModel>>
+		_economyModel = new EconomyModel(new Dictionary<int, Dictionary<string, ItemModel>>
 			{
 				{
 					1, new Dictionary<string, ItemModel>
 					{
-						{ "1", new ItemModel { ObjectId = "1" } },
-						{ "2", new ItemModel { ObjectId = "2" } },
-						{ "3", new ItemModel { ObjectId = "3" } },
-						{ "4", new ItemModel { ObjectId = "4" } },
+						{ "1", new ItemModel("1") },
+						{ "2", new ItemModel("2") },
+						{ "3", new ItemModel("3") },
+						{ "4", new ItemModel("4") },
 					}
 				},
-			},
-		};
+			}
+		);
 		
 		_mockHelper.SetupGet(m => m.GameContent).Returns(_gameContentHelper.Object);
 

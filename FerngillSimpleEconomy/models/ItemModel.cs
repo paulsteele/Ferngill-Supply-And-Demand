@@ -5,7 +5,8 @@ using Object = StardewValley.Object;
 
 namespace fse.core.models
 {
-	public class ItemModel
+	[method: JsonConstructor]
+	public class ItemModel(string objectId)
 	{
 		private int _dailyDelta;
 		private int _supply;
@@ -13,7 +14,7 @@ namespace fse.core.models
 		//cache the multiplier at the beginning of the day to keep prices consistent throughout the day
 		private float _cachedMultiplier = 1f;
 
-		[JsonInclude] public string ObjectId { get; set; }
+		[JsonInclude] public string ObjectId => objectId;
 
 		[JsonInclude]
 		public int Supply
@@ -55,7 +56,7 @@ namespace fse.core.models
 			Supply = Math.Min(Supply, ConfigModel.Instance.MaxCalculatedSupply);
 		}
 		
-		private Object _objectInstance;
+		private Object? _objectInstance;
 		public Object GetObjectInstance() => _objectInstance ??= new Object(ObjectId, 1);
 	}
 }

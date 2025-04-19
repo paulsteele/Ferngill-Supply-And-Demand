@@ -19,11 +19,10 @@ public class ItemModelTests : HarmonyTestBase
 			MaxPercentage = 0.8f,
 		};
 
-		_itemModel = new ItemModel
+		_itemModel = new ItemModel("item1")
 		{
-			ObjectId = "item1",
 			Supply = 100,
-			DailyDelta = 10
+			DailyDelta = 10,
 		};
 	}
 

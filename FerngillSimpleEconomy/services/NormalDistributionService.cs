@@ -15,13 +15,13 @@ public interface INormalDistributionService
 
 public class NormalDistributionService : INormalDistributionService
 {
-	private Normal _supplyNormal;
-	private Normal _deltaNormal;
-	private Normal _inSeasonNormal;
-	private Normal _outOfSeasonNormal;
+	private Normal _supplyNormal = new();
+	private Normal _deltaNormal = new();
+	private Normal _inSeasonNormal = new();
+	private Normal _outOfSeasonNormal = new();
 	private static int MeanSupply => (ConfigModel.MinSupply + ConfigModel.Instance.MaxCalculatedSupply) / 2;
 	private static int MeanDelta => (ConfigModel.Instance.MinDelta + ConfigModel.Instance.MaxDelta) / 2;
-	
+
 	public void Reset()
 	{
 		var rand = new Random();

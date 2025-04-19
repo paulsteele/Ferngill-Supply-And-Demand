@@ -6,7 +6,7 @@ namespace fse.core.models;
 
 public class ConfigModel
 {
-	public static ConfigModel Instance { get; set; }
+	public static ConfigModel Instance { get; set; } = new();
 	public const int MinSupply = 0;
 	public const int MaxSupply = int.MaxValue;
 	

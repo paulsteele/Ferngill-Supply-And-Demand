@@ -63,10 +63,10 @@ public class MultiplayerHandlerTests : HarmonyTestBase
 	{
 		HarmonyGame.GetPlayerResult = _farmer1;
 
-		var economy1 = new EconomyModel();
-		var economy2 = new EconomyModel();
-		var economy3 = new EconomyModel();
-		var economy4 = new EconomyModel();
+		var economy1 = new EconomyModel(new Dictionary<int, Dictionary<string, ItemModel>>());
+		var economy2 = new EconomyModel(new Dictionary<int, Dictionary<string, ItemModel>>());
+		var economy3 = new EconomyModel(new Dictionary<int, Dictionary<string, ItemModel>>());
+		var economy4 = new EconomyModel(new Dictionary<int, Dictionary<string, ItemModel>>());
 
 		_mockMultiplayerService.Setup(m =>
 				m.IsMultiplayerMessageOfType(EconomyModelMessage.StaticType, It.IsAny<ModMessageReceivedEventArgs>()))

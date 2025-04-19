@@ -82,7 +82,7 @@ public class GameMenuRenderedHandlerTests : HarmonyTestBase
 
 		_mockInputHelper.Setup(m => m.GetCursorPosition()).Returns(_mockCursor.Object);
 		_mockCursor.SetupGet(m => m.ScreenPixels).Returns(new Vector2(32, 32));
-		_mockForecastMenuService.Setup(m => m.CreateMenu()).Returns(_mockForecastMenu.Object);
+		_mockForecastMenuService.Setup(m => m.CreateMenu(It.IsAny<Action>())).Returns(_mockForecastMenu.Object);
 		_mockModContent.Setup(m => m.Load<Texture2D>(It.IsAny<string>())).Returns(_assetTexture);
 
 		_gameMenuLoadedHandler = new GameMenuLoadedHandler(_mockModHelper.Object, _mockMonitor.Object, _mockForecastMenuService.Object, _mockTooltipService.Object);
@@ -101,7 +101,7 @@ public class GameMenuRenderedHandlerTests : HarmonyTestBase
 	{
 		_mockInputEvents.InvokeButtonPressed(HarmonyButtonPressedEventArgs.CreateButtonPressedEventArgs(SButton.MouseLeft, _mockCursor.Object));
 		
-		_mockForecastMenu.Verify(m => m.TakeOverMenuTab(_gameMenu), Times.Once);
+		Assert.That(Game1.activeClickableMenu, Is.EqualTo(_mockForecastMenu.Object));
 	}
 	
 	[Test]
@@ -110,7 +110,7 @@ public class GameMenuRenderedHandlerTests : HarmonyTestBase
 		HarmonyGame.GetActiveClickableMenuResult = null!;
 		_mockInputEvents.InvokeButtonPressed(HarmonyButtonPressedEventArgs.CreateButtonPressedEventArgs(SButton.MouseLeft, _mockCursor.Object));
 		
-		_mockForecastMenu.Verify(m => m.TakeOverMenuTab(_gameMenu), Times.Never);
+		Assert.That(Game1.activeClickableMenu, Is.Not.EqualTo(_mockForecastMenu.Object));
 	}
 	
 	[Test]
@@ -119,7 +119,7 @@ public class GameMenuRenderedHandlerTests : HarmonyTestBase
 		ConfigModel.Instance.EnableMenuTab = false;
 		_mockInputEvents.InvokeButtonPressed(HarmonyButtonPressedEventArgs.CreateButtonPressedEventArgs(SButton.MouseLeft, _mockCursor.Object));
 		
-		_mockForecastMenu.Verify(m => m.TakeOverMenuTab(_gameMenu), Times.Never);
+		Assert.That(Game1.activeClickableMenu, Is.Not.EqualTo(_mockForecastMenu.Object));
 	}
 	
 	[Test]
@@ -127,7 +127,7 @@ public class GameMenuRenderedHandlerTests : HarmonyTestBase
 	{
 		_mockInputEvents.InvokeButtonPressed(HarmonyButtonPressedEventArgs.CreateButtonPressedEventArgs(SButton.MouseRight, _mockCursor.Object));
 		
-		_mockForecastMenu.Verify(m => m.TakeOverMenuTab(_gameMenu), Times.Never);
+		Assert.That(Game1.activeClickableMenu, Is.Not.EqualTo(_mockForecastMenu.Object));
 	}
 	
 	[TestCase(32, 32, 1, 1, true)]
@@ -150,8 +150,8 @@ public class GameMenuRenderedHandlerTests : HarmonyTestBase
 		HarmonyOptions.GetZoomLevelResult = zoom;
 		
 		_mockInputEvents.InvokeButtonPressed(HarmonyButtonPressedEventArgs.CreateButtonPressedEventArgs(SButton.MouseLeft, _mockCursor.Object));
-		
-		_mockForecastMenu.Verify(m => m.TakeOverMenuTab(_gameMenu), Times.Exactly(expectedToOpen ? 1 : 0));
+
+		Assert.That(Game1.activeClickableMenu, expectedToOpen ? Is.EqualTo(_mockForecastMenu.Object) : Is.Not.EqualTo(_mockForecastMenu.Object));
 	}
 	
 	[Test]
@@ -160,21 +160,23 @@ public class GameMenuRenderedHandlerTests : HarmonyTestBase
 		_gameMenu.pages[0] = _mockForecastMenu.Object;
 		_mockInputEvents.InvokeButtonPressed(HarmonyButtonPressedEventArgs.CreateButtonPressedEventArgs(SButton.MouseLeft, _mockCursor.Object));
 		
-		_mockForecastMenu.Verify(m => m.TakeOverMenuTab(_gameMenu), Times.Never);
+		Assert.That(Game1.activeClickableMenu, Is.Not.EqualTo(_mockForecastMenu.Object));
 	}
-[TestCase(0, 0, 0, true, 704, 16)]
-[TestCase(0, 0, 0, false, 774, 16)]
-[TestCase(0, 0, 1, true, 705, 16)]
-[TestCase(0, 0, 1, false, 775, 16)]
-[TestCase(50, 50, 0, true, 754, 66)]
-[TestCase(50, 50, 50, true, 804, 66)]
-public void ShouldDrawTabInCorrectPosition(
-	int menuX,
-	int menuY,
-	int offset,
-	bool isExitPageLastTab,
-	int expectedX,
-	int expectedY
+
+	[TestCase(0, 0, 0, true, 704, 16)]
+	[TestCase(0, 0, 0, false, 774, 16)]
+	[TestCase(0, 0, 1, true, 705, 16)]
+	[TestCase(0, 0, 1, false, 775, 16)]
+	[TestCase(50, 50, 0, true, 754, 66)]
+	[TestCase(50, 50, 50, true, 804, 66)]
+	public void ShouldDrawTabInCorrectPosition
+	(
+		int menuX,
+		int menuY,
+		int offset,
+		bool isExitPageLastTab,
+		int expectedX,
+		int expectedY
 	)
 	{
 		_gameMenu.xPositionOnScreen = menuX;

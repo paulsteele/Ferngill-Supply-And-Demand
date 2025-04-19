@@ -20,15 +20,14 @@ public class EconomyModelTests : HarmonyTestBase
 	{
 		base.Setup();
 
-		_economyModel = new EconomyModel();
 		
-		_itemModel1 = new ItemModel() {ObjectId = "o1"};
-		_itemModel2 = new ItemModel() {ObjectId = "o2"};
-		_itemModel3 = new ItemModel() {ObjectId = "o3"};
-		_itemModel4 = new ItemModel() {ObjectId = "o4"};
-		_itemModel5 = new ItemModel() {ObjectId = "o5"};
+		_itemModel1 = new ItemModel("o1");
+		_itemModel2 = new ItemModel("o2");
+		_itemModel3 = new ItemModel("o3");
+		_itemModel4 = new ItemModel("o4");
+		_itemModel5 = new ItemModel("o5");
 		
-		_economyModel.CategoryEconomies = new Dictionary<int, Dictionary<string, ItemModel>>()
+		var economyDict = new Dictionary<int, Dictionary<string, ItemModel>>()
 		{
 			{
 				1, new Dictionary<string, ItemModel>()
@@ -47,6 +46,8 @@ public class EconomyModelTests : HarmonyTestBase
 			},
 		};
 
+		_economyModel = new EconomyModel(economyDict);
+		
 		Game1.content = new LocalizedContentManager(null, null, null);
 	}
 
@@ -102,7 +103,7 @@ public class EconomyModelTests : HarmonyTestBase
 	[Test]
 	public void ShouldReturnItemModelForEquivalentIds()
 	{
-		_economyModel.CategoryEconomies = new Dictionary<int, Dictionary<string, ItemModel>>()
+		_economyModel = new EconomyModel(new Dictionary<int, Dictionary<string, ItemModel>>()
 		{
 			{
 				1, new Dictionary<string, ItemModel>()
@@ -119,7 +120,7 @@ public class EconomyModelTests : HarmonyTestBase
 					{"o5", _itemModel5},
 				}
 			},
-		};
+		});
 		
 		var o1 = new Object("176", 1) { Category = 1 };
 		var o2 = new Object("174", 1) { Category = 1 };
@@ -149,24 +150,25 @@ public class EconomyModelTests : HarmonyTestBase
 	[Test]
 	public void ShouldReturnItemModelForIdForEquivalentIds()
 	{
-		_economyModel.CategoryEconomies = new Dictionary<int, Dictionary<string, ItemModel>>()
+		_economyModel = new EconomyModel(new Dictionary<int, Dictionary<string, ItemModel>>()
 		{
 			{
 				1, new Dictionary<string, ItemModel>()
 				{
-					{"176", _itemModel1},
-					{"174", _itemModel2},
+					{ "176", _itemModel1 },
+					{ "174", _itemModel2 },
 				}
 			},
 			{
 				2, new Dictionary<string, ItemModel>()
 				{
-					{"184", _itemModel3},
-					{"186", _itemModel4},
-					{"o5", _itemModel5},
+					{ "184", _itemModel3 },
+					{ "186", _itemModel4 },
+					{ "o5", _itemModel5 },
 				}
 			},
-		};
+		});
+
 		var itemModel1 = _economyModel.GetItem("176");
 		var itemModel2 = _economyModel.GetItem("174");
 		var itemModel3 = _economyModel.GetItem("184");
@@ -205,27 +207,24 @@ public class EconomyModelTests : HarmonyTestBase
 	[Test]
 	public void ShouldIndicateEconomiesHaveSameItems()
 	{
-		var newModel = new EconomyModel
+		var newModel = new EconomyModel(new Dictionary<int, Dictionary<string, ItemModel>>()
 		{
-			CategoryEconomies = new Dictionary<int, Dictionary<string, ItemModel>>()
 			{
+				1, new Dictionary<string, ItemModel>()
 				{
-					1, new Dictionary<string, ItemModel>()
-					{
-						{"o1", _itemModel1},
-						{"o2", _itemModel2},
-					}
-				},
-				{
-					2, new Dictionary<string, ItemModel>()
-					{
-						{"o3", _itemModel3},
-						{"o4", _itemModel4},
-						{"o5", _itemModel5},
-					}
-				},
+					{ "o1", _itemModel1 },
+					{ "o2", _itemModel2 },
+				}
 			},
-		};
+			{
+				2, new Dictionary<string, ItemModel>()
+				{
+					{ "o3", _itemModel3 },
+					{ "o4", _itemModel4 },
+					{ "o5", _itemModel5 },
+				}
+			},
+		});
 		
 		Assert.That(_economyModel.HasSameItems(newModel), Is.True);
 	}
@@ -233,9 +232,7 @@ public class EconomyModelTests : HarmonyTestBase
 	[Test]
 	public void ShouldIndicateEconomiesHaveDifferentCategories()
 	{
-		var newModel = new EconomyModel
-		{
-			CategoryEconomies = new Dictionary<int, Dictionary<string, ItemModel>>()
+		var newModel = new EconomyModel (new Dictionary<int, Dictionary<string, ItemModel>>()
 			{
 				{
 					1, new Dictionary<string, ItemModel>()
@@ -252,8 +249,8 @@ public class EconomyModelTests : HarmonyTestBase
 						{"o5", _itemModel5},
 					}
 				},
-			},
-		};
+			}
+		);
 		
 		Assert.That(_economyModel.HasSameItems(newModel), Is.False);
 	}
@@ -261,9 +258,7 @@ public class EconomyModelTests : HarmonyTestBase
 	[Test]
 	public void ShouldIndicateEconomiesHaveDifferentItems()
 	{
-		var newModel = new EconomyModel
-		{
-			CategoryEconomies = new Dictionary<int, Dictionary<string, ItemModel>>()
+		var newModel = new EconomyModel(new Dictionary<int, Dictionary<string, ItemModel>>()
 			{
 				{
 					1, new Dictionary<string, ItemModel>()
@@ -280,8 +275,8 @@ public class EconomyModelTests : HarmonyTestBase
 						{"o5", _itemModel5},
 					}
 				},
-			},
-		};
+			}
+		);
 		
 		Assert.That(_economyModel.HasSameItems(newModel), Is.False);
 	}

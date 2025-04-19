@@ -73,8 +73,7 @@ public class ForecastMenuTests : HarmonyTestBase
 		Game1.graphics = new GraphicsDeviceManager(null);
 
 		_batch = new SpriteBatch(null, 0);
-		_menu = new ForecastMenu(_helperMock.Object, _economyServiceMock.Object, _monitorMock.Object,
-			_drawTextHelperMock.Object);
+		_menu = new ForecastMenu(_helperMock.Object, _economyServiceMock.Object, _drawTextHelperMock.Object, ExitAction);
 	}
 
 	[TearDown]
@@ -83,6 +82,11 @@ public class ForecastMenuTests : HarmonyTestBase
 		_batch.Dispose();
 		//clears out static objects
 		_menu.gameWindowSizeChanged(new Rectangle(0, 0, 0, 0), new Rectangle(0, 0, 0, 0));
+	}
+
+	private void ExitAction()
+	{
+		
 	}
 
 	[TestCase(1080, 620, 880, 520, 100, 50)]
@@ -184,7 +188,7 @@ public class ForecastMenuTests : HarmonyTestBase
 		}
 
 		_economyServiceMock.Setup(m => m.GetItemsForCategory(1)).Returns(models.ToArray);
-		_menu = new ForecastMenu(_helperMock.Object, _economyServiceMock.Object, _monitorMock.Object, _drawTextHelperMock.Object);
+		_menu = new ForecastMenu(_helperMock.Object, _economyServiceMock.Object, _drawTextHelperMock.Object, ExitAction);
 
 		_menu.draw(_batch);
 
@@ -493,8 +497,7 @@ public class ForecastMenuTests : HarmonyTestBase
 		Game1.uiViewport.Height = screenHeight;
 		Game1.season = season;
 
-		_menu = new ForecastMenu(_helperMock.Object, _economyServiceMock.Object, _monitorMock.Object,
-			_drawTextHelperMock.Object);
+		_menu = new ForecastMenu(_helperMock.Object, _economyServiceMock.Object, _drawTextHelperMock.Object, ExitAction);
 
 		_menu.draw(_batch);
 
@@ -581,8 +584,7 @@ public class ForecastMenuTests : HarmonyTestBase
 		_economyServiceMock.Setup(m => m.GetPricePerDay(models[1])).Returns(sellPricePerDay);
 
 		_economyServiceMock.Setup(m => m.GetItemsForCategory(1)).Returns(models.ToArray);
-		_menu = new ForecastMenu(_helperMock.Object, _economyServiceMock.Object, _monitorMock.Object,
-			_drawTextHelperMock.Object);
+		_menu = new ForecastMenu(_helperMock.Object, _economyServiceMock.Object, _drawTextHelperMock.Object, ExitAction);
 		Game1.staminaRect = new Texture2D(null, 0, 0);
 
 		_menu.draw(_batch);
@@ -772,8 +774,7 @@ public class ForecastMenuTests : HarmonyTestBase
 		Game1.uiViewport.Width = 2000;
 		Game1.uiViewport.Height = 6200;
 
-		_menu = new ForecastMenu(_helperMock.Object, _economyServiceMock.Object, _monitorMock.Object,
-			_drawTextHelperMock.Object);
+		_menu = new ForecastMenu(_helperMock.Object, _economyServiceMock.Object, _drawTextHelperMock.Object, ExitAction);
 
 		_menu.draw(_batch);
 

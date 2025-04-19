@@ -278,9 +278,7 @@ public class EconomyServiceTests : HarmonyTestBase
 	[Test]
 	public void ShouldLoadAnExistingEconomyOnLoad()
 	{
-		var model = new EconomyModel
-		{
-			CategoryEconomies = new Dictionary<int, Dictionary<string, ItemModel>>
+		var model = new EconomyModel(new Dictionary<int, Dictionary<string, ItemModel>>
 			{
 				{1, new Dictionary<string, ItemModel>()
 				{
@@ -292,8 +290,8 @@ public class EconomyServiceTests : HarmonyTestBase
 					{"3", new ItemModel(){ObjectId = "3", DailyDelta = 21, Supply = 210}},
 					{"4", new ItemModel(){ObjectId = "4", DailyDelta = 22, Supply = 220}},
 				}},
-			},
-		};
+			}
+		);
 		
 		_mockDataHelper.Setup(m => m.ReadSaveData<EconomyModel>(EconomyModel.ModelKey))
 			.Returns(model);
@@ -1223,9 +1221,7 @@ public class EconomyServiceTests : HarmonyTestBase
 			GenerateObjectData("4", 2),
 		});
 		
-		var model = new EconomyModel
-		{
-			CategoryEconomies = new Dictionary<int, Dictionary<string, ItemModel>>
+		var model = new EconomyModel(new Dictionary<int, Dictionary<string, ItemModel>>
 			{
 				{1, new Dictionary<string, ItemModel>()
 				{
@@ -1237,8 +1233,8 @@ public class EconomyServiceTests : HarmonyTestBase
 					{"3", new ItemModel(){ObjectId = "3", DailyDelta = 21, Supply = 210}},
 					{"4", new ItemModel(){ObjectId = "4", DailyDelta = 22, Supply = 220}},
 				}},
-			},
-		};
+			}
+		);
 		HarmonyObject.CategoryIdToNameMapping.Add(3, "Cat3");
 		
 		_mockDataHelper.Setup(m => m.ReadSaveData<EconomyModel>(EconomyModel.ModelKey))
