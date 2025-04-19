@@ -22,7 +22,7 @@ public class GameMenuRenderedHandlerTests : HarmonyTestBase
 	private Mock<IMonitor> _mockMonitor;
 	private Mock<ICursorPosition> _mockCursor;
 	private Mock<IForecastMenuService> _mockForecastMenuService;
-	private Mock<ForecastMenu> _mockForecastMenu;
+	private Mock<IForecastMenu> _mockForecastMenu;
 	private Mock<IModContentHelper> _mockModContent;
 	private Mock<IModRegistry> _mockModRegistry;
 	private Mock<IInputHelper> _mockInputHelper;
@@ -44,7 +44,7 @@ public class GameMenuRenderedHandlerTests : HarmonyTestBase
 		_mockInputEvents = new MockInputEvents();
 		_mockCursor = new Mock<ICursorPosition>();
 		_mockForecastMenuService = new Mock<IForecastMenuService>();
-		_mockForecastMenu = new Mock<ForecastMenu>();
+		_mockForecastMenu = new Mock<IForecastMenu>();
 		_mockModContent = new Mock<IModContentHelper>();
 		_mockModRegistry = new Mock<IModRegistry>();
 		_mockInputHelper = new Mock<IInputHelper>();
@@ -157,7 +157,7 @@ public class GameMenuRenderedHandlerTests : HarmonyTestBase
 	[Test]
 	public void ShouldNotCreateForecastMenuWhenForecastMenuIsAlreadyOpen()
 	{
-		_gameMenu.pages[0] = _mockForecastMenu.Object;
+		HarmonyGame.GetActiveClickableMenuResult = new Mock<IClickableMenu>().Object;
 		_mockInputEvents.InvokeButtonPressed(HarmonyButtonPressedEventArgs.CreateButtonPressedEventArgs(SButton.MouseLeft, _mockCursor.Object));
 		
 		Assert.That(Game1.activeClickableMenu, Is.Not.EqualTo(_mockForecastMenu.Object));

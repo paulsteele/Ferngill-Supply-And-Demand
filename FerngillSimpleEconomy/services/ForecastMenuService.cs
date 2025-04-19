@@ -2,13 +2,12 @@
 using fse.core.helpers;
 using fse.core.menu;
 using StardewModdingAPI;
-using StardewValley.Menus;
 
 namespace fse.core.services;
 
 public interface IForecastMenuService
 {
-	ForecastMenu CreateMenu(Action? exitAction);
+	IForecastMenu CreateMenu(Action? exitAction);
 }
 
 public class ForecastMenuService(
@@ -18,5 +17,5 @@ public class ForecastMenuService(
 	IDrawSupplyBarHelper drawSupplyBarHelper
 ) : IForecastMenuService
 {
-	public ForecastMenu CreateMenu(Action? exitAction) => new ForecastMenu(modHelper, economyService, drawTextHelper, drawSupplyBarHelper, exitAction);
+	public IForecastMenu CreateMenu(Action? exitAction) => new ForecastMenu(modHelper, economyService, drawTextHelper, drawSupplyBarHelper, exitAction);
 }

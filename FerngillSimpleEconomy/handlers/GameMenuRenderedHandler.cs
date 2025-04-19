@@ -120,7 +120,7 @@ public class GameMenuLoadedHandler : IHandler
 		TakeOverMenuTab(gameMenu, forecastMenu);
 	}
 
-	private static void TakeOverMenuTab(GameMenu gameMenu, ForecastMenu forecastMenu)
+	private static void TakeOverMenuTab(GameMenu gameMenu, IForecastMenu forecastMenu)
 	{
 		Game1.activeClickableMenu = forecastMenu;
 			

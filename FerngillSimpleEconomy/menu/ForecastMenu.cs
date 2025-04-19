@@ -12,7 +12,10 @@ using StardewValley;
 using StardewValley.Menus;
 
 namespace fse.core.menu;
-public class ForecastMenu : IClickableMenu
+
+public abstract class IForecastMenu : IClickableMenu;
+
+public class ForecastMenu : IForecastMenu
 {
 	private readonly IModHelper _helper;
 	private readonly IEconomyService _economyService;
