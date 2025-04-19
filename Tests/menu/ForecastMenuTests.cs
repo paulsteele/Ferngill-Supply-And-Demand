@@ -569,12 +569,12 @@ public class ForecastMenuTests : HarmonyTestBase
 	{
 		ConfigModel.Instance.MinDelta = -1000;
 		Game1.uiViewport.Width = 2000;
-		Game1.uiViewport.Height = 620 * expectedRows;
+		Game1.uiViewport.Height = 100 + 355 + 120 * expectedRows;
 
 		var models = new List<ItemModel>
 		{
 			new() { DailyDelta = delta, ObjectId = sellPrice.ToString(), Supply = supply },
-			new() { DailyDelta = delta, ObjectId = sellPrice.ToString(), Supply = supply },
+			new() { DailyDelta = delta, ObjectId = (sellPrice + 1).ToString(), Supply = supply },
 		};
 
 		_economyServiceMock.Setup(m => m.GetPricePerDay(models[0])).Returns(sellPricePerDay);
@@ -599,6 +599,7 @@ public class ForecastMenuTests : HarmonyTestBase
 		HarmonyObject.DrawInMenuCalls.Clear();
 		HarmonyIClickableMenu.DrawHoriztonalPartitionCalls.Clear();
 		HarmonySpriteBatch.DrawCalls.Clear();
+		HarmonyClickableTextureComponent.DrawCalls.Clear();
 		_drawTextHelperMock.Invocations.Clear();
 
 		_menu.draw(_batch);
@@ -729,7 +730,7 @@ public class ForecastMenuTests : HarmonyTestBase
 				_batch,
 				expectedNameLocation,
 				565,
-				$"display-{sellPrice}",
+				$"display-{sellPrice+1}",
 				DrawTextHelper.DrawTextAlignment.Start,
 				DrawTextHelper.DrawTextAlignment.Middle,
 				false
@@ -741,7 +742,7 @@ public class ForecastMenuTests : HarmonyTestBase
 				_batch,
 				expectedPriceLocation,
 				565,
-				sellPrice.ToString(),
+				(sellPrice+1).ToString(),
 				DrawTextHelper.DrawTextAlignment.Middle,
 				DrawTextHelper.DrawTextAlignment.Middle,
 				false

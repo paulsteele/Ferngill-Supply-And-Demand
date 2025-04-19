@@ -1,4 +1,5 @@
-﻿using HarmonyLib;
+﻿using fse.core.models;
+using HarmonyLib;
 using Tests.HarmonyMocks;
 namespace Tests;
 
@@ -8,6 +9,7 @@ public class HarmonyTestBase
 	public virtual void Setup()
 	{
 		var harmony = new Harmony("fse.tests");
+		ConfigModel.Instance = new ConfigModel();
 
 		HarmonyFarmer.Setup(harmony);
 		HarmonyGame.Setup(harmony);
