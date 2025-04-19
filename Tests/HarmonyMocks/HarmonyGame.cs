@@ -20,6 +20,10 @@ public static class HarmonyGame
 			prefix: new HarmonyMethod(typeof(HarmonyGame), nameof(MockGetActiveClickableMenu))
 		);
 		harmony.Patch(
+			AccessTools.PropertySetter(typeof(Game1), nameof(Game1.activeClickableMenu)),
+			prefix: new HarmonyMethod(typeof(HarmonyGame), nameof(MockSetActiveClickableMenu))
+		);
+		harmony.Patch(
 			AccessTools.PropertyGetter(typeof(Game1), nameof(Game1.options)),
 			prefix: new HarmonyMethod(typeof(HarmonyGame), nameof(MockGetOptions))
 		);
@@ -111,6 +115,13 @@ public static class HarmonyGame
 	static bool MockGetActiveClickableMenu(ref IClickableMenu __result)
 	{
 		__result = GetActiveClickableMenuResult;
+		return false;
+	}
+	static bool MockSetActiveClickableMenu(
+		IClickableMenu value
+	)
+	{
+		GetActiveClickableMenuResult = value;
 		return false;
 	}
 	public static Options GetOptionsResult { get; set; }
