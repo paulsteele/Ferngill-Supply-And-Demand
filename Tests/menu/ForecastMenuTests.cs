@@ -48,20 +48,20 @@ public class ForecastMenuTests : HarmonyTestBase
 		});
 		_economyServiceMock.Setup(m => m.GetItemsForCategory(1)).Returns(
 			[
-				new ItemModel { ObjectId = "1", Supply = 100, DailyDelta = 100 },
-				new ItemModel { ObjectId = "2", Supply = 200, DailyDelta = 200 },
+				new ItemModel("1") { Supply = 100, DailyDelta = 100 },
+				new ItemModel("2") { Supply = 200, DailyDelta = 200 },
 			]
 		);
 		_economyServiceMock.Setup(m => m.GetItemsForCategory(2)).Returns(
 			[
-				new ItemModel { ObjectId = "3", Supply = 300, DailyDelta = 300 },
-				new ItemModel { ObjectId = "4", Supply = 400, DailyDelta = 400 },
-				new ItemModel { ObjectId = "5", Supply = 500, DailyDelta = 500 },
+				new ItemModel("3") { Supply = 300, DailyDelta = 300 },
+				new ItemModel("4") { Supply = 400, DailyDelta = 400 },
+				new ItemModel("5") { Supply = 500, DailyDelta = 500 },
 			]
 		);
 		_economyServiceMock.Setup(m => m.GetItemsForCategory(3)).Returns(
 			[
-				new ItemModel { ObjectId = "6", Supply = 600, DailyDelta = 600 },
+				new ItemModel("6") { Supply = 600, DailyDelta = 600 },
 			]
 		);
 
@@ -184,7 +184,7 @@ public class ForecastMenuTests : HarmonyTestBase
 		var models = new List<ItemModel>();
 		for (var i = 0; i < numItems; i++)
 		{
-			models.Add(new ItemModel { DailyDelta = i * 100, ObjectId = i.ToString(), Supply = i * 100 });
+			models.Add(new ItemModel(i.ToString()) { DailyDelta = i * 100, Supply = i * 100 });
 		}
 
 		_economyServiceMock.Setup(m => m.GetItemsForCategory(1)).Returns(models.ToArray);
@@ -576,8 +576,8 @@ public class ForecastMenuTests : HarmonyTestBase
 
 		var models = new List<ItemModel>
 		{
-			new() { DailyDelta = delta, ObjectId = sellPrice.ToString(), Supply = supply },
-			new() { DailyDelta = delta, ObjectId = (sellPrice + 1).ToString(), Supply = supply },
+			new ItemModel(sellPrice.ToString()) { DailyDelta = delta, Supply = supply },
+			new ItemModel((sellPrice + 1).ToString()) { DailyDelta = delta, Supply = supply },
 		};
 
 		_economyServiceMock.Setup(m => m.GetPricePerDay(models[0])).Returns(sellPricePerDay);

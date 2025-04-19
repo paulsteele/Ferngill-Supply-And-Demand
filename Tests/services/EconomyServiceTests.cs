@@ -54,7 +54,7 @@ public class EconomyServiceTests : HarmonyTestBase
 		_mockNormalDistributionService.Setup(m => m.SampleInSeasonDelta()).Returns(26);
 		_mockNormalDistributionService.Setup(m => m.SampleOutOfSeasonDelta()).Returns(25);
 
-		_mockArtisanService.Setup(m => m.GetBaseFromArtisanGood("307")).Returns(new ItemModel{ ObjectId = "442"});
+		_mockArtisanService.Setup(m => m.GetBaseFromArtisanGood("307")).Returns(new ItemModel("442"));
 
 		Game1.objectData = new Dictionary<string, ObjectData>(new[]
 		{
@@ -282,13 +282,13 @@ public class EconomyServiceTests : HarmonyTestBase
 			{
 				{1, new Dictionary<string, ItemModel>()
 				{
-					{"1", new ItemModel(){ObjectId = "1", DailyDelta = 11, Supply = 110}},
-					{"2", new ItemModel(){ObjectId = "2", DailyDelta = 12, Supply = 120}},
+					{"1", new ItemModel("1"){ DailyDelta = 11, Supply = 110}},
+					{"2", new ItemModel("2"){ DailyDelta = 12, Supply = 120}},
 				}},
 				{2, new Dictionary<string, ItemModel>()
 				{
-					{"3", new ItemModel(){ObjectId = "3", DailyDelta = 21, Supply = 210}},
-					{"4", new ItemModel(){ObjectId = "4", DailyDelta = 22, Supply = 220}},
+					{"3", new ItemModel("3"){ DailyDelta = 21, Supply = 210}},
+					{"4", new ItemModel("4"){ DailyDelta = 22, Supply = 220}},
 				}},
 			}
 		);
@@ -1314,9 +1314,9 @@ public class EconomyServiceTests : HarmonyTestBase
 		
 		_economyService.OnLoaded();
 
-		var itemModel = new ItemModel(){ObjectId = "2"};
-		var equivalentModel = new ItemModel() { ObjectId = "174" };
-		var artisanModel = new ItemModel() { ObjectId = "307" };
+		var itemModel = new ItemModel("2");
+		var equivalentModel = new ItemModel("174");
+		var artisanModel = new ItemModel("307");
 		Assert.Multiple(() =>
 		{ 
 			Assert.That(_economyService.GetConsolidatedItem(itemModel), Is.EqualTo(itemModel)); 
