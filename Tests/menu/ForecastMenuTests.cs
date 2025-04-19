@@ -81,6 +81,8 @@ public class ForecastMenuTests : HarmonyTestBase
 	public void Teardown()
 	{
 		_batch.Dispose();
+		//clears out static objects
+		_menu.gameWindowSizeChanged(new Rectangle(0, 0, 0, 0), new Rectangle(0, 0, 0, 0));
 	}
 
 	[TestCase(1080, 620, 880, 520, 100, 50)]
@@ -520,7 +522,7 @@ public class ForecastMenuTests : HarmonyTestBase
 	}
 
 	[TestCase(1080, 620, 944, 42)]
-	[TestCase(10800, 6200, 5439, 2581)]
+	[TestCase(10800, 6200, 6324, 2092)]
 	public void ShouldDrawExitButton(int screenWidth, int screenHeight, int x, int y)
 	{
 		Game1.uiViewport.Width = screenWidth;
@@ -528,7 +530,7 @@ public class ForecastMenuTests : HarmonyTestBase
 
 		_menu.draw(_batch);
 
-		var exitButton = HarmonyClickableTextureComponent.DrawCalls.ToArray()[4].Key;
+		var exitButton = HarmonyClickableTextureComponent.DrawCalls.FirstOrDefault(c => c.Key.name == "exit-button").Key;
 		Assert.Multiple(() =>
 		{
 			Assert.That(exitButton.bounds.X, Is.EqualTo(x));

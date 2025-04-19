@@ -581,12 +581,18 @@ public class ForecastMenu : AbstractForecastMenu
 	private void DrawExitButton(SpriteBatch batch)
 	{
 		_exitButton ??= new ClickableTextureComponent(
+			"exit-button",
 			new Rectangle(
 				xPositionOnScreen + width - 36,
 				yPositionOnScreen - 8, 48, 48
 			),
+			"",
+			"",
 			Game1.mouseCursors,
-			new Rectangle(337, 494, 12, 12), 4f);
+			new Rectangle(337, 494, 12, 12), 
+			4f
+		);
+		
 
 		_exitButton.draw(batch);
 	}
