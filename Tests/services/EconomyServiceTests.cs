@@ -1202,7 +1202,7 @@ public class EconomyServiceTests : HarmonyTestBase
 	[Test]
 	public void ShouldForwardItemModelFromSeed()
 	{
-		var itemModel = new ItemModel();
+		var itemModel = new ItemModel("seed");
 		_mockSeedService.Setup(m => m.GetItemModelFromSeedId("seed")).Returns(itemModel);
 		
 		Assert.That(_economyService.GetItemModelFromSeed("seed"), Is.EqualTo(itemModel));
@@ -1224,13 +1224,13 @@ public class EconomyServiceTests : HarmonyTestBase
 			{
 				{1, new Dictionary<string, ItemModel>()
 				{
-					{"1", new ItemModel(){ObjectId = "1", DailyDelta = 11, Supply = 110}},
-					{"2", new ItemModel(){ObjectId = "2", DailyDelta = 12, Supply = 120}},
+					{"1", new ItemModel("1"){ DailyDelta = 11, Supply = 110}},
+					{"2", new ItemModel("2"){ DailyDelta = 12, Supply = 120}},
 				}},
 				{2, new Dictionary<string, ItemModel>()
 				{
-					{"3", new ItemModel(){ObjectId = "3", DailyDelta = 21, Supply = 210}},
-					{"4", new ItemModel(){ObjectId = "4", DailyDelta = 22, Supply = 220}},
+					{"3", new ItemModel("3"){ DailyDelta = 21, Supply = 210}},
+					{"4", new ItemModel("4"){ DailyDelta = 22, Supply = 220}},
 				}},
 			}
 		);
