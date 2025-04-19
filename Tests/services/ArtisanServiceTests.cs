@@ -85,10 +85,8 @@ public class ArtisanServiceTests
 	public void ShouldHandleNullMappingGracefully()
 	{
 		_artisanService.GenerateArtisanMapping(_economyModel);
-		// Act
 		var result = _artisanService.GetBaseFromArtisanGood("1");
 
-		// Assert
 		Assert.That(result, Is.Null);
 	}
 

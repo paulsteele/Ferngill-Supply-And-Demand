@@ -30,6 +30,12 @@ public class ArtisanService(IMonitor monitor, IModHelper helper) : IArtisanServi
 		
 		var machineData = helper.GameContent.Load<Dictionary<string, MachineData>>("Data\\Machines");
 
+		// ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+		if (machineData == null)
+		{
+			return;
+		}
+
 		_artisanGoodToBase = machineData.Values
 			.Where(m => m.OutputRules != null)
 			.SelectMany(m => m.OutputRules)

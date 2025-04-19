@@ -25,6 +25,12 @@ public class SeedService(IMonitor monitor) : ISeedService
 		var cropData = Game1.content.Load<Dictionary<string, CropData>>("Data\\Crops");
 		var failCount = 0;
 		Exception? mostRecentException = null;
+		
+		// ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+		if (cropData == null)
+		{
+			return;
+		}
 
 		foreach (var seed in cropData.Keys)
 		{
