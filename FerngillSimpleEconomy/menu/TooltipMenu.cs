@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using fse.core.models;
 using fse.core.services;
 using Microsoft.Xna.Framework;
@@ -9,64 +8,39 @@ using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Menus;
 
-namespace fse.core.menu
+namespace fse.core.menu;
+
+public interface ITooltipMenu
 {
-	public interface ITooltipMenu
-	{
-		void PreRenderHud(RenderingHudEventArgs e);
-		void PostRenderHud(RenderedHudEventArgs e);
-		void PostRenderGui(RenderedActiveMenuEventArgs e);
-	}
+	void PreRenderHud(RenderingHudEventArgs e);
+	void PostRenderHud(RenderedHudEventArgs e);
+	void PostRenderGui(RenderedActiveMenuEventArgs e);
+}
 
-	public class TooltipMenu : ITooltipMenu
-	{
-	private static IModHelper _helper;
-	private static AbstractForecastMenu _forecastMenu;
-	private static IEconomyService _econService;
-	private static IBetterGameMenuService _betterGameMenuService;
-	private Item _toolbarItem;
-	private readonly bool _isUiInfoSuiteLoaded;
+public class TooltipMenu(
+	IModHelper helper,
+	IEconomyService econService,
+	IForecastMenuService forecastMenuService,
+	IBetterGameMenuService betterGameMenuService
+	) : ITooltipMenu
+{
+	private readonly AbstractForecastMenu _forecastMenu = forecastMenuService.CreateMenu();
+	private Item? _toolbarItem;
+	private readonly bool _isUiInfoSuiteLoaded = helper.ModRegistry.IsLoaded("Annosz.UiInfoSuite2");
 
-	//Constructor
-	public TooltipMenu(IModHelper helper, IEconomyService econService, IForecastMenuService forecastMenuService, IBetterGameMenuService betterGameMenuService)
-	{
-		_helper = helper;
-		_econService = econService;
-		_betterGameMenuService = betterGameMenuService;
-
-		_forecastMenu = forecastMenuService.CreateMenu();
-
-		_isUiInfoSuiteLoaded = _helper.ModRegistry.IsLoaded("Annosz.UiInfoSuite2"); 
-	}
-
-	//Get hovered toolbar item
 	public void PreRenderHud(RenderingHudEventArgs e)
 	{
 		if (!ConfigModel.Instance.EnableTooltip)
 		{
 			return;
 		}
-		_toolbarItem = null;
-		foreach (var menu in Game1.onScreenMenus)
-		{
-			if (menu is not Toolbar)
-			{
-				continue;
-			}
 
-			_toolbarItem = _helper.Reflection.GetField<Item>(menu, "hoverItem").GetValue();
-			return;
-		}
+		_toolbarItem = Game1.onScreenMenus.OfType<Toolbar>().FirstOrDefault()?.hoverItem;
 	}
 
-	//Render for toolbar item
 	public void PostRenderHud(RenderedHudEventArgs e)
 	{
-		if (!ConfigModel.Instance.EnableTooltip)
-		{
-			return;
-		}
-		if (Game1.activeClickableMenu != null || _toolbarItem == null)
+		if (!ConfigModel.Instance.EnableTooltip || Game1.activeClickableMenu != null || _toolbarItem == null)
 		{
 			return;
 		}
@@ -75,7 +49,6 @@ namespace fse.core.menu
 		_toolbarItem = null;
 	}
 
-	//Render for menu item
 	public void PostRenderGui(RenderedActiveMenuEventArgs e)
 	{
 		if (!ConfigModel.Instance.EnableTooltip)
@@ -94,17 +67,14 @@ namespace fse.core.menu
 		}
 	}
 
-	//Get hovered menu item
-	private static Item GetHoveredItemFromMenu(IClickableMenu menu)
+	private Item? GetHoveredItemFromMenu(IClickableMenu menu)
 	{
-		// game menu
-		var page = _betterGameMenuService?.GetCurrentPage(menu);
+		var page = betterGameMenuService.GetCurrentPage(menu);
 		if (page is InventoryPage inventoryPage)
 		{
 			return inventoryPage.hoveredItem;
 		}
 
-		// from inventory UI (so things like shops and so on)
 		if (menu is MenuWithInventory inventoryMenu)
 		{
 			return inventoryMenu.hoveredItem;
@@ -113,14 +83,13 @@ namespace fse.core.menu
 		return null;
 	}
 
-	//Populate and draw
 	private void PopulateHoverTextBoxAndDraw(Item item)
 	{
 		if (item is not Object obj)
 		{
 			return;
 		}
-		var model = _econService.GetItemModelFromObject(obj);
+		var model = econService.GetItemModelFromObject(obj);
 
 		if (model == null)
 		{
@@ -130,33 +99,31 @@ namespace fse.core.menu
 		DrawHoverTextBox(model);
 	}
 
-	//Draw
 	private void DrawHoverTextBox(ItemModel model)
 	{
-	 const int width = 240;
-	 const int height = 110;
+		const int width = 240;
+		const int height = 110;
 
-	 var x = (int)(Mouse.GetState().X / Game1.options.uiScale) - Game1.tileSize / 2 - width;
-	 var y = (int)(Mouse.GetState().Y / Game1.options.uiScale) + Game1.tileSize / 3;
+		var x = (int)(Mouse.GetState().X / Game1.options.uiScale) - Game1.tileSize / 2 - width;
+		var y = (int)(Mouse.GetState().Y / Game1.options.uiScale) + Game1.tileSize / 3;
 
-	 //So that the tooltips don't overlap
-	 if ((_isUiInfoSuiteLoaded))
-	 {
-		 x -= 140;
-	 }
+		//So that the tooltips don't overlap
+		if ((_isUiInfoSuiteLoaded))
+		{
+			x -= 140;
+		}
 
-	 if (x < 0)
-	 {
-		 x = 0;
-	 }
+		if (x < 0)
+		{
+			x = 0;
+		}
 
-	 if (y + height > Game1.graphics.GraphicsDevice.Viewport.Height)
-	 {
-		 y = Game1.graphics.GraphicsDevice.Viewport.Height - height;
-	 }
+		if (y + height > Game1.graphics.GraphicsDevice.Viewport.Height)
+		{
+			y = Game1.graphics.GraphicsDevice.Viewport.Height - height;
+		}
 
-	 IClickableMenu.drawTextureBox(Game1.spriteBatch, Game1.menuTexture, new Rectangle(0, 256, 60, 60), x, y, width+20, height, Color.White);
-	 _forecastMenu.DrawSupplyBar(Game1.spriteBatch, x+15, y+20, x+width, (Game1.tileSize / 2), model);
+		IClickableMenu.drawTextureBox(Game1.spriteBatch, Game1.menuTexture, new Rectangle(0, 256, 60, 60), x, y, width+20, height, Color.White);
+		_forecastMenu.DrawSupplyBar(Game1.spriteBatch, x+15, y+20, x+width, (Game1.tileSize / 2), model);
 	}
- }
 }
