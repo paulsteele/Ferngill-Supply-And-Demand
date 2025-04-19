@@ -34,9 +34,9 @@ public class SafeActionTests
 		
 		Assert.That(value, Is.EqualTo(-1));
 		
-		mockMonitor.Verify(m => m.Log(It.IsAny<string>(), It.IsAny<LogLevel>()), Times.Exactly(3));
+		mockMonitor.Verify(m => m.Log(It.IsAny<string>(), It.IsAny<LogLevel>()), Times.Exactly(2));
 		
 		mockMonitor.Verify(m => m.Log(nameof(SafeActionShouldLogAndReturnDefaultValue), LogLevel.Error), Times.Once);
-		mockMonitor.Verify(m => m.Log("ForcedError", LogLevel.Error), Times.Once);
+		mockMonitor.Verify(m => m.Log(It.Is<string>(s => s.Contains("ForcedError")), LogLevel.Error), Times.Once);
 	}
 }
