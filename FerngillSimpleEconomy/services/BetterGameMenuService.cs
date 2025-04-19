@@ -1,6 +1,4 @@
-﻿#nullable enable
-
-using fse.core.models;
+﻿using fse.core.models;
 
 using Leclair.Stardew.BetterGameMenu;
 
@@ -22,7 +20,7 @@ public interface IBetterGameMenuService
 	/// register our custom tab, along with setting up any
 	/// necessary events.
 	/// </summary>
-	void Register(IBetterGameMenuApi api);
+	void Register(IBetterGameMenuApi? api);
 
 	/// <summary>
 	/// Get the current menu page of the provided game menu, assuming the
@@ -38,7 +36,6 @@ public interface IBetterGameMenuService
 	/// screen back to the previous tab.
 	/// </summary>
 	void SwitchToLastTab();
-
 }
 
 public class BetterGameMenuService(
@@ -47,19 +44,24 @@ public class BetterGameMenuService(
 	IForecastMenuService menuService
 ) : IBetterGameMenuService
 {
-	private IBetterGameMenuApi? Api;
+	private IBetterGameMenuApi? _api;
 
-	private readonly PerScreen<string?> LastTab = new();
+	private readonly PerScreen<string?> _lastTab = new();
 
-	public void Register(IBetterGameMenuApi api)
+	public void Register(IBetterGameMenuApi? api)
 	{
-		Api = api;
+		if (api == null)
+		{
+			return;
+		}
+		
+		_api = api;
 
-		Api.RegisterTab(
+		_api.RegisterTab(
 			manifest.UniqueID,
 			order: (int)VanillaTabOrders.Exit + 10,
 			getDisplayName: () => modHelper.Translation.Get("fse.forecast.menu.tab.title"),
-			getIcon: () => (Api.CreateDraw(
+			getIcon: () => (_api.CreateDraw(
 				modHelper.ModContent.Load<Texture2D>("assets/stock-menu.png"),
 				new Microsoft.Xna.Framework.Rectangle(0, 0, 16, 16),
 				scale: 4f
@@ -71,13 +73,12 @@ public class BetterGameMenuService(
 			getMenuInvisible: () => true
 		);
 
-		Api.OnTabChanged(OnTabChanged);
-
+		_api.OnTabChanged(OnTabChanged);
 	}
 
 	private void OnTabChanged(ITabChangedEvent e)
 	{
-		LastTab.Value = e.OldTab;
+		_lastTab.Value = e.OldTab;
 
 		if (e.Tab == manifest.UniqueID && e.Menu.upperRightCloseButton is not null)
 		{
@@ -87,16 +88,11 @@ public class BetterGameMenuService(
 
 	public void SwitchToLastTab()
 	{
-		var menu = Api?.ActiveMenu;
-		menu?.TryChangeTab(LastTab.Value ?? menu.VisibleTabs.FirstOrDefault() ?? nameof(VanillaTabOrders.Exit));
+		var menu = _api?.ActiveMenu;
+		menu?.TryChangeTab(_lastTab.Value ?? menu.VisibleTabs.FirstOrDefault() ?? nameof(VanillaTabOrders.Exit));
 	}
 
-	private IClickableMenu CreateInstance(IClickableMenu menu)
-	{
-		var result = menuService.CreateMenu();
-		result.SetBetterGameMenu(this);
-		return result;
-	}
+	private IClickableMenu CreateInstance(IClickableMenu menu) => menuService.CreateMenu(SwitchToLastTab);
 
 	public IClickableMenu? GetCurrentPage(IClickableMenu? menu)
 	{
@@ -104,11 +100,12 @@ public class BetterGameMenuService(
 		{
 			return gameMenu.GetCurrentPage();
 		}
-		else if (Api is not null && menu is not null)
+
+		if (_api is not null && menu is not null)
 		{
-			return Api.GetCurrentPage(menu);
+			return _api.GetCurrentPage(menu);
 		}
+		
 		return null;
 	}
-
 }

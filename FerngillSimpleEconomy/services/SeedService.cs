@@ -11,8 +11,8 @@ namespace fse.core.services;
 public interface ISeedService
 {
 	void GenerateSeedMapping(EconomyModel economyModel);
-	ItemModel GetItemModelFromSeedId(string seed);
-	SeedModel GetSeedModelFromModelId(string modelId);
+	ItemModel? GetItemModelFromSeedId(string seed);
+	SeedModel? GetSeedModelFromModelId(string modelId);
 }
 
 public class SeedService(IMonitor monitor) : ISeedService
@@ -24,17 +24,12 @@ public class SeedService(IMonitor monitor) : ISeedService
 	{
 		var cropData = Game1.content.Load<Dictionary<string, CropData>>("Data\\Crops");
 		var failCount = 0;
-		Exception mostRecentException = null;
+		Exception? mostRecentException = null;
 
 		foreach (var seed in cropData.Keys)
 		{
 			try
 			{
-				if (seed == null)
-				{
-					continue;
-				}
-
 				if (!cropData.TryGetValue(seed, out var data))
 				{
 					continue;
@@ -66,6 +61,6 @@ public class SeedService(IMonitor monitor) : ISeedService
 		}
 	}
 	
-	public ItemModel GetItemModelFromSeedId(string seed) => SeedToItem.GetValueOrDefault(seed);
-	public SeedModel GetSeedModelFromModelId(string modelId) => ItemToSeed.GetValueOrDefault(modelId);
+	public ItemModel? GetItemModelFromSeedId(string seed) => SeedToItem.GetValueOrDefault(seed);
+	public SeedModel? GetSeedModelFromModelId(string modelId) => ItemToSeed.GetValueOrDefault(modelId);
 }

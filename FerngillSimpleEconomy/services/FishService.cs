@@ -10,7 +10,7 @@ namespace fse.core.services;
 public interface IFishService
 {
 	void GenerateFishMapping(EconomyModel economyModel);
-	FishModel GetFishModelFromModelId(string modelId);
+	FishModel? GetFishModelFromModelId(string modelId);
 }
 
 public class FishService(IMonitor monitor) : IFishService
@@ -21,16 +21,12 @@ public class FishService(IMonitor monitor) : IFishService
 	{
 		var fishData = Game1.content.Load<Dictionary<string, string>>("Data\\Fish");
 		var failCount = 0;
-		Exception mostRecentException = null;
+		Exception? mostRecentException = null;
 
 		foreach (var fish in fishData.Keys)
 		{
 			try
 			{
-				if (fish == null)
-				{
-					continue;
-				}
 				if (!fishData.TryGetValue(fish, out var data))
 				{
 					continue;
@@ -63,5 +59,5 @@ public class FishService(IMonitor monitor) : IFishService
 		}
 	}
 
-	public FishModel GetFishModelFromModelId(string modelId) => ItemToFish.GetValueOrDefault(modelId);
+	public FishModel? GetFishModelFromModelId(string modelId) => ItemToFish.GetValueOrDefault(modelId);
 }

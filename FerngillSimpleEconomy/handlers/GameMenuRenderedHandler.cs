@@ -19,7 +19,7 @@ public class GameMenuLoadedHandler : IHandler
 	private readonly IMonitor _monitor;
 	private readonly IForecastMenuService _forecastMenuService;
 	private readonly ITooltipMenu _tooltipMenu;
-	private Texture2D _menuTexture;
+	private Texture2D? _menuTexture;
 	public readonly ClickableComponent Tab;
 
 	public GameMenuLoadedHandler(
@@ -116,7 +116,24 @@ public class GameMenuLoadedHandler : IHandler
 				return;
 		}
 
-		_forecastMenuService.CreateMenu().TakeOverMenuTab(gameMenu);
+		var forecastMenu = _forecastMenuService.CreateMenu(() => ReleaseMenuTab(gameMenu));
+		TakeOverMenuTab(gameMenu, forecastMenu);
+	}
+
+	private static void TakeOverMenuTab(GameMenu gameMenu, AbstractForecastMenu forecastMenu)
+	{
+		Game1.activeClickableMenu = forecastMenu;
+			
+		gameMenu.invisible = true;
+		gameMenu.upperRightCloseButton.visible = false;
+	}
+
+	private static void ReleaseMenuTab(GameMenu originalMenu)
+	{
+		originalMenu.invisible = false;
+		originalMenu.upperRightCloseButton.visible = true;
+	
+		Game1.activeClickableMenu = originalMenu;
 	}
 
 	public void DrawTab(SpriteBatch batch)
@@ -161,7 +178,7 @@ public class GameMenuLoadedHandler : IHandler
 		batch.Draw(
 			_menuTexture,
 			new Vector2(Tab.bounds.X, Tab.bounds.Y), 
-			new Rectangle?(new Rectangle(0 * 16, 0, 16, 16)),
+			new Rectangle(0 * 16, 0, 16, 16),
 			Color.White, 
 			0.0f, 
 			Vector2.Zero, 

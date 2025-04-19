@@ -1,4 +1,5 @@
-﻿using fse.core.helpers;
+﻿using System;
+using fse.core.helpers;
 using fse.core.menu;
 using StardewModdingAPI;
 
@@ -6,15 +7,14 @@ namespace fse.core.services;
 
 public interface IForecastMenuService
 {
-	AbstractForecastMenu CreateMenu();
+	AbstractForecastMenu CreateMenu(Action? exitAction);
 }
 
 public class ForecastMenuService(
 	IModHelper modHelper, 
-	IEconomyService economyService, 
-	IMonitor monitor,
+	IEconomyService economyService,
 	IDrawTextHelper drawTextHelper
 ) : IForecastMenuService
 {
-	public AbstractForecastMenu CreateMenu() => new ForecastMenu(modHelper, economyService, monitor, drawTextHelper);
+	public AbstractForecastMenu CreateMenu(Action? exitAction) => new ForecastMenu(modHelper, economyService, drawTextHelper, exitAction);
 }

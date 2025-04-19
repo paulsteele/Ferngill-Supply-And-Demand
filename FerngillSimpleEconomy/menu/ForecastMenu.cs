@@ -15,10 +15,6 @@ namespace fse.core.menu;
 
 public abstract class AbstractForecastMenu : IClickableMenu
 {
-	public abstract void TakeOverMenuTab(GameMenu gameMenu);
-
-	public abstract void SetBetterGameMenu(IBetterGameMenuService service);
-
 	public abstract void DrawSupplyBar(SpriteBatch batch, int startingX, int startingY, int endingX, int barHeight, ItemModel model);
 }
 
@@ -26,9 +22,8 @@ public class ForecastMenu : AbstractForecastMenu
 {
 	private readonly IModHelper _helper;
 	private readonly IEconomyService _economyService;
-	private readonly IMonitor _monitor;
 	private readonly IDrawTextHelper _drawTextHelper;
-	private IBetterGameMenuService _betterGameMenuService;
+	private readonly Action? _exitAction;
 	private ItemModel[] _allItems;
 	private readonly Dictionary<int, string> _categories;
 	private int _itemIndex;
@@ -36,16 +31,16 @@ public class ForecastMenu : AbstractForecastMenu
 	private bool _isScrolling;
 	private bool _isInCategoryDropdown;
 	private bool _isInSortDropdown;
-	private ClickableTextureComponent _upArrow;
-	private ClickableTextureComponent _downArrow;
-	private ClickableTextureComponent _scrollbar;
+	private ClickableTextureComponent? _upArrow;
+	private ClickableTextureComponent? _downArrow;
+	private ClickableTextureComponent? _scrollbar;
 	private Rectangle? _scrollbarRunner;
 	private int _bottomIndex;
-	private OptionsDropDown _categoryDropdown;
-	private OptionsDropDown _sortDropdown;
-	private OptionsTextEntry _optionsTextEntry;
-	private OptionsCheckbox[] _seasonsCheckboxes;
-	private ClickableTextureComponent _exitButton;
+	private OptionsDropDown? _categoryDropdown;
+	private OptionsDropDown? _sortDropdown;
+	private OptionsTextEntry? _optionsTextEntry;
+	private OptionsCheckbox[]? _seasonsCheckboxes;
+	private ClickableTextureComponent? _exitButton;
 	private bool _drawn;
 
 	private string None => _helper.Translation.Get("fse.forecast.menu.sort.none");
@@ -60,11 +55,10 @@ public class ForecastMenu : AbstractForecastMenu
 	private string _chosenSort;
 	private int _chosenCategory;
 	private Seasons _chosenSeasons;
-	private GameMenu _hiddenMenu;
 
 	private static int? _cachedChosenCategory;
-	private static string _cachedChosenSort;
-	private static string _textFilter;
+	private static string? _cachedChosenSort;
+	private static string? _textFilter;
 	private static int _controllerIndex;
 	
 	private float? _breakEvenSupply;
@@ -77,14 +71,14 @@ public class ForecastMenu : AbstractForecastMenu
 	public ForecastMenu(
 		IModHelper helper,
 		IEconomyService economyService,
-		IMonitor monitor,
-		IDrawTextHelper drawTextHelper
+		IDrawTextHelper drawTextHelper,
+		Action? exitAction
 	)
 	{
 		_helper = helper;
 		_economyService = economyService;
-		_monitor = monitor;
 		_drawTextHelper = drawTextHelper;
+		_exitAction = exitAction;
 
 		_sortDisplayOptions = [None, Name, Supply, DailyChange, MarketPrice, MarketPricePerDay];
 
@@ -92,32 +86,24 @@ public class ForecastMenu : AbstractForecastMenu
 
 		_chosenSort = string.IsNullOrWhiteSpace(_cachedChosenSort) ? _sortOptions.First() : _cachedChosenSort ;
 			
-		if (economyService.Loaded)
+		_allItems = [];
+		_categories = new Dictionary<int, string>
 		{
-			_categories = new Dictionary<int, string>
-			{
-				{ int.MinValue, helper.Translation.Get("fse.forecast.menu.allCategory") },
-			};
-				
-			economyService.GetCategories();
-			_categories = _categories.Concat(economyService.GetCategories()).ToDictionary(g => g.Key, g => g.Value);
-				
-			_categories = _categories.GroupBy(pair => pair.Value).ToDictionary(pairs => pairs.First().Key, pairs => pairs.First().Value);
-			_chosenCategory = _cachedChosenCategory ?? int.MinValue;
-			SetupItemsWithSort();
-		}
-		else
+			{ int.MinValue, helper.Translation.Get("fse.forecast.menu.allCategory") },
+		};
+
+		if (!economyService.Loaded)
 		{
-			_categories = new Dictionary<int, string>();
-			_allItems = [];
+			return;
 		}
-	}
 
-	public override void SetBetterGameMenu(IBetterGameMenuService service)
-	{
-		_betterGameMenuService = service;
+		economyService.GetCategories();
+		_categories = _categories.Concat(economyService.GetCategories()).ToDictionary(g => g.Key, g => g.Value);
+				
+		_categories = _categories.GroupBy(pair => pair.Value).ToDictionary(pairs => pairs.First().Key, pairs => pairs.First().Value);
+		_chosenCategory = _cachedChosenCategory ?? int.MinValue;
+		SetupItemsWithSort();
 	}
-
 
 	public override void gameWindowSizeChanged(Rectangle oldBounds, Rectangle newBounds)
 	{
@@ -143,15 +129,6 @@ public class ForecastMenu : AbstractForecastMenu
 		{
 			Game1.playSound("shwip");
 		}
-	}
-
-	public override void TakeOverMenuTab(GameMenu gameMenu)
-	{
-		_hiddenMenu = gameMenu;
-		Game1.activeClickableMenu = this;
-			
-		gameMenu.invisible = true;
-		gameMenu.upperRightCloseButton.visible = false;
 	}
 
 	public override bool readyToClose() => !_optionsTextEntry?.textBox.Selected ?? true;
@@ -184,12 +161,18 @@ public class ForecastMenu : AbstractForecastMenu
 			case Buttons.DPadDown:
 				if (_isInCategoryDropdown)
 				{
-					_categoryDropdown.selectedOption = (_categoryDropdown.selectedOption + 1 + _categoryDropdown.dropDownOptions.Count) % _categoryDropdown.dropDownOptions.Count;
+					if (_categoryDropdown != null)
+					{
+						_categoryDropdown.selectedOption = (_categoryDropdown.selectedOption + 1 + _categoryDropdown.dropDownOptions.Count) % _categoryDropdown.dropDownOptions.Count;
+					}
 				}
 
 				if (_isInSortDropdown)
 				{
-					_sortDropdown.selectedOption = (_sortDropdown.selectedOption + 1 + _sortDropdown.dropDownOptions.Count) % _sortDropdown.dropDownOptions.Count;
+					if (_sortDropdown != null)
+					{
+						_sortDropdown.selectedOption = (_sortDropdown.selectedOption + 1 + _sortDropdown.dropDownOptions.Count) % _sortDropdown.dropDownOptions.Count;
+					}
 				}
 
 				break;
@@ -197,12 +180,18 @@ public class ForecastMenu : AbstractForecastMenu
 			case Buttons.DPadUp:
 				if (_isInCategoryDropdown)
 				{
-					_categoryDropdown.selectedOption = (_categoryDropdown.selectedOption - 1 + _categoryDropdown.dropDownOptions.Count) % _categoryDropdown.dropDownOptions.Count;
+					if (_categoryDropdown != null)
+					{
+						_categoryDropdown.selectedOption = (_categoryDropdown.selectedOption - 1 + _categoryDropdown.dropDownOptions.Count) % _categoryDropdown.dropDownOptions.Count;
+					}
 				}
 
 				if (_isInSortDropdown)
 				{
-					_sortDropdown.selectedOption = (_sortDropdown.selectedOption - 1 + _sortDropdown.dropDownOptions.Count) % _sortDropdown.dropDownOptions.Count;
+					if (_sortDropdown != null)
+					{
+						_sortDropdown.selectedOption = (_sortDropdown.selectedOption - 1 + _sortDropdown.dropDownOptions.Count) % _sortDropdown.dropDownOptions.Count;
+					}
 				}
 
 				break;
@@ -220,36 +209,36 @@ public class ForecastMenu : AbstractForecastMenu
 			return;
 		}
 			
-		if (_categoryDropdown.bounds.Contains(x, y))
+		if (_categoryDropdown?.bounds.Contains(x, y) ?? false)
 		{
 			_categoryDropdown.receiveLeftClick(x, y);
 			_isInCategoryDropdown = true;
 		}
-		else if (_sortDropdown.bounds.Contains(x, y))
+		else if (_sortDropdown?.bounds.Contains(x, y) ?? false)
 		{
 			_sortDropdown.receiveLeftClick(x, y);
 			_isInSortDropdown = true;
 		}
-		else if (_upArrow.containsPoint(x, y))
+		else if (_upArrow?.containsPoint(x, y) ?? false)
 		{
 			_itemIndex = BoundsHelper.EnsureBounds(_itemIndex - 1, 0, _bottomIndex);
 		}
-		else if (_downArrow.containsPoint(x, y))
+		else if (_downArrow?.containsPoint(x, y) ?? false)
 		{
 			_itemIndex = BoundsHelper.EnsureBounds(_itemIndex + 1, 0, _bottomIndex);
 		}
-		else if (_scrollbar.containsPoint(x, y))
+		else if (_scrollbar?.containsPoint(x, y) ?? false)
 		{
 			_isScrolling = true;
 		}
-		else if (_exitButton.containsPoint(x, y))
+		else if (_exitButton?.containsPoint(x, y) ?? false)
 		{
 			GoBackToPreviousMenu();
 		}
 		_optionsTextEntry?.receiveLeftClick(x, y);
 
 		var seasonsChanged = false;
-		for (var i = 0; i < _seasonsCheckboxes.Length; i++)
+		for (var i = 0; i < _seasonsCheckboxes?.Length; i++)
 		{
 			var checkbox = _seasonsCheckboxes[i];
 
@@ -292,6 +281,10 @@ public class ForecastMenu : AbstractForecastMenu
 
 	private void NavigateToNextControllerElement(bool forward)
 	{
+		if (_categoryDropdown == null || _seasonsCheckboxes == null || _sortDropdown == null)
+		{
+			return;
+		}
 		(Rectangle baseRect, int xOffset, int yOffset)[] elements = [ 
 			(_categoryDropdown.bounds, _categoryDropdown.bounds.Width - 32, _categoryDropdown.bounds.Height / 2), 
 			(_seasonsCheckboxes[0].bounds, _seasonsCheckboxes[0].bounds.Width / 2, _seasonsCheckboxes[0].bounds.Height / 2),
@@ -312,21 +305,13 @@ public class ForecastMenu : AbstractForecastMenu
 
 	private void GoBackToPreviousMenu()
 	{
-			if (_hiddenMenu != null)
-			{
-				_hiddenMenu.invisible = false;
-				_hiddenMenu.upperRightCloseButton.visible = true;
-
-				Game1.activeClickableMenu = _hiddenMenu;
-			}
-			else if (_betterGameMenuService != null)
-			{
-				_betterGameMenuService.SwitchToLastTab();
-			}
-			else
-			{
-				exitThisMenu();
-			}
+		if (_exitAction != null)
+		{
+			_exitAction();
+			return;
+		}
+		
+		exitThisMenu();
 	}
 
 	public override void releaseLeftClick(int x, int y)
@@ -341,9 +326,9 @@ public class ForecastMenu : AbstractForecastMenu
 		// ReSharper disable once InvertIf
 		if (_isInCategoryDropdown)
 		{
-			_categoryDropdown.leftClickReleased(x, y);
+			_categoryDropdown?.leftClickReleased(x, y);
 
-			if (_categoryDropdown.dropDownOptions.Count > _categoryDropdown.selectedOption)
+			if (_categoryDropdown?.dropDownOptions.Count > _categoryDropdown?.selectedOption)
 			{
 				if (int.TryParse(_categoryDropdown.dropDownOptions[_categoryDropdown.selectedOption], out var result))
 				{
@@ -359,9 +344,9 @@ public class ForecastMenu : AbstractForecastMenu
 		// ReSharper disable once InvertIf
 		if (_isInSortDropdown)
 		{
-			_sortDropdown.leftClickReleased(x, y);
+			_sortDropdown?.leftClickReleased(x, y);
 
-			if (_sortDropdown.dropDownOptions.Count > _sortDropdown.selectedOption)
+			if (_sortDropdown?.dropDownOptions.Count > _sortDropdown?.selectedOption)
 			{
 				_chosenSort = _sortDropdown.dropDownOptions[_sortDropdown.selectedOption];
 				_cachedChosenSort = _chosenSort;
@@ -380,13 +365,13 @@ public class ForecastMenu : AbstractForecastMenu
 		}
 		if (_isInCategoryDropdown)
 		{
-			_categoryDropdown.leftClickHeld(x, y);
+			_categoryDropdown?.leftClickHeld(x, y);
 			return;
 		}
 			
 		if (_isInSortDropdown)
 		{
-			_sortDropdown.leftClickHeld(x, y);
+			_sortDropdown?.leftClickHeld(x, y);
 			return;
 		}
 			
@@ -396,6 +381,11 @@ public class ForecastMenu : AbstractForecastMenu
 		}
 
 		if (!_scrollbarRunner.HasValue)
+		{
+			return;
+		}
+
+		if (_scrollbar == null)
 		{
 			return;
 		}
@@ -920,6 +910,5 @@ public class ForecastMenu : AbstractForecastMenu
 		items = items.Where(i => _economyService.ItemValidForSeason(i, _chosenSeasons)).DistinctBy(i => i.ObjectId).ToList();
 
 		_allItems = items.ToArray();
-		_breakEvenSupply = _economyService.GetBreakEvenSupply();
 	}
 }

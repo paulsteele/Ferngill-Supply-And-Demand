@@ -22,7 +22,7 @@ public class FerngillSimpleEconomy : Mod
 		var artisanService = new ArtisanService(Monitor, helper);
 		var normalDistributionService = new NormalDistributionService();
 		var economyService = new EconomyService(helper, Monitor, multiplayerService, fishService, seedService, artisanService, normalDistributionService);
-		var forecastMenuService = new ForecastMenuService(helper, economyService, Monitor, new DrawTextHelper());
+		var forecastMenuService = new ForecastMenuService(helper, economyService,  new DrawTextHelper());
 		var betterGameMenuService = new BetterGameMenuService(ModManifest, helper, forecastMenuService);
 		var tooltipMenu = new TooltipMenu(helper, economyService, forecastMenuService, betterGameMenuService);
 		RegisterPatches(helper, economyService, forecastMenuService);
@@ -68,6 +68,6 @@ public class FerngillSimpleEconomy : Mod
 		new GameLoadedHandler(helper, Monitor, ModManifest, economyService, betterGameMenuService).Register();
 		new GameMenuLoadedHandler(helper, Monitor, forecastMenuService, tooltipMenu).Register();
 		new MultiplayerHandler(helper, economyService, multiplayerService).Register();
-		new HotkeyHandler(helper, Monitor, forecastMenuService).Register();
+		new HotkeyHandler(helper, forecastMenuService).Register();
 	}
 }

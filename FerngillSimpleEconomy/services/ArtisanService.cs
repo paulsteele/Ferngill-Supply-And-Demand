@@ -10,13 +10,13 @@ namespace fse.core.services;
 public interface IArtisanService
 {
 	void GenerateArtisanMapping(EconomyModel economyModel);
-	ItemModel GetBaseFromArtisanGood(string modelId);
+	ItemModel? GetBaseFromArtisanGood(string modelId);
 }
 
 public class ArtisanService(IMonitor monitor, IModHelper helper) : IArtisanService
 {
-	private Dictionary<string, string> _artisanGoodToBase;
-	private EconomyModel _economyModel;
+	private Dictionary<string, string>? _artisanGoodToBase;
+	private EconomyModel? _economyModel;
 	
 	public void GenerateArtisanMapping(EconomyModel economyModel)
 	{
@@ -29,11 +29,6 @@ public class ArtisanService(IMonitor monitor, IModHelper helper) : IArtisanServi
 		}
 		
 		var machineData = helper.GameContent.Load<Dictionary<string, MachineData>>("Data\\Machines");
-
-		if (machineData == null)
-		{
-			return;
-		}
 
 		_artisanGoodToBase = machineData.Values
 			.Where(m => m.OutputRules != null)
@@ -74,7 +69,7 @@ public class ArtisanService(IMonitor monitor, IModHelper helper) : IArtisanServi
 		BreakCycles();
 	}
 
-	public ItemModel GetBaseFromArtisanGood(string modelId)
+	public ItemModel? GetBaseFromArtisanGood(string modelId)
 	{
 		if (_economyModel == null || _artisanGoodToBase == null)
 		{
@@ -98,6 +93,11 @@ public class ArtisanService(IMonitor monitor, IModHelper helper) : IArtisanServi
 
 	private void BreakCycles()
 	{
+		if (_artisanGoodToBase == null)
+		{
+			return;
+		}
+
 		var keys = _artisanGoodToBase.Keys.ToArray();
 
 		foreach (var key in keys)

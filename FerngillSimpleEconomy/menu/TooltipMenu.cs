@@ -24,7 +24,7 @@ public class TooltipMenu(
 	IBetterGameMenuService betterGameMenuService
 	) : ITooltipMenu
 {
-	private readonly AbstractForecastMenu _forecastMenu = forecastMenuService.CreateMenu();
+	private readonly AbstractForecastMenu _forecastMenu = forecastMenuService.CreateMenu(null);
 	private Item? _toolbarItem;
 	private readonly bool _isUiInfoSuiteLoaded = helper.ModRegistry.IsLoaded("Annosz.UiInfoSuite2");
 

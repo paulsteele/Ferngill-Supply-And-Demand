@@ -6,18 +6,14 @@ using StardewValley;
 
 namespace fse.core.handlers;
 
-public class HotkeyHandler(
-	IModHelper helper,
-	IMonitor monitor,
-	IForecastMenuService forecastMenuService)
-	: IHandler
+public class HotkeyHandler(IModHelper helper, IForecastMenuService forecastMenuService) : IHandler
 {
 	public void Register()
 	{
 		helper.Events.Input.ButtonsChanged += InputOnButtonPressed;
 	}
 
-	private void InputOnButtonPressed(object sender, ButtonsChangedEventArgs e)
+	private void InputOnButtonPressed(object? sender, ButtonsChangedEventArgs e)
 	{
 		if (!Context.IsPlayerFree)
 		{
@@ -28,6 +24,6 @@ public class HotkeyHandler(
 			return;
 		}
 		
-		Game1.activeClickableMenu ??= forecastMenuService.CreateMenu();
+		Game1.activeClickableMenu ??= forecastMenuService.CreateMenu(null);
 	}
 }

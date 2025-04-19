@@ -54,11 +54,6 @@ namespace fse.core.handlers
 		private void RegisterBetterGameMenu()
 		{
 			var betterGameMenuApi = _helper.ModRegistry.GetApi<IBetterGameMenuApi>("leclair.bettergamemenu");
-			if (betterGameMenuApi is null)
-			{
-				return;
-			}
-
 			_betterGameMenuService.Register(betterGameMenuApi);
 		}
 		

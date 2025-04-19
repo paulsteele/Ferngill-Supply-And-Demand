@@ -24,12 +24,12 @@ public interface IEconomyService
 	ItemModel[] GetItemsForCategory(int category);
 	int GetPrice(Object obj, int basePrice);
 	void AdjustSupply(Object? obj, int amount, bool notifyPeers = true);
-	ItemModel GetItemModelFromSeed(string seed);
+	ItemModel? GetItemModelFromSeed(string seed);
 	bool ItemValidForSeason(ItemModel model, Seasons seasonsFilter);
 	int GetPricePerDay(ItemModel model);
 	ItemModel GetConsolidatedItem(ItemModel original);
 	float GetBreakEvenSupply();
-	ItemModel GetItemModelFromObject(Object obj);
+	ItemModel? GetItemModelFromObject(Object obj);
 }
 
 public class EconomyService(
@@ -308,8 +308,12 @@ public class EconomyService(
 		return (num / den) + ConfigModel.Instance.MaxCalculatedSupply;
 	}
 
-	private Object GetArtisanBase(Object obj)
+	private Object? GetArtisanBase(Object? obj)
 	{
+		if (obj == null)
+		{
+			return null;
+		}
 		var preserveId = obj.preservedParentSheetIndex?.Get();
 		var artisanBase = artisanService.GetBaseFromArtisanGood(obj.ItemId);
 		if (artisanBase != null)
@@ -333,14 +337,8 @@ public class EconomyService(
 		return (int)(basePrice * modifier);
 	}
 
-	public void AdjustSupply(Object obj, int amount, bool notifyPeers = true)
+	public void AdjustSupply(Object? obj, int amount, bool notifyPeers = true)
 	{
-		if (Economy == null)
-		{
-			monitor.Log($"Economy not generated to determine item model for {obj.name}", LogLevel.Error);
-			return;
-		}
-
 		obj = GetArtisanBase(obj) ?? obj;
 			
 		var itemModel = Economy.GetItem(obj);
@@ -365,9 +363,9 @@ public class EconomyService(
 		}
 	}
 
-	public ItemModel GetItemModelFromSeed(string seed) => seedService.GetItemModelFromSeedId(seed);
-	private SeedModel GetSeedModelFromItem(string item) => seedService.GetSeedModelFromModelId(item);
-	private FishModel GetFishModelFromItem(string item) => fishService.GetFishModelFromModelId(item);
+	public ItemModel? GetItemModelFromSeed(string seed) => seedService.GetItemModelFromSeedId(seed);
+	private SeedModel? GetSeedModelFromItem(string item) => seedService.GetSeedModelFromModelId(item);
+	private FishModel? GetFishModelFromItem(string item) => fishService.GetFishModelFromModelId(item);
 
 	public bool ItemValidForSeason(ItemModel model, Seasons seasonsFilter)
 	{
@@ -434,7 +432,7 @@ public class EconomyService(
 		return artisanBase ?? baseModel;
 	}
 
-	public ItemModel GetItemModelFromObject(Object obj)
+	public ItemModel? GetItemModelFromObject(Object obj)
 	{
 		var artisanBase = GetArtisanBase(obj);
 		if (artisanBase != null)

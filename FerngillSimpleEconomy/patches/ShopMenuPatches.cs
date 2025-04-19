@@ -19,7 +19,7 @@ namespace fse.core.patches
 		{
 			get
 			{
-				_forecastMenu ??= ForecastMenuService.CreateMenu();
+				_forecastMenu ??= ForecastMenuService.CreateMenu(null);
 				return _forecastMenu;
 			}
 		}
@@ -73,9 +73,13 @@ namespace fse.core.patches
 
 			foreach (var tuple in items)
 			{
+				if (tuple.model == null)
+				{
+					continue;
+				}
 				var startingX = __instance.xPositionOnScreen + __instance.width - 400;
 				var startingY = __instance.yPositionOnScreen + 16 + tuple.visibleIndex * ((__instance.height - 256) / 4);
-				var width = 200;
+				const int width = 200;
 				
 				ForecastMenu.DrawSupplyBar(b, startingX, startingY + 20, startingX + width, 30, tuple.model);
 			}
