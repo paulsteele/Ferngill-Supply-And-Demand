@@ -7,11 +7,12 @@ using Object = StardewValley.Object;
 
 namespace fse.core.models
 {
-	public class EconomyModel
+	[method: JsonConstructor]
+	public class EconomyModel(Dictionary<int, Dictionary<string, ItemModel>> categoryEconomies)
 	{
-		public static readonly string ModelKey = "fsd.economy.model";
+		public const string ModelKey = "fsd.economy.model";
 
-		[JsonInclude] public Dictionary<int, Dictionary<string, ItemModel>> CategoryEconomies { get; set; }
+		[JsonInclude] public Dictionary<int, Dictionary<string, ItemModel>> CategoryEconomies { get; } = categoryEconomies;
 
 		public bool HasSameItems(EconomyModel other)
 		{
@@ -30,7 +31,7 @@ namespace fse.core.models
 		}
 
 		private static bool DictionariesContainSameKeys<TKey, TVal>(Dictionary<TKey, TVal> first,
-			IReadOnlyDictionary<TKey, TVal> second) => first.Count == second.Count && first.Keys.All(second.ContainsKey);
+			IReadOnlyDictionary<TKey, TVal> second) where TKey : notnull => first.Count == second.Count && first.Keys.All(second.ContainsKey);
 
 		public void ForAllItems(Action<ItemModel> action)
 		{
@@ -40,7 +41,7 @@ namespace fse.core.models
 			}
 		}
 
-		public ItemModel GetItem(Object obj)
+		public ItemModel? GetItem(Object? obj)
 		{
 			if (obj == null)
 			{
@@ -52,7 +53,7 @@ namespace fse.core.models
 				: null;
 		}
 		
-		public ItemModel GetItem(string id)
+		public ItemModel? GetItem(string id)
 		{
 			foreach (var categoryEconomy in CategoryEconomies)
 			{

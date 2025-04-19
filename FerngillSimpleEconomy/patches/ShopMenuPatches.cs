@@ -14,7 +14,15 @@ namespace fse.core.patches
 {
 	public class ShopMenuPatches : SelfRegisteringPatches
 	{
-		private static AbstractForecastMenu _forecastMenu;
+		private static AbstractForecastMenu? _forecastMenu;
+		private static AbstractForecastMenu ForecastMenu
+		{
+			get
+			{
+				_forecastMenu ??= ForecastMenuService.CreateMenu();
+				return _forecastMenu;
+			}
+		}
 
 		//Prefix as the number of sold stacks is modified in the original function
 		public static bool AddBuyBackItemPreFix(ISalable sold_item, int sell_unit_price, int stack)
@@ -69,7 +77,7 @@ namespace fse.core.patches
 				var startingY = __instance.yPositionOnScreen + 16 + tuple.visibleIndex * ((__instance.height - 256) / 4);
 				var width = 200;
 				
-				_forecastMenu.DrawSupplyBar(b, startingX, startingY + 20, startingX + width, 30, tuple.model);
+				ForecastMenu.DrawSupplyBar(b, startingX, startingY + 20, startingX + width, 30, tuple.model);
 			}
 		}
 
@@ -89,8 +97,6 @@ namespace fse.core.patches
 				AccessTools.Method(typeof(ShopMenu), nameof(ShopMenu.draw), new []{typeof(SpriteBatch)}),
 				transpiler: new HarmonyMethod(typeof(ShopMenuPatches), nameof(ShopDrawingTranspiler))
 			);
-
-			_forecastMenu = ForecastMenuService.CreateMenu();
 		}
 
 		public static IEnumerable<CodeInstruction> ShopDrawingTranspiler(IEnumerable<CodeInstruction> steps)
@@ -101,7 +107,7 @@ namespace fse.core.patches
 			{
 				var current = enumerator.Current;
 
-				if (current?.opcode == OpCodes.Ldfld && (FieldInfo)current?.operand == AccessTools.Field(typeof(ShopMenu), nameof(ShopMenu.downArrow)))
+				if (current.opcode == OpCodes.Ldfld && (FieldInfo)current.operand == AccessTools.Field(typeof(ShopMenu), nameof(ShopMenu.downArrow)))
 				{
 					yield return new CodeInstruction(OpCodes.Ldarg_1);
 					yield return new CodeInstruction(OpCodes.Ldarg_0);

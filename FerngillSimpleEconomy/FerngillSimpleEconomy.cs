@@ -13,30 +13,20 @@ namespace fse.core;
 // ReSharper disable once UnusedType.Global
 public class FerngillSimpleEconomy : Mod
 {
-	private MultiplayerService _multiplayerService;
-	private EconomyService _economyService;
-	private ForecastMenuService _forecastMenuService;
-	private NormalDistributionService _normalDistributionService;
-	private SeedService _seedService;
-	private FishService _fishService;
-	private ArtisanService _artisanService;
-	private TooltipMenu _tooltipMenu;
-	private BetterGameMenuService _betterGameMenuService;
-
 	public override void Entry(IModHelper helper)
 	{
 		ConfigModel.Instance = helper.ReadConfig<ConfigModel>();
-		_multiplayerService = new MultiplayerService(helper);
-		_seedService = new SeedService(Monitor);
-		_fishService = new FishService(Monitor);
-		_artisanService = new ArtisanService(Monitor, helper);
-		_normalDistributionService = new NormalDistributionService();
-		_economyService = new EconomyService(helper, Monitor, _multiplayerService, _fishService, _seedService, _artisanService, _normalDistributionService);
-		_forecastMenuService = new ForecastMenuService(helper, _economyService, Monitor, new DrawTextHelper());
-		_betterGameMenuService = new BetterGameMenuService(ModManifest, helper, _forecastMenuService);
-		_tooltipMenu = new TooltipMenu(helper, _economyService, _forecastMenuService, _betterGameMenuService);
-		RegisterPatches(helper);
-		RegisterHandlers(helper);
+		var multiplayerService = new MultiplayerService(helper);
+		var seedService = new SeedService(Monitor);
+		var fishService = new FishService(Monitor);
+		var artisanService = new ArtisanService(Monitor, helper);
+		var normalDistributionService = new NormalDistributionService();
+		var economyService = new EconomyService(helper, Monitor, multiplayerService, fishService, seedService, artisanService, normalDistributionService);
+		var forecastMenuService = new ForecastMenuService(helper, economyService, Monitor, new DrawTextHelper());
+		var betterGameMenuService = new BetterGameMenuService(ModManifest, helper, forecastMenuService);
+		var tooltipMenu = new TooltipMenu(helper, economyService, forecastMenuService, betterGameMenuService);
+		RegisterPatches(helper, economyService, forecastMenuService);
+		RegisterHandlers(helper, economyService, forecastMenuService, betterGameMenuService, tooltipMenu, multiplayerService);
 		helper.ConsoleCommands.Add("fse_reset", "Fully Resets Ferngill Simple Economy", (_, _) =>
 		{
 			if (!Game1.player.IsMainPlayer)
@@ -44,27 +34,40 @@ public class FerngillSimpleEconomy : Mod
 				return;
 			}
 
-			_economyService.Reset();
-			_economyService.AdvanceOneDay();
+			economyService.Reset();
+			economyService.AdvanceOneDay();
 		});
 	}
 
-	private void RegisterPatches(IModHelper helper)
+	private void RegisterPatches
+	(
+		IModHelper helper, 
+		EconomyService economyService, 
+		ForecastMenuService forecastMenuService
+	)
 	{
 		var harmony = new Harmony(ModManifest.UniqueID);
 
-		SelfRegisteringPatches.Initialize(helper, _economyService, Monitor, _forecastMenuService);
+		SelfRegisteringPatches.Initialize(helper, economyService, Monitor, forecastMenuService);
 		new ObjectPatches().Register(harmony);
 		new ShopMenuPatches().Register(harmony);
 	}
 
-	private void RegisterHandlers(IModHelper helper)
+	private void RegisterHandlers
+	(
+		IModHelper helper, 
+		EconomyService economyService, 
+		ForecastMenuService forecastMenuService, 
+		BetterGameMenuService betterGameMenuService, 
+		TooltipMenu tooltipMenu, 
+		MultiplayerService multiplayerService
+	)
 	{
-		new DayEndHandler(helper, Monitor, _economyService).Register();
-		new SaveLoadedHandler(helper, Monitor, _economyService).Register();
-		new GameLoadedHandler(helper, Monitor, ModManifest, _economyService, _betterGameMenuService).Register();
-		new GameMenuLoadedHandler(helper, Monitor, _forecastMenuService, _tooltipMenu).Register();
-		new MultiplayerHandler(helper, _economyService, _multiplayerService).Register();
-		new HotkeyHandler(helper, Monitor, _forecastMenuService).Register();
+		new DayEndHandler(helper, Monitor, economyService).Register();
+		new SaveLoadedHandler(helper, Monitor, economyService).Register();
+		new GameLoadedHandler(helper, Monitor, ModManifest, economyService, betterGameMenuService).Register();
+		new GameMenuLoadedHandler(helper, Monitor, forecastMenuService, tooltipMenu).Register();
+		new MultiplayerHandler(helper, economyService, multiplayerService).Register();
+		new HotkeyHandler(helper, Monitor, forecastMenuService).Register();
 	}
 }

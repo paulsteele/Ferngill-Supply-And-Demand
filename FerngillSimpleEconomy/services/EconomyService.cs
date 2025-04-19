@@ -23,7 +23,7 @@ public interface IEconomyService
 	Dictionary<int, string> GetCategories();
 	ItemModel[] GetItemsForCategory(int category);
 	int GetPrice(Object obj, int basePrice);
-	void AdjustSupply(Object obj, int amount, bool notifyPeers = true);
+	void AdjustSupply(Object? obj, int amount, bool notifyPeers = true);
 	ItemModel GetItemModelFromSeed(string seed);
 	bool ItemValidForSeason(ItemModel model, Seasons seasonsFilter);
 	int GetPricePerDay(ItemModel model);
@@ -46,7 +46,7 @@ public class EconomyService(
 
 	public bool Loaded { get; private set; }
 
-	private EconomyModel Economy { get; set; }
+	private EconomyModel Economy { get; set; } = new(new Dictionary<int, Dictionary<string, ItemModel>>());
 
 	public void OnLoaded()
 	{
@@ -152,10 +152,7 @@ public class EconomyService(
 			.GroupBy(obj => obj.Category, obj => new ItemModel { ObjectId = obj.ItemId })
 			.ToDictionary(grouping => grouping.Key, grouping => grouping.ToDictionary(item => item.ObjectId));
 
-		return new EconomyModel
-		{
-			CategoryEconomies = validItems,
-		};
+		return new EconomyModel(validItems);
 	}
 
 	public void SetupForNewSeason()

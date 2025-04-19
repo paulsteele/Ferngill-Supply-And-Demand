@@ -28,11 +28,7 @@ namespace fse.core.actions
 			catch (Exception e)
 			{
 				monitor.Log(callerName, LogLevel.Error);
-				monitor.Log(e.Message, LogLevel.Error);
-				if (e.StackTrace != null)
-				{
-					monitor.Log(e.StackTrace, LogLevel.Error);
-				}
+				monitor.Log(e.ToString(), LogLevel.Error);
 
 				return defaultValue;
 			}
