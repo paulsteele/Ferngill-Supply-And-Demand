@@ -1188,9 +1188,8 @@ public class EconomyServiceTests : HarmonyTestBase
 			DaysToGrow = 10
 		};
 
-		var itemModel = new ItemModel()
+		var itemModel = new ItemModel("200")
 		{
-			ObjectId = "200",
 			Supply = 0,
 			DailyDelta = 0
 		};
