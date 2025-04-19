@@ -5,11 +5,10 @@ namespace Tests;
 
 public class HarmonyTestBase
 {
-	[SetUp]
-	public virtual void Setup()
+	[OneTimeSetUp]
+	public virtual void OneTimeSetup()
 	{
 		var harmony = new Harmony("fse.tests");
-		ConfigModel.Instance = new ConfigModel();
 
 		HarmonyFarmer.Setup(harmony);
 		HarmonyGame.Setup(harmony);
@@ -37,6 +36,12 @@ public class HarmonyTestBase
 		HarmonyOptionsTextEntry.Setup(harmony);
 		HarmonyTextBox.Setup(harmony);
 		HarmonyExitPage.Setup(harmony);
+	}
+
+	[SetUp]
+	public virtual void Setup()
+	{
+		ConfigModel.Instance = new ConfigModel();
 	}
 	
 	[TearDown]
