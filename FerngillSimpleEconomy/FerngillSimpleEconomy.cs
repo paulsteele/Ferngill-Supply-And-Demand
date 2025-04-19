@@ -22,10 +22,11 @@ public class FerngillSimpleEconomy : Mod
 		var artisanService = new ArtisanService(Monitor, helper);
 		var normalDistributionService = new NormalDistributionService();
 		var economyService = new EconomyService(helper, Monitor, multiplayerService, fishService, seedService, artisanService, normalDistributionService);
-		var forecastMenuService = new ForecastMenuService(helper, economyService,  new DrawTextHelper());
+		var drawSupplyBarHelper = new DrawSupplyBarHelper(economyService);
+		var forecastMenuService = new ForecastMenuService(helper, economyService, new DrawTextHelper(), drawSupplyBarHelper);
 		var betterGameMenuService = new BetterGameMenuService(ModManifest, helper, forecastMenuService);
-		var tooltipMenu = new TooltipMenu(helper, economyService, forecastMenuService, betterGameMenuService);
-		RegisterPatches(helper, economyService, forecastMenuService);
+		var tooltipMenu = new TooltipMenu(helper, economyService, drawSupplyBarHelper, betterGameMenuService);
+		RegisterPatches(economyService, drawSupplyBarHelper);
 		RegisterHandlers(helper, economyService, forecastMenuService, betterGameMenuService, tooltipMenu, multiplayerService);
 		helper.ConsoleCommands.Add("fse_reset", "Fully Resets Ferngill Simple Economy", (_, _) =>
 		{
@@ -41,14 +42,13 @@ public class FerngillSimpleEconomy : Mod
 
 	private void RegisterPatches
 	(
-		IModHelper helper, 
 		EconomyService economyService, 
-		ForecastMenuService forecastMenuService
+		IDrawSupplyBarHelper drawSupplyBarHelper
 	)
 	{
 		var harmony = new Harmony(ModManifest.UniqueID);
 
-		SelfRegisteringPatches.Initialize(helper, economyService, Monitor, forecastMenuService);
+		SelfRegisteringPatches.Initialize(economyService, Monitor, drawSupplyBarHelper);
 		new ObjectPatches().Register(harmony);
 		new ShopMenuPatches().Register(harmony);
 	}

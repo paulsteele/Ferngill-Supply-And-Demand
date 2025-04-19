@@ -18,8 +18,8 @@ public class ForecastMenuTests : HarmonyTestBase
 	private Mock<IDrawTextHelper> _drawTextHelperMock;
 	private Mock<IEconomyService> _economyServiceMock;
 	private Mock<IModHelper> _helperMock;
+	private Mock<IDrawSupplyBarHelper> _drawSupplyBarHelperMock;
 	private ForecastMenu _menu;
-	private Mock<IMonitor> _monitorMock;
 
 	[SetUp]
 	public override void Setup()
@@ -28,8 +28,8 @@ public class ForecastMenuTests : HarmonyTestBase
 
 		_helperMock = new Mock<IModHelper>();
 		_economyServiceMock = new Mock<IEconomyService>();
-		_monitorMock = new Mock<IMonitor>();
 		_drawTextHelperMock = new Mock<IDrawTextHelper>();
+		_drawSupplyBarHelperMock = new Mock<IDrawSupplyBarHelper>();
 
 		_helperMock.Setup(m => m.Translation).Returns(new MockTranslationHelper());
 
@@ -73,7 +73,7 @@ public class ForecastMenuTests : HarmonyTestBase
 		Game1.graphics = new GraphicsDeviceManager(null);
 
 		_batch = new SpriteBatch(null, 0);
-		_menu = new ForecastMenu(_helperMock.Object, _economyServiceMock.Object, _drawTextHelperMock.Object, ExitAction);
+		_menu = new ForecastMenu(_helperMock.Object, _economyServiceMock.Object, _drawTextHelperMock.Object, _drawSupplyBarHelperMock.Object, ExitAction);
 	}
 
 	[TearDown]
@@ -188,7 +188,7 @@ public class ForecastMenuTests : HarmonyTestBase
 		}
 
 		_economyServiceMock.Setup(m => m.GetItemsForCategory(1)).Returns(models.ToArray);
-		_menu = new ForecastMenu(_helperMock.Object, _economyServiceMock.Object, _drawTextHelperMock.Object, ExitAction);
+		_menu = new ForecastMenu(_helperMock.Object, _economyServiceMock.Object, _drawTextHelperMock.Object, _drawSupplyBarHelperMock.Object, ExitAction);
 
 		_menu.draw(_batch);
 
@@ -497,7 +497,7 @@ public class ForecastMenuTests : HarmonyTestBase
 		Game1.uiViewport.Height = screenHeight;
 		Game1.season = season;
 
-		_menu = new ForecastMenu(_helperMock.Object, _economyServiceMock.Object, _drawTextHelperMock.Object, ExitAction);
+		_menu = new ForecastMenu(_helperMock.Object, _economyServiceMock.Object, _drawTextHelperMock.Object, _drawSupplyBarHelperMock.Object, ExitAction);
 
 		_menu.draw(_batch);
 
@@ -584,7 +584,7 @@ public class ForecastMenuTests : HarmonyTestBase
 		_economyServiceMock.Setup(m => m.GetPricePerDay(models[1])).Returns(sellPricePerDay);
 
 		_economyServiceMock.Setup(m => m.GetItemsForCategory(1)).Returns(models.ToArray);
-		_menu = new ForecastMenu(_helperMock.Object, _economyServiceMock.Object, _drawTextHelperMock.Object, ExitAction);
+		_menu = new ForecastMenu(_helperMock.Object, _economyServiceMock.Object, _drawTextHelperMock.Object, _drawSupplyBarHelperMock.Object, ExitAction);
 		Game1.staminaRect = new Texture2D(null, 0, 0);
 
 		_menu.draw(_batch);
@@ -774,7 +774,7 @@ public class ForecastMenuTests : HarmonyTestBase
 		Game1.uiViewport.Width = 2000;
 		Game1.uiViewport.Height = 6200;
 
-		_menu = new ForecastMenu(_helperMock.Object, _economyServiceMock.Object, _drawTextHelperMock.Object, ExitAction);
+		_menu = new ForecastMenu(_helperMock.Object, _economyServiceMock.Object, _drawTextHelperMock.Object, _drawSupplyBarHelperMock.Object, ExitAction);
 
 		_menu.draw(_batch);
 

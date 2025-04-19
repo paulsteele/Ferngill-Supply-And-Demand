@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using fse.core.helpers;
 using fse.core.models;
 using fse.core.services;
 using Microsoft.Xna.Framework;
@@ -20,11 +21,10 @@ public interface ITooltipMenu
 public class TooltipMenu(
 	IModHelper helper,
 	IEconomyService econService,
-	IForecastMenuService forecastMenuService,
+	IDrawSupplyBarHelper drawSupplyBarHelper,
 	IBetterGameMenuService betterGameMenuService
 	) : ITooltipMenu
 {
-	private readonly AbstractForecastMenu _forecastMenu = forecastMenuService.CreateMenu(null);
 	private Item? _toolbarItem;
 	private readonly bool _isUiInfoSuiteLoaded = helper.ModRegistry.IsLoaded("Annosz.UiInfoSuite2");
 
@@ -124,6 +124,6 @@ public class TooltipMenu(
 		}
 
 		IClickableMenu.drawTextureBox(Game1.spriteBatch, Game1.menuTexture, new Rectangle(0, 256, 60, 60), x, y, width+20, height, Color.White);
-		_forecastMenu.DrawSupplyBar(Game1.spriteBatch, x+15, y+20, x+width, (Game1.tileSize / 2), model);
+		drawSupplyBarHelper.DrawSupplyBar(Game1.spriteBatch, x+15, y+20, x+width, (Game1.tileSize / 2), model);
 	}
 }

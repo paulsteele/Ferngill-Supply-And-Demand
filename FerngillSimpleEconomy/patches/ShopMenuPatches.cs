@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
+using fse.core.helpers;
 using fse.core.menu;
 using fse.core.models;
 using HarmonyLib;
@@ -14,16 +15,6 @@ namespace fse.core.patches
 {
 	public class ShopMenuPatches : SelfRegisteringPatches
 	{
-		private static AbstractForecastMenu? _forecastMenu;
-		private static AbstractForecastMenu ForecastMenu
-		{
-			get
-			{
-				_forecastMenu ??= ForecastMenuService.CreateMenu(null);
-				return _forecastMenu;
-			}
-		}
-
 		//Prefix as the number of sold stacks is modified in the original function
 		public static bool AddBuyBackItemPreFix(ISalable sold_item, int sell_unit_price, int stack)
 		{
@@ -81,7 +72,7 @@ namespace fse.core.patches
 				var startingY = __instance.yPositionOnScreen + 16 + tuple.visibleIndex * ((__instance.height - 256) / 4);
 				const int width = 200;
 				
-				ForecastMenu.DrawSupplyBar(b, startingX, startingY + 20, startingX + width, 30, tuple.model);
+				DrawSupplyBarHelper.DrawSupplyBar(b, startingX, startingY + 20, startingX + width, 30, tuple.model);
 			}
 		}
 

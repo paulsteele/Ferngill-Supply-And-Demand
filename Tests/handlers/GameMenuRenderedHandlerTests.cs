@@ -22,7 +22,7 @@ public class GameMenuRenderedHandlerTests : HarmonyTestBase
 	private Mock<IMonitor> _mockMonitor;
 	private Mock<ICursorPosition> _mockCursor;
 	private Mock<IForecastMenuService> _mockForecastMenuService;
-	private Mock<AbstractForecastMenu> _mockForecastMenu;
+	private Mock<ForecastMenu> _mockForecastMenu;
 	private Mock<IModContentHelper> _mockModContent;
 	private Mock<IModRegistry> _mockModRegistry;
 	private Mock<IInputHelper> _mockInputHelper;
@@ -44,7 +44,7 @@ public class GameMenuRenderedHandlerTests : HarmonyTestBase
 		_mockInputEvents = new MockInputEvents();
 		_mockCursor = new Mock<ICursorPosition>();
 		_mockForecastMenuService = new Mock<IForecastMenuService>();
-		_mockForecastMenu = new Mock<AbstractForecastMenu>();
+		_mockForecastMenu = new Mock<ForecastMenu>();
 		_mockModContent = new Mock<IModContentHelper>();
 		_mockModRegistry = new Mock<IModRegistry>();
 		_mockInputHelper = new Mock<IInputHelper>();

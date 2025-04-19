@@ -62,7 +62,7 @@ public class GameMenuLoadedHandler : IHandler
 			return;
 		}
 		
-		if (gameMenu.pages[gameMenu.currentTab] is AbstractForecastMenu)
+		if (gameMenu.pages[gameMenu.currentTab] is ForecastMenu)
 		{
 			return;
 		}
@@ -120,7 +120,7 @@ public class GameMenuLoadedHandler : IHandler
 		TakeOverMenuTab(gameMenu, forecastMenu);
 	}
 
-	private static void TakeOverMenuTab(GameMenu gameMenu, AbstractForecastMenu forecastMenu)
+	private static void TakeOverMenuTab(GameMenu gameMenu, ForecastMenu forecastMenu)
 	{
 		Game1.activeClickableMenu = forecastMenu;
 			

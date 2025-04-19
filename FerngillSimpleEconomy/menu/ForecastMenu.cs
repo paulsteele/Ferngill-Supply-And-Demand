@@ -12,17 +12,12 @@ using StardewValley;
 using StardewValley.Menus;
 
 namespace fse.core.menu;
-
-public abstract class AbstractForecastMenu : IClickableMenu
-{
-	public abstract void DrawSupplyBar(SpriteBatch batch, int startingX, int startingY, int endingX, int barHeight, ItemModel model);
-}
-
-public class ForecastMenu : AbstractForecastMenu
+public class ForecastMenu : IClickableMenu
 {
 	private readonly IModHelper _helper;
 	private readonly IEconomyService _economyService;
 	private readonly IDrawTextHelper _drawTextHelper;
+	private readonly IDrawSupplyBarHelper _drawSupplyBarHelper;
 	private readonly Action? _exitAction;
 	private ItemModel[] _allItems;
 	private readonly Dictionary<int, string> _categories;
@@ -61,8 +56,6 @@ public class ForecastMenu : AbstractForecastMenu
 	private static string? _textFilter;
 	private static int _controllerIndex;
 	
-	private float? _breakEvenSupply;
-
 	private const int Divider1 = 340;
 	private const int Divider2 = 560;
 	private const int Divider3 = 780;
@@ -72,12 +65,14 @@ public class ForecastMenu : AbstractForecastMenu
 		IModHelper helper,
 		IEconomyService economyService,
 		IDrawTextHelper drawTextHelper,
+		IDrawSupplyBarHelper drawSupplyBarHelper,
 		Action? exitAction
 	)
 	{
 		_helper = helper;
 		_economyService = economyService;
 		_drawTextHelper = drawTextHelper;
+		_drawSupplyBarHelper = drawSupplyBarHelper;
 		_exitAction = exitAction;
 
 		_sortDisplayOptions = [None, Name, Supply, DailyChange, MarketPrice, MarketPricePerDay];
@@ -661,7 +656,7 @@ public class ForecastMenu : AbstractForecastMenu
 			drawHorizontalPartition(batch, y + rowHeight - 5, true );
 		}
 
-		DrawSupplyBar(batch,x + Divider3 + 5, y + 10,  x + rowWidth - 15 - padding * 2, (Game1.tileSize / 2), model);
+		_drawSupplyBarHelper.DrawSupplyBar(batch,x + Divider3 + 5, y + 10,  x + rowWidth - 15 - padding * 2, (Game1.tileSize / 2), model);
 		var splitPoint = obj.DisplayName.LastIndexOf(" ", StringComparison.Ordinal);
 		if (splitPoint == -1)
 		{
@@ -688,107 +683,6 @@ public class ForecastMenu : AbstractForecastMenu
 		_drawTextHelper.DrawAlignedText(batch, xPositionOnScreen + DividerWidth + Divider2 + ((Divider3 - Divider2) / 2), textCenterLine, pricePerDayDisplay, DrawTextHelper.DrawTextAlignment.Middle, DrawTextHelper.DrawTextAlignment.Middle, false);
 	}
 
-	public override void DrawSupplyBar(SpriteBatch batch, int startingX, int startingY, int endingX, int barHeight, ItemModel originalModel)
-	{
-		var model = _economyService.GetConsolidatedItem(originalModel);
-		var barWidth = ((endingX - startingX) / 10) * 10;
-		var percentage = Math.Min(model.Supply / (float)ConfigModel.Instance.MaxCalculatedSupply, 1);
-
-		var percentageRect = new Rectangle(startingX, startingY + Game1.tileSize / 2, (int) (barWidth * percentage), barHeight);
-		var percentageWidth = (int)(barWidth * percentage);
-			
-		var color1 = new Color((int)(60 + percentage * 120), (int)(180 - percentage * 120), (int)(80 - percentage * 80));
-		var color2 = new Color((int)(percentage * 113), (int)(113 - percentage * 113), (int)(62 - percentage * 62));
-		var color3 = new Color((int)(percentage * 80), (int)(80 - percentage * 80), (int)(50 - percentage * 50));
-		var color4 = new Color((int)(percentage * 60), (int)(60 - percentage * 60), (int)(30 - percentage * 30));
-		
-		var y = startingY + 32;
-		
-		// bar background
-		batch.Draw(Game1.staminaRect, new Rectangle(startingX  - 1, y + 4, barWidth + 4, 40), Color.Black * 0.35f);
-		batch.Draw(Game1.staminaRect, new Rectangle(startingX + 4, y , barWidth + 4, 40), new Color(60, 60, 25));
-		batch.Draw(Game1.staminaRect, new Rectangle(startingX + 8, y + 4, barWidth + 4 - 12, 32), new Color(173, 129, 79));
-
-		y += 4;
-		
-		// bar foreground
-		if (percentageWidth > 4)
-		{
-			batch.Draw(Game1.staminaRect, new Rectangle(startingX + 8, y , percentageWidth, 32), color2);
-			batch.Draw(Game1.staminaRect, new Rectangle(startingX + 8, y + 4, 4, 28), color3);
-			batch.Draw(Game1.staminaRect, new Rectangle(startingX + 8, y + 28, percentageWidth - 8, 4), color3);
-			batch.Draw(Game1.staminaRect, new Rectangle(startingX + 12, y , percentageWidth - 4, 4), color1);
-			batch.Draw(Game1.staminaRect, new Rectangle(startingX + percentageWidth, y, 4, 28), color1);
-			batch.Draw(Game1.staminaRect, new Rectangle(startingX + 4 + percentageWidth, y, 4, 32), color4);
-		}
-
-		// ticks 
-		for (var i = 1; i < 10; i++)
-		{
-			var tickX = startingX + ((barWidth / 10) * i);
-			if (percentageRect.X + percentageRect.Width > tickX)
-			{
-				batch.Draw(Game1.staminaRect, new Rectangle(tickX , y, 4, 28), color1);
-			}
-			batch.Draw(Game1.staminaRect, new Rectangle(tickX + 4, y, 4, 32), color4);
-		}
-
-		_breakEvenSupply ??= _economyService.GetBreakEvenSupply();
-		
-		if (_breakEvenSupply.Value > 0)
-		{
-			var evenX = (int) Math.Floor((startingX + barWidth * _breakEvenSupply.Value / ConfigModel.Instance.MaxCalculatedSupply));
-			
-			batch.Draw(Game1.mouseCursors, new Rectangle(evenX, startingY + 12, 18, 16), new Rectangle(232, 347, 9, 8), Color.White);
-		}
-		DrawDeltaArrows(batch, model, percentageRect, barHeight);
-	}
-
-	private static void DrawDeltaArrows(SpriteBatch batch, ItemModel model, Rectangle percentageRect, int barHeight)
-	{
-		var location = new Rectangle(percentageRect.X + percentageRect.Width - (int)(Game1.tileSize * .3) + 15,
-			percentageRect.Y - barHeight - 4, 5 * Game1.pixelZoom, 5 * Game1.pixelZoom);
-		
-		if (model.DailyDelta < 0)
-		{
-			var leftArrow = new ClickableTextureComponent("left-arrow", location, "", "", Game1.mouseCursors,
-				new Rectangle(352, 495, 12, 11), Game1.pixelZoom * .75f);
-			leftArrow.bounds.X -= 30;
-			if (model.DailyDelta < -2 * ConfigModel.Instance.DeltaArrow)
-			{
-				leftArrow.bounds.X += 10;
-				leftArrow.draw(batch);
-			}
-
-			if (model.DailyDelta < -1 * ConfigModel.Instance.DeltaArrow)
-			{
-				leftArrow.bounds.X += 10;
-				leftArrow.draw(batch);
-			}
-
-			leftArrow.bounds.X += 10;
-			leftArrow.draw(batch);
-		}
-		else
-		{
-			var rightArrow = new ClickableTextureComponent("right-arrow", location, "", "", Game1.mouseCursors,
-				new Rectangle(365, 495, 12, 11), Game1.pixelZoom * .75f);
-			if (model.DailyDelta > 2 * ConfigModel.Instance.DeltaArrow)
-			{
-				rightArrow.bounds.X -= 10;
-				rightArrow.draw(batch);
-			}
-
-			if (model.DailyDelta > ConfigModel.Instance.DeltaArrow)
-			{
-				rightArrow.bounds.X -= 10;
-				rightArrow.draw(batch);
-			}
-
-			rightArrow.bounds.X -= 10;
-			rightArrow.draw(batch);
-		}
-	}
 
 	private void DrawScrollBar(SpriteBatch batch)
 	{
