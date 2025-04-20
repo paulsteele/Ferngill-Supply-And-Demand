@@ -13,7 +13,6 @@ namespace fse.core.menu;
 
 public interface ITooltipMenu
 {
-	void PreRenderHud(RenderingHudEventArgs e);
 	void PostRenderHud(RenderedHudEventArgs e);
 	void PostRenderGui(RenderedActiveMenuEventArgs e);
 }
@@ -25,28 +24,18 @@ public class TooltipMenu(
 	IBetterGameMenuService betterGameMenuService
 	) : ITooltipMenu
 {
-	private Item? _toolbarItem;
 	private readonly bool _isUiInfoSuiteLoaded = helper.ModRegistry.IsLoaded("Annosz.UiInfoSuite2");
-
-	public void PreRenderHud(RenderingHudEventArgs e)
-	{
-		if (!ConfigModel.Instance.EnableTooltip)
-		{
-			return;
-		}
-
-		_toolbarItem = Game1.onScreenMenus.OfType<Toolbar>().FirstOrDefault()?.hoverItem;
-	}
 
 	public void PostRenderHud(RenderedHudEventArgs e)
 	{
-		if (!ConfigModel.Instance.EnableTooltip || Game1.activeClickableMenu != null || _toolbarItem == null)
+		if (!ConfigModel.Instance.EnableTooltip || Game1.activeClickableMenu != null)
 		{
 			return;
 		}
 
-		PopulateHoverTextBoxAndDraw(_toolbarItem);
-		_toolbarItem = null;
+		var toolbarItem = Game1.onScreenMenus.OfType<Toolbar>().FirstOrDefault()?.hoverItem;
+		
+		PopulateHoverTextBoxAndDraw(toolbarItem);
 	}
 
 	public void PostRenderGui(RenderedActiveMenuEventArgs e)
@@ -83,7 +72,7 @@ public class TooltipMenu(
 		return null;
 	}
 
-	private void PopulateHoverTextBoxAndDraw(Item item)
+	private void PopulateHoverTextBoxAndDraw(Item? item)
 	{
 		if (item is not Object obj)
 		{
@@ -108,7 +97,7 @@ public class TooltipMenu(
 		var y = (int)(Mouse.GetState().Y / Game1.options.uiScale) + Game1.tileSize / 3;
 
 		//So that the tooltips don't overlap
-		if ((_isUiInfoSuiteLoaded))
+		if (_isUiInfoSuiteLoaded)
 		{
 			x -= 140;
 		}
