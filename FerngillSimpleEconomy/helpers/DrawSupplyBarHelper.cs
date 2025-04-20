@@ -13,7 +13,7 @@ public interface IDrawSupplyBarHelper
 	public void DrawSupplyBar(SpriteBatch batch, int startingX, int startingY, int endingX, int barHeight, ItemModel model);
 }
 
-public class DrawSupplyBarHelper(EconomyService economyService) : IDrawSupplyBarHelper
+public class DrawSupplyBarHelper(IEconomyService economyService) : IDrawSupplyBarHelper
 { 
 	private float? _breakEvenSupply;
 	

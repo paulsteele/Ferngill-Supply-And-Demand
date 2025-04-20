@@ -541,34 +541,17 @@ public class ForecastMenuTests : HarmonyTestBase
 		});
 	}
 
-	[TestCase(1, 10, 100, 1000, 10, 92, 25, 229, 0, 0, 1, 0, 1003, 204, 582, 802)]
-	[TestCase(1, 20, 100, 1000, 10, 92, 25, 229, 0, 0, 2, 0, 993, 204, 582, 802)]
-	[TestCase(1, 30, 100, 1000, 10, 92, 25, 229, 0, 0, 3, 0, 983, 204, 582, 802)]
-	[TestCase(1, -10, 100, 1000, 10, 92, 25, 229, 0, 1, 0, 993, 0, 204, 582, 802)]
-	[TestCase(1, -20, 100, 1000, 10, 92, 25, 229, 0, 2, 0, 1003, 0, 204, 582, 802)]
-	[TestCase(1, -30, 100, 1000, 10, 92, 25, 229, 0, 3, 0, 1013, 0, 204, 582, 802)]
-	[TestCase(1, 10, 100, 100, -1, 92, 25, 229, 0, 0, 1, 0, 1003, 204, 582, 802)]
-	[TestCase(1, 10, 500, 1000, 10, 460, 127, 127, 0, 0, 1, 0, 1371, 204, 582, 802)]
-	[TestCase(2, 10, 100, 1000, 10, 92, 25, 229, 0, 0, 1, 0, 1003, 204, 582, 802)]
+	[TestCase(1,  1000, 10,  204, 582, 802)]
+	[TestCase(1,  100, -1,  204, 582, 802)]
+	[TestCase(2,  1000, 10,  204, 582, 802)]
 	public void ShouldDrawRow
 	(
 		int expectedRows,
-		int delta,
-		int supply,
 		int sellPrice,
 		int sellPricePerDay,
-		int expectedBarWidth,
-		int expectedBarColorRed,
-		int expectedBarColorGreen,
-		int expectedBarColorBlue,
-		int expectedLeftArrowCalls,
-		int expectedRightArrowCalls,
-		int expectedLeftArrowLocation,
-		int expectedRightArrowLocation,
 		int expectedNameLocation,
 		int expectedPriceLocation,
-		int expectedPerDayLocation
-	)
+		int expectedPerDayLocation)
 	{
 		ConfigModel.Instance.MinDelta = -1000;
 		Game1.uiViewport.Width = 2000;
@@ -576,8 +559,8 @@ public class ForecastMenuTests : HarmonyTestBase
 
 		var models = new List<ItemModel>
 		{
-			new ItemModel(sellPrice.ToString()) { DailyDelta = delta, Supply = supply },
-			new ItemModel((sellPrice + 1).ToString()) { DailyDelta = delta, Supply = supply },
+			new(sellPrice.ToString()),
+			new((sellPrice + 1).ToString()),
 		};
 
 		_economyServiceMock.Setup(m => m.GetPricePerDay(models[0])).Returns(sellPricePerDay);
