@@ -1,11 +1,9 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
-using fse.core.helpers;
-using fse.core.menu;
 using fse.core.models;
 using HarmonyLib;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewValley;
 using StardewValley.Menus;
@@ -37,14 +35,9 @@ namespace fse.core.patches
 		public static void DrawSeedInfo(
 			SpriteBatch b,
 			// ReSharper disable once InconsistentNaming
-			ShopMenu __instance
+			ShopMenu shopMenu
 		)
 		{
-			if (Game1.activeClickableMenu is not ShopMenu shopMenu)
-			{
-				return;
-			}
-
 			if (shopMenu.forSale == null)
 			{
 				return;
@@ -55,24 +48,30 @@ namespace fse.core.patches
 				return;
 			}
 
-			var items = shopMenu.forSale
-				.Select((t, i) => (salable: t, visibleIndex: i - __instance.currentItemIndex))
-				.Where(t => t.salable is Object { Category: Object.SeedsCategory })
-				.Select(t => (model: EconomyService.GetItemModelFromSeed(((Object) t.salable).ItemId), t.visibleIndex))
-				.Where(t => t.model != null)
-				.Where(t => t.visibleIndex is >= 0 and < ShopMenu.itemsPerPage);
-
-			foreach (var tuple in items)
+			var forSaleButtons = shopMenu.forSaleButtons;
+			var forSale = shopMenu.forSale;
+			int currItemIdx = shopMenu.currentItemIndex;
+			int vanillaBtnWidth = shopMenu.width - 32;
+			for (int i = 0; i < forSaleButtons.Count; i++)
 			{
-				if (tuple.model == null)
+				if (currItemIdx + i >= forSale.Count)
 				{
 					continue;
 				}
-				var startingX = __instance.xPositionOnScreen + __instance.width - 400;
-				var startingY = __instance.yPositionOnScreen + 16 + tuple.visibleIndex * ((__instance.height - 256) / 4);
-				const int width = 200;
-				
-				DrawSupplyBarHelper.DrawSupplyBar(b, startingX, startingY + 20, startingX + width, 30, tuple.model);
+				ClickableComponent component = forSaleButtons[i];
+				ISalable salable = forSale[currItemIdx + i];
+				Rectangle bounds = component.bounds;
+				if (salable is Object { Category: Object.SeedsCategory } obj && EconomyService.GetItemModelFromSeed(obj.ItemId) is ItemModel model)
+				{
+					if (bounds.Width < vanillaBtnWidth)
+					{
+						DrawSupplyBarHelper.DrawSupplyBar(b, bounds.X + 96, component.bounds.Y + 20, bounds.Right - bounds.Width / 5, 30, model);
+					}
+					else
+					{
+						DrawSupplyBarHelper.DrawSupplyBar(b, bounds.Right - 400, component.bounds.Y + 20, bounds.Right - 200, 30, model);
+					}
+				}
 			}
 		}
 
@@ -87,9 +86,9 @@ namespace fse.core.patches
 				AccessTools.Method(typeof(ShopMenu), nameof(ShopMenu.BuyBuybackItem)),
 				postfix: new HarmonyMethod(typeof(ShopMenuPatches), nameof(BuyBuybackItemPostFix))
 			);
-			
+
 			harmony.Patch(
-				AccessTools.Method(typeof(ShopMenu), nameof(ShopMenu.draw), new []{typeof(SpriteBatch)}),
+				AccessTools.Method(typeof(ShopMenu), nameof(ShopMenu.draw), new[] { typeof(SpriteBatch) }),
 				transpiler: new HarmonyMethod(typeof(ShopMenuPatches), nameof(ShopDrawingTranspiler))
 			);
 		}
@@ -97,7 +96,7 @@ namespace fse.core.patches
 		public static IEnumerable<CodeInstruction> ShopDrawingTranspiler(IEnumerable<CodeInstruction> steps)
 		{
 			using var enumerator = steps.GetEnumerator();
-			
+
 			while (enumerator.MoveNext())
 			{
 				var current = enumerator.Current;
@@ -108,7 +107,7 @@ namespace fse.core.patches
 					yield return new CodeInstruction(OpCodes.Ldarg_0);
 					yield return new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(ShopMenuPatches), nameof(DrawSeedInfo)));
 				}
-				
+
 				yield return enumerator.Current;
 			}
 		}
