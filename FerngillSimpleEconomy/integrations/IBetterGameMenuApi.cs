@@ -12,6 +12,7 @@ using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Menus;
 
+// ReSharper disable once CheckNamespace
 namespace Leclair.Stardew.BetterGameMenu;
 
 

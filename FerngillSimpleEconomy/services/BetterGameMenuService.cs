@@ -30,12 +30,6 @@ public interface IBetterGameMenuService
 	/// </summary>
 	/// <param name="menu">The menu to get the current page from.</param>
 	IClickableMenu? GetCurrentPage(IClickableMenu? menu);
-
-	/// <summary>
-	/// This method attempts to change the Better Game Menu of the active
-	/// screen back to the previous tab.
-	/// </summary>
-	void SwitchToLastTab();
 }
 
 public class BetterGameMenuService(
@@ -86,7 +80,7 @@ public class BetterGameMenuService(
 		}
 	}
 
-	public void SwitchToLastTab()
+	private void SwitchToLastTab()
 	{
 		var menu = _api?.ActiveMenu;
 		menu?.TryChangeTab(_lastTab.Value ?? menu.VisibleTabs.FirstOrDefault() ?? nameof(VanillaTabOrders.Exit));
