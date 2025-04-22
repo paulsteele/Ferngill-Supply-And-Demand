@@ -43,7 +43,8 @@ public class GameLoadedHandler(
 	private void RegisterStarControl()
 	{
 		var starControlApi = helper.ModRegistry.GetApi<IStarControlApi>("StarControl.API");
-		var iconicFrameworkApi = helper.ModRegistry.GetApi<IIconicFrameworkApi>("furyx639.ToolbarIcons");
+		// The IconicFrameworkApi is already injected into the StarControlService constructor
+		// so we don't need to pass it again here
 		starControlService.Register(starControlApi);
 	}
 
