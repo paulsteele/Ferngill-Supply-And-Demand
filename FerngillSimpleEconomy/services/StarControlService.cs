@@ -7,22 +7,21 @@ namespace fse.core.services;
 
 public interface IStarControlService
 {
-    void Register(IStarControlApi? api);
+    void Register(IStarControlApi? api, IIconicFrameworkApi? iconicFrameworkApi = null);
 }
 
 public class StarControlService(
     IModHelper helper, 
-    IForecastMenuService forecastMenuService,
-    IIconicFrameworkApi? iconicFrameworkApi) : IStarControlService
+    IForecastMenuService forecastMenuService) : IStarControlService
 {
-    public void Register(IStarControlApi? api)
+    public void Register(IStarControlApi? api, IIconicFrameworkApi? iconicFrameworkApi = null)
     {
         if (api == null)
         {
             return;
         }
         
-        // Early return if IconicFrameworkApi is available through DI
+        // Early return if IconicFrameworkApi is available
         if (iconicFrameworkApi != null)
         {
             return;
