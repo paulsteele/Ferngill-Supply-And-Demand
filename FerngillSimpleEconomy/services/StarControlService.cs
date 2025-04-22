@@ -10,11 +10,20 @@ public interface IStarControlService
     void Register(IStarControlApi? api);
 }
 
-public class StarControlService(IModHelper helper, IForecastMenuService forecastMenuService) : IStarControlService
+public class StarControlService(
+    IModHelper helper, 
+    IForecastMenuService forecastMenuService,
+    IIconicFrameworkApi? iconicFrameworkApi) : IStarControlService
 {
     public void Register(IStarControlApi? api)
     {
         if (api == null)
+        {
+            return;
+        }
+        
+        // Early return if IconicFrameworkApi is available through DI
+        if (iconicFrameworkApi != null)
         {
             return;
         }
