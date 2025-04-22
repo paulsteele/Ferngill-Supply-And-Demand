@@ -1,4 +1,5 @@
-﻿using fse.core.integrations;
+﻿using System;
+using fse.core.integrations;
 using StardewModdingAPI;
 using StardewValley;
 
@@ -17,6 +18,9 @@ public class StarControlService(IModHelper helper, IForecastMenuService forecast
         {
             return;
         }
+        
+        Console.WriteLine(helper.ToString());
+        Console.WriteLine(forecastMenuService.ToString());
 
         // TODO: Implement the registration logic for StarControl integration
         // This should follow a similar pattern to IconicFrameworkService but adapted for StarControl's API

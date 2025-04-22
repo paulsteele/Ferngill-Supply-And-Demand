@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using fse.core.actions;
 using fse.core.extensions;
+using fse.core.integrations;
 using fse.core.models;
 using fse.core.services;
 using GenericModConfigMenu;
