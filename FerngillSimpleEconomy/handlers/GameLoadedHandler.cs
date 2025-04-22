@@ -34,17 +34,18 @@ public class GameLoadedHandler(
 	private void OnLaunched()
 	{
 		RegisterBetterGameMenu();
-		RegisterIconicFramework();
-		RegisterStarControl();
+		RegisterIconicAndStarControl();
 		RegisterMailFramework();
 		RegisterGenericConfig();
 	}
 	
-	private void RegisterStarControl()
+	private void RegisterIconicAndStarControl()
 	{
+		// Load the IconicFramework API once and use it for both services
+		var iconicFramework = helper.ModRegistry.GetApi<IIconicFrameworkApi>("furyx639.ToolbarIcons");
+		iconicFrameworkService.Register(iconicFramework);
+		
 		var starControlApi = helper.ModRegistry.GetApi<IStarControlApi>("StarControl.API");
-		// The IconicFrameworkApi is already injected into the StarControlService constructor
-		// so we don't need to pass it again here
 		starControlService.Register(starControlApi);
 	}
 
@@ -52,12 +53,6 @@ public class GameLoadedHandler(
 	{
 		var betterGameMenuApi = helper.ModRegistry.GetApi<IBetterGameMenuApi>("leclair.bettergamemenu");
 		betterGameMenuService.Register(betterGameMenuApi);
-	}
-		
-	private void RegisterIconicFramework()
-	{
-		var iconicFramework = helper.ModRegistry.GetApi<IIconicFrameworkApi>("furyx639.ToolbarIcons");
-		iconicFrameworkService.Register(iconicFramework);
 	}
 
 	private void RegisterMailFramework()
