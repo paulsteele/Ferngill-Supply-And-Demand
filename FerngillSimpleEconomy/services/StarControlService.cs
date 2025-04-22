@@ -1,20 +1,20 @@
 ﻿using System;
 using fse.core.integrations;
+using LeFauxMods.Common.Integrations.IconicFramework;
 using StardewModdingAPI;
-using StardewValley;
 
 namespace fse.core.services;
 
 public interface IStarControlService
 {
-    void Register(IStarControlApi? api, IIconicFrameworkApi? iconicFrameworkApi = null);
+    void Register(IStarControlApi? api, IIconicFrameworkApi? iconicFrameworkApi);
 }
 
 public class StarControlService(
     IModHelper helper, 
     IForecastMenuService forecastMenuService) : IStarControlService
 {
-    public void Register(IStarControlApi? api, IIconicFrameworkApi? iconicFrameworkApi = null)
+    public void Register(IStarControlApi? api, IIconicFrameworkApi? iconicFrameworkApi)
     {
         if (api == null)
         {

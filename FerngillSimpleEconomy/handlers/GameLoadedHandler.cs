@@ -41,11 +41,10 @@ public class GameLoadedHandler(
 	
 	private void RegisterIconicAndStarControl()
 	{
-		// Load the IconicFramework API once and use it for both services
 		var iconicFramework = helper.ModRegistry.GetApi<IIconicFrameworkApi>("furyx639.ToolbarIcons");
-		iconicFrameworkService.Register(iconicFramework);
-		
 		var starControlApi = helper.ModRegistry.GetApi<IStarControlApi>("StarControl.API");
+		
+		iconicFrameworkService.Register(iconicFramework);
 		starControlService.Register(starControlApi, iconicFramework);
 	}
 
