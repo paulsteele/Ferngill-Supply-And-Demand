@@ -46,7 +46,7 @@ public class GameLoadedHandler(
 		iconicFrameworkService.Register(iconicFramework);
 		
 		var starControlApi = helper.ModRegistry.GetApi<IStarControlApi>("StarControl.API");
-		starControlService.Register(starControlApi);
+		starControlService.Register(starControlApi, iconicFramework);
 	}
 
 	private void RegisterBetterGameMenu()
