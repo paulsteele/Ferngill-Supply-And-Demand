@@ -21,7 +21,8 @@ public class GameLoadedHandler(
 	IManifest manifest,
 	IEconomyService economyService,
 	IBetterGameMenuService betterGameMenuService,
-	IIconicFrameworkService iconicFrameworkService
+	IIconicFrameworkService iconicFrameworkService,
+	IStarControlService starControlService
 ) : IHandler
 {
 	public void Register()
@@ -33,8 +34,15 @@ public class GameLoadedHandler(
 	{
 		RegisterBetterGameMenu();
 		RegisterIconicFramework();
+		RegisterStarControl();
 		RegisterMailFramework();
 		RegisterGenericConfig();
+	}
+	
+	private void RegisterStarControl()
+	{
+		var starControlApi = helper.ModRegistry.GetApi<IStarControlApi>("StarControl.API");
+		starControlService.Register(starControlApi);
 	}
 
 	private void RegisterBetterGameMenu()

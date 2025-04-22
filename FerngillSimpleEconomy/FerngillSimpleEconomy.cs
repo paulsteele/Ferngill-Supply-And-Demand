@@ -26,9 +26,10 @@ public class FerngillSimpleEconomy : Mod
 		var forecastMenuService = new ForecastMenuService(helper, economyService, new DrawTextHelper(), drawSupplyBarHelper);
 		var betterGameMenuService = new BetterGameMenuService(ModManifest, helper, forecastMenuService);
 		var iconicFrameworkService = new IconicFrameworkService(helper, forecastMenuService);
+		var starControlService = new StarControlService(helper, forecastMenuService);
 		var tooltipMenu = new TooltipMenu(helper, economyService, drawSupplyBarHelper, betterGameMenuService);
 		RegisterPatches(economyService, drawSupplyBarHelper);
-		RegisterHandlers(helper, economyService, forecastMenuService, betterGameMenuService, iconicFrameworkService, tooltipMenu, multiplayerService);
+		RegisterHandlers(helper, economyService, forecastMenuService, betterGameMenuService, iconicFrameworkService, starControlService, tooltipMenu, multiplayerService);
 		helper.ConsoleCommands.Add("fse_reset", "Fully Resets Ferngill Simple Economy", (_, _) =>
 		{
 			if (!Game1.player.IsMainPlayer)
@@ -61,13 +62,14 @@ public class FerngillSimpleEconomy : Mod
 		ForecastMenuService forecastMenuService, 
 		BetterGameMenuService betterGameMenuService,
 		IconicFrameworkService iconicFrameworkService,
+		StarControlService starControlService,
 		TooltipMenu tooltipMenu, 
 		MultiplayerService multiplayerService
 	)
 	{
 		new DayEndHandler(helper, Monitor, economyService).Register();
 		new SaveLoadedHandler(helper, Monitor, economyService).Register();
-		new GameLoadedHandler(helper, Monitor, ModManifest, economyService, betterGameMenuService, iconicFrameworkService).Register();
+		new GameLoadedHandler(helper, Monitor, ModManifest, economyService, betterGameMenuService, iconicFrameworkService, starControlService).Register();
 		new GameMenuLoadedHandler(helper, Monitor, forecastMenuService, tooltipMenu).Register();
 		new MultiplayerHandler(helper, economyService, multiplayerService).Register();
 		new HotkeyHandler(helper, forecastMenuService).Register();
