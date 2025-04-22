@@ -43,6 +43,7 @@ public class GameLoadedHandler(
 	private void RegisterStarControl()
 	{
 		var starControlApi = helper.ModRegistry.GetApi<IStarControlApi>("StarControl.API");
+		var iconicFrameworkApi = helper.ModRegistry.GetApi<IIconicFrameworkApi>("furyx639.ToolbarIcons");
 		starControlService.Register(starControlApi);
 	}
 
