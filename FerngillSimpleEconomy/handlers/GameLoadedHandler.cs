@@ -1,7 +1,6 @@
 ﻿using System.Linq;
 using fse.core.actions;
 using fse.core.extensions;
-using fse.core.integrations;
 using fse.core.models;
 using fse.core.services;
 using GenericModConfigMenu;
@@ -10,6 +9,7 @@ using Leclair.Stardew.BetterGameMenu;
 using LeFauxMods.Common.Integrations.IconicFramework;
 using MailFrameworkMod.Api;
 using Microsoft.Xna.Framework;
+using StarControl;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Menus;
@@ -42,7 +42,7 @@ public class GameLoadedHandler(
 	private void RegisterIconicAndStarControl()
 	{
 		var iconicFramework = helper.ModRegistry.GetApi<IIconicFrameworkApi>("furyx639.ToolbarIcons");
-		var starControlApi = helper.ModRegistry.GetApi<IStarControlApi>("StarControl.API");
+		var starControlApi = helper.ModRegistry.GetApi<IStarControlApi>("focustense.StarControl");
 		
 		iconicFrameworkService.Register(iconicFramework);
 		starControlService.Register(starControlApi, iconicFramework);
