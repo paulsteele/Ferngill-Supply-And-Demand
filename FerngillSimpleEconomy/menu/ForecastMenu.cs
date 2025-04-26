@@ -279,7 +279,7 @@ public class ForecastMenu : IForecastMenu
 
 	private void NavigateToNextControllerElement(bool forward)
 	{
-		if (_categoryDropdown == null || _seasonsCheckboxes == null || _sortDropdown == null)
+		if (_categoryDropdown == null || _seasonsCheckboxes == null || _sortDropdown == null || _optionsTextEntry == null)
 		{
 			return;
 		}
@@ -290,6 +290,7 @@ public class ForecastMenu : IForecastMenu
 			(_seasonsCheckboxes[2].bounds, _seasonsCheckboxes[2].bounds.Width / 2, _seasonsCheckboxes[2].bounds.Height / 2),
 			(_seasonsCheckboxes[3].bounds,_seasonsCheckboxes[2].bounds.Width / 2, _seasonsCheckboxes[2].bounds.Height / 2),
 			(_sortDropdown.bounds, _sortDropdown.bounds.Width - 32, _sortDropdown.bounds.Height / 2),
+			(_optionsTextEntry.bounds, _optionsTextEntry.bounds.Width / 2, _optionsTextEntry.bounds.Height / 2),
 		];
 		
 		var offset = forward ? 1 : -1;
