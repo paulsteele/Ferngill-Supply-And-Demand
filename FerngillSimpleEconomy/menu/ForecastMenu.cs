@@ -145,7 +145,7 @@ public class ForecastMenu : IForecastMenu
 				{
 					break;
 				}
-				NavigateToNextControllerElement(true);
+				NavigateToNextControllerElement(ControllerDirection.Right);
 				break;
 			case Buttons.LeftThumbstickLeft:
 			case Buttons.DPadLeft:
@@ -153,7 +153,7 @@ public class ForecastMenu : IForecastMenu
 				{
 					break;
 				}
-				NavigateToNextControllerElement(false);
+				NavigateToNextControllerElement(ControllerDirection.Left);
 				break;
 			case Buttons.LeftThumbstickDown:
 			case Buttons.DPadDown:
@@ -162,6 +162,7 @@ public class ForecastMenu : IForecastMenu
 					if (_categoryDropdown != null)
 					{
 						_categoryDropdown.selectedOption = (_categoryDropdown.selectedOption + 1 + _categoryDropdown.dropDownOptions.Count) % _categoryDropdown.dropDownOptions.Count;
+						break;
 					}
 				}
 
@@ -170,9 +171,11 @@ public class ForecastMenu : IForecastMenu
 					if (_sortDropdown != null)
 					{
 						_sortDropdown.selectedOption = (_sortDropdown.selectedOption + 1 + _sortDropdown.dropDownOptions.Count) % _sortDropdown.dropDownOptions.Count;
+						break;
 					}
 				}
-
+				
+				NavigateToNextControllerElement(ControllerDirection.Down);
 				break;
 			case Buttons.LeftThumbstickUp:
 			case Buttons.DPadUp:
@@ -181,6 +184,7 @@ public class ForecastMenu : IForecastMenu
 					if (_categoryDropdown != null)
 					{
 						_categoryDropdown.selectedOption = (_categoryDropdown.selectedOption - 1 + _categoryDropdown.dropDownOptions.Count) % _categoryDropdown.dropDownOptions.Count;
+						break;
 					}
 				}
 
@@ -189,8 +193,10 @@ public class ForecastMenu : IForecastMenu
 					if (_sortDropdown != null)
 					{
 						_sortDropdown.selectedOption = (_sortDropdown.selectedOption - 1 + _sortDropdown.dropDownOptions.Count) % _sortDropdown.dropDownOptions.Count;
+						break;
 					}
 				}
+				NavigateToNextControllerElement(ControllerDirection.Up);
 
 				break;
 		}
@@ -277,7 +283,15 @@ public class ForecastMenu : IForecastMenu
 		}
 	}
 
-	private void NavigateToNextControllerElement(bool forward)
+	private enum ControllerDirection
+	{
+		Left,
+		Up,
+		Right,
+		Down,
+	}
+
+	private void NavigateToNextControllerElement(ControllerDirection direction)
 	{
 		if (_categoryDropdown == null || _seasonsCheckboxes == null || _sortDropdown == null || _optionsTextEntry == null)
 		{
@@ -292,11 +306,18 @@ public class ForecastMenu : IForecastMenu
 			(_sortDropdown.bounds, _sortDropdown.bounds.Width - 32, _sortDropdown.bounds.Height / 2),
 			(_optionsTextEntry.bounds, _optionsTextEntry.bounds.Width / 2, _optionsTextEntry.bounds.Height / 2),
 		];
-		
-		var offset = forward ? 1 : -1;
 
-		_controllerIndex = (_controllerIndex + offset + elements.Length) % elements.Length;
-		
+		if (direction is ControllerDirection.Left or ControllerDirection.Right)
+		{
+			var offset = direction == ControllerDirection.Right ? 1 : -1;
+
+			_controllerIndex = (_controllerIndex + offset + elements.Length) % elements.Length;
+		}
+		else
+		{
+			_controllerIndex = _controllerIndex == 6 ? 0 : 6;
+		}
+
 		var element = elements[_controllerIndex];
 
 		Mouse.SetPosition(element.baseRect.X + element.xOffset, element.baseRect.Y + element.yOffset);
