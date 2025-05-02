@@ -19,6 +19,7 @@ public interface IEconomyService
 	void SetupForNewSeason();
 	void SetupForNewYear();
 	void Reset();
+	void ResetDaily();
 	void AdvanceOneDay();
 	Dictionary<int, string> GetCategories();
 	ItemModel[] GetItemsForCategory(int category);
@@ -186,6 +187,15 @@ public class EconomyService(
 		QueueSave();
 	}
 
+	public void ResetDaily()
+	{
+	 if (IsClient)
+	 {
+		return;
+	 }
+	 RandomizeEconomy(Economy, false, true, SeasonHelper.GetCurrentSeason());
+	 QueueSave();
+	}
 
 	private void RandomizeEconomy(EconomyModel model, bool updateSupply, bool updateDelta, Seasons season)
 	{
