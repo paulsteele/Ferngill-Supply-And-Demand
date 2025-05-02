@@ -40,6 +40,16 @@ public class FerngillSimpleEconomy : Mod
 			economyService.Reset();
 			economyService.AdvanceOneDay();
 		});
+		helper.ConsoleCommands.Add("fse_reset_daily", "Resets Daily Supply Change of Ferngill Simple Economy", (_, _) =>
+		{
+		 if (!Game1.player.IsMainPlayer)
+		 {
+			return;
+		 }
+
+		 economyService.ResetDaily();
+		 economyService.AdvanceOneDay();
+		});
 	}
 
 	private void RegisterPatches
