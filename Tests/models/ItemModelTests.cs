@@ -63,4 +63,25 @@ public class ItemModelTests : HarmonyTestBase
 		var obj = _itemModel.GetObjectInstance();
 		Assert.That(obj.ItemId, Is.EqualTo(_itemModel.ObjectId));
 	}
+
+	[TestCase(.3f, 1.3f, 1000, 500, 100, ExpectedResult = 80d)]
+	[TestCase(5f, .2f, 1000, 500, 100, ExpectedResult = 240d)]
+	[TestCase(7f, 6.5f, 1000, 1000, 100, ExpectedResult = 700d)]
+	public double TestGetPrice(
+		float minMultiplier,
+		float maxMultiplier,
+		int maxCalculatedSupply,
+		int supply,
+		int basePrice
+	)
+	{
+		ConfigModel.Instance.MinPercentage = minMultiplier;
+		ConfigModel.Instance.MaxPercentage = maxMultiplier;
+		ConfigModel.Instance.MaxCalculatedSupply = maxCalculatedSupply;
+		_itemModel.Supply = supply;
+		
+		_itemModel.UpdateMultiplier();
+		return _itemModel.GetPrice(basePrice);
+		
+	}
 }
