@@ -64,9 +64,10 @@ public class ItemModelTests : HarmonyTestBase
 		Assert.That(obj.ItemId, Is.EqualTo(_itemModel.ObjectId));
 	}
 
-	[TestCase(.3f, 1.3f, 1000, 500, 100, ExpectedResult = 80d)]
-	[TestCase(5f, .2f, 1000, 500, 100, ExpectedResult = 240d)]
-	[TestCase(7f, 6.5f, 1000, 1000, 100, ExpectedResult = 700d)]
+	[TestCase(.3f, 1.3f, 1000, 750, 100, ExpectedResult = 54d)]
+	[TestCase(.2f, 5f, 1000, 500, 100, ExpectedResult = 260d)]
+	[TestCase(6.5f, 7f, 1000, 1000, 100, ExpectedResult = 650d)]
+	[TestCase(3.5f, 5f, 1000, 0, 100, ExpectedResult = 500d)]
 	public double TestGetPrice(
 		float minMultiplier,
 		float maxMultiplier,
