@@ -65,6 +65,7 @@ public class ItemModelTests : HarmonyTestBase
 	}
 
 	[TestCase(.3f, 1.3f, 1000, 750, 100, ExpectedResult = 54d)]
+	[TestCase(.3f, 1.3f, 1000, 250, 100, ExpectedResult = 104d)]
 	[TestCase(.2f, 5f, 1000, 500, 100, ExpectedResult = 260d)]
 	[TestCase(6.5f, 7f, 1000, 1000, 100, ExpectedResult = 650d)]
 	[TestCase(3.5f, 5f, 1000, 0, 100, ExpectedResult = 500d)]
