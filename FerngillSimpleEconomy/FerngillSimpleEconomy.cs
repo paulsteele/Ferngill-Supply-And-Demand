@@ -37,18 +37,18 @@ public class FerngillSimpleEconomy : Mod
 				return;
 			}
 
-			economyService.Reset();
+			economyService.Reset(true, true, SeasonHelper.GetCurrentSeason());
 			economyService.AdvanceOneDay();
 		});
 		helper.ConsoleCommands.Add("fse_reset_daily", "Resets Daily Supply Change of Ferngill Simple Economy", (_, _) =>
 		{
-		 if (!Game1.player.IsMainPlayer)
-		 {
-			return;
-		 }
+			if (!Game1.player.IsMainPlayer)
+			{
+				return;
+			}
 
-		 economyService.ResetDaily();
-		 economyService.AdvanceOneDay();
+			economyService.Reset(false, true, SeasonHelper.GetCurrentSeason());
+			economyService.AdvanceOneDay();
 		});
 	}
 

@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using fse.core.actions;
 using fse.core.extensions;
+using fse.core.helpers;
 using fse.core.models;
 using fse.core.services;
 using GenericModConfigMenu;
@@ -259,7 +260,7 @@ public class GameLoadedHandler(
 						{
 							if (economyService.Loaded)
 							{
-								economyService.Reset();
+								economyService.Reset(true, true, SeasonHelper.GetCurrentSeason());
 								economyService.AdvanceOneDay();
 							}
 						}

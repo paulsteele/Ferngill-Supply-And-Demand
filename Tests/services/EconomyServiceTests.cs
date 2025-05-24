@@ -698,8 +698,6 @@ public class EconomyServiceTests : HarmonyTestBase
 	{
 		_economyService.OnLoaded();
 
-		Game1.currentSeason = "Summer";
-		
 		var cat1Items = _economyService.GetItemsForCategory(1);
 		var cat2Items = _economyService.GetItemsForCategory(2);
 
@@ -723,7 +721,7 @@ public class EconomyServiceTests : HarmonyTestBase
 		_mockSeedService.Setup(m => m.GetSeedModelFromModelId("1")).Returns(seed1);
 		_mockSeedService.Setup(m => m.GetSeedModelFromModelId("2")).Returns(seed2);
 		
-		_economyService.Reset();
+		_economyService.Reset(true, true, Seasons.Summer);
 
 		Assert.Multiple(() =>
 		{
@@ -746,8 +744,6 @@ public class EconomyServiceTests : HarmonyTestBase
 	{
 		_economyService.OnLoaded();
 
-		Game1.currentSeason = "Summer";
-		
 		var cat1Items = _economyService.GetItemsForCategory(1);
 		var cat2Items = _economyService.GetItemsForCategory(2);
 
@@ -771,7 +767,7 @@ public class EconomyServiceTests : HarmonyTestBase
 		_mockFishService.Setup(m => m.GetFishModelFromModelId("1")).Returns(fish1);
 		_mockFishService.Setup(m => m.GetFishModelFromModelId("2")).Returns(fish2);
 		
-		_economyService.Reset();
+		_economyService.Reset(true, true, Seasons.Summer);
 
 		Assert.Multiple(() =>
 		{
