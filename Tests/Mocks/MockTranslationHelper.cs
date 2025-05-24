@@ -8,6 +8,10 @@ namespace Tests.Mocks;
 public class MockTranslationHelper : ITranslationHelper
 {
 	public string ModID { get; }
+	public bool ContainsKey(string key) => throw new NotImplementedException();
+
+	public IEnumerable<string> GetKeys() => throw new NotImplementedException();
+
 	public IEnumerable<Translation> GetTranslations() => throw new NotImplementedException();
 
 	public Translation Get(string key)
