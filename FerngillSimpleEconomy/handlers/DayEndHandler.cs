@@ -12,7 +12,6 @@ public class DayEndHandler(
 	IEconomyService economyService)
 	: IHandler
 {
-	private const int LastDayOfMonth = 28;
 
 	public void Register()
 	{
@@ -50,16 +49,13 @@ public class DayEndHandler(
 
 	private void HandleEndOfSeason()
 	{
-		if (Game1.dayOfMonth < LastDayOfMonth)
-		{
-			return;
-		}
-
-		if (Utility.getSeasonNumber(Game1.currentSeason) == 3)
+		if (economyService.UpdateSupplyYear)
 		{
 			economyService.SetupForNewYear();
+			return; // Skip seasonal update if yearly is happening.
 		}
-		else
+
+		if (economyService.UpdateSupplySeason)
 		{
 			economyService.SetupForNewSeason();
 		}

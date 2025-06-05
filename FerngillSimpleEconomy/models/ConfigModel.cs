@@ -9,7 +9,8 @@ public class ConfigModel
 	public static ConfigModel Instance { get; set; } = new();
 	public const int MinSupply = 0;
 	public const int MaxSupply = int.MaxValue;
-	
+	public enum Frequency { FreqDay, FreqWeek, FreqSeason, FreqYear }
+
 	public int MaxCalculatedSupply { get; set; } = 1000;
 	public int MinDelta { get; set; } = -30;
 	public int MaxDelta { get; set; } = 30;
@@ -25,6 +26,8 @@ public class ConfigModel
 	public bool EnableShopDisplay { get; set; } = true;
 	public bool EnableTooltip { get; set; } = true;
 	public bool DisableArtisanMapping { get; set; } = false;
+	public Frequency ChangeFreq { get; set; } = Frequency.FreqSeason; // Seasonal supply
+	public Frequency SupplyFreq { get; set; } = Frequency.FreqYear; // Yearly supply
 	public KeybindList ShowMenuHotkey { get; set; } = KeybindList.Parse("H");
 
 	public List<int> ValidCategories { get; set; } =

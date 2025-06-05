@@ -36,5 +36,11 @@
 	"fse.config.hotkey.openMenu": "Open Forecast",
 	"fse.config.Reset": "Reset",
 	"fse.config.category.header": "Categories in Economy",
-	"fse.config.category.subtitle": "The game must be restarted after this is changed. Names may appear duplicated as that is how the game references them. Check the wiki for specifics."
+	"fse.config.category.subtitle": "The game must be restarted after this is changed. Names may appear duplicated as that is how the game references them. Check the wiki for specifics.",
+	"fse.config.ChangeFreq": "Seasonal supply update frequency.",
+	"fse.config.SupplyFreq": "Yearly supply update frequency.",
+	"fse.config.FreqDay": "Daily",
+	"fse.config.FreqWeek": "Weekly",
+	"fse.config.FreqSeason": "Seasonally",
+	"fse.config.FreqYear": "Yearly"
 }
