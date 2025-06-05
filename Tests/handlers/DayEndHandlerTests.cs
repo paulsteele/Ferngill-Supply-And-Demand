@@ -1,4 +1,5 @@
 using fse.core.handlers;
+using fse.core.helpers;
 using fse.core.models;
 using fse.core.services;
 using Microsoft.Xna.Framework;
@@ -167,20 +168,19 @@ public class DayEndHandlerTests : HarmonyTestBase
 		_mockEconomyService.Verify(m => m.AdjustSupply(It.IsAny<Object>(), It.IsAny<int>(), false), Times.Never);
 	}
 	
-	[TestCase(Season.Spring, true, false)]
-	[TestCase(Season.Summer, true, false)]
-	[TestCase(Season.Fall, true, false)]
-	[TestCase(Season.Winter, false, true)]
-	public void ShouldAdvanceToCorrectStateAtEndOfSeason(Season season, bool shouldAdvanceSeason, bool shouldAdvanceYear)
+	[TestCase(false, true, Season.Spring)]
+	[TestCase(false, true, Season.Summer)]
+	[TestCase(false, true, Season.Fall)]
+	[TestCase(true, true, Season.Winter)]
+	public void ShouldAdvanceToCorrectStateAtEndOfSeason( bool shouldAdvanceSupply, bool shouldAdvanceDelta, Season season)
 	{
 		_farmerTeam.SetUseSeparateWalletsResult(false);
 		Game1.dayOfMonth = 28;
 		Game1.season = season;
 		
 		_mockGameLoopEvents.InvokeDayEnding();
-		
-		_mockEconomyService.Verify(m => m.SetupForNewSeason(), Times.Exactly(shouldAdvanceSeason ? 1 : 0));
-		_mockEconomyService.Verify(m => m.SetupForNewYear(), Times.Exactly(shouldAdvanceYear ? 1 : 0));
+
+		_mockEconomyService.Verify(m => m.Reset(shouldAdvanceSupply, shouldAdvanceDelta, SeasonHelper.GetNextSeason()), Times.Exactly(1));
 	}
 }
 
