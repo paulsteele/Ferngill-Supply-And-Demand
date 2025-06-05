@@ -1,9 +1,10 @@
 ﻿using System.Linq;
 using fse.core.actions;
+using fse.core.helpers;
+using fse.core.models;
 using fse.core.services;
 using StardewModdingAPI;
 using StardewValley;
-
 namespace fse.core.handlers;
 
 public class DayEndHandler(
@@ -44,24 +45,16 @@ public class DayEndHandler(
 				economyService.AdjustSupply(item as Object, item.Stack, false);
 			}
 		}
-
-		HandleEndOfSeason();
+		HandleEndOfDayDynamics();
 	}
 
-	private void HandleEndOfSeason()
-	{
-		if (Game1.dayOfMonth < LastDayOfMonth)
+	private void HandleEndOfDayDynamics() {
+		bool isSupplyChange = (Game1.dayOfMonth + (Utility.getSeasonNumber(Game1.currentSeason)*28)) % ConfigModel.Instance.DaysToSupplyChange == 0;
+		bool isDeltaChange = Game1.dayOfMonth % ConfigModel.Instance.DaysToDeltaChange == 0;
+		if (isSupplyChange || isDeltaChange)
 		{
-			return;
-		}
-
-		if (Utility.getSeasonNumber(Game1.currentSeason) == 3)
-		{
-			economyService.SetupForNewYear();
-		}
-		else
-		{
-			economyService.SetupForNewSeason();
+			bool isEndOfMonth = Game1.dayOfMonth == 28;
+			economyService.Reset(isSupplyChange, isDeltaChange, (isEndOfMonth)? SeasonHelper.GetNextSeason() : SeasonHelper.GetCurrentSeason());
 		}
 	}
 }

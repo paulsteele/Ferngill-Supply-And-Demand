@@ -11,8 +11,10 @@ public class ConfigModel
 	public const int MaxSupply = int.MaxValue;
 	
 	public int MaxCalculatedSupply { get; set; } = 1000;
+	public int DaysToSupplyChange { get; set; } = 112;
 	public int MinDelta { get; set; } = -30;
 	public int MaxDelta { get; set; } = 30;
+	public int DaysToDeltaChange { get; set; } = 28;
 	public int DeltaArrow { get; set; } = 10;
 	public int StdDevSupply { get; set; } = 150;
 	public int StdDevDelta { get; set; } = 5;
