@@ -194,7 +194,25 @@ public class GameLoadedHandler(
 			getValue: () => ConfigModel.Instance.DisableArtisanMapping,
 			setValue: val => ConfigModel.Instance.DisableArtisanMapping = val
 		);
-			
+
+		configMenu.AddTextOption( // Seasonal supply
+			mod: manifest,
+			name: () => helper.Translation.Get("fse.config.ChangeFreq"),
+			getValue: () => ConfigModel.Instance.ChangeFreq.ToString(),
+			setValue: val => ConfigModel.Instance.ChangeFreq = System.Enum.Parse<ConfigModel.Frequency>(val),
+			allowedValues: ["FreqDay", "FreqWeek", "FreqSeason", "FreqYear"],
+			formatAllowedValue: val => helper.Translation.Get($"fse.config.{val}")
+		);
+
+		configMenu.AddTextOption( // Yearly supply
+			mod: manifest,
+			name: () => helper.Translation.Get("fse.config.SupplyFreq"),
+			getValue: () => ConfigModel.Instance.SupplyFreq.ToString(),
+			setValue: val => ConfigModel.Instance.SupplyFreq = System.Enum.Parse<ConfigModel.Frequency>(val),
+			allowedValues: ["FreqDay", "FreqWeek", "FreqSeason", "FreqYear"],
+			formatAllowedValue: val => helper.Translation.Get($"fse.config.{val}")
+		);
+
 		configMenu.AddKeybindList(
 			mod: manifest,
 			name: ()=> helper.Translation.Get("fse.config.hotkey.openMenu"),

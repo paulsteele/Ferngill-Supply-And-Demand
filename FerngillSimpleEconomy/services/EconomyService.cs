@@ -30,6 +30,8 @@ public interface IEconomyService
 	ItemModel GetConsolidatedItem(ItemModel original);
 	float GetBreakEvenSupply();
 	ItemModel? GetItemModelFromObject(Object obj);
+	bool UpdateSupplySeason { get; }
+	bool UpdateSupplyYear { get; }
 }
 
 public class EconomyService(
@@ -434,4 +436,23 @@ public class EconomyService(
 	}
 
 	private static int RoundDouble(double d) => (int)Math.Round(d, 0, MidpointRounding.ToEven);
+
+	private static bool ShouldSupplyUpdate(ConfigModel.Frequency frequency) // Check if we should update.
+	{
+		int currentDay = Game1.dayOfMonth;
+		bool isEndOfWeek = currentDay % 7 == 0; // Last day of week
+		bool isEndOfMonth = 28 == currentDay; // Last day of season
+		bool isEndOfYear = Utility.getSeasonNumber(Game1.currentSeason) == 3 && isEndOfMonth; // Last day of year
+
+		return frequency switch
+		{
+			ConfigModel.Frequency.FreqDay => true, // Daily
+			ConfigModel.Frequency.FreqWeek => isEndOfWeek, // Weekly
+			ConfigModel.Frequency.FreqSeason => isEndOfMonth, // Seasonally
+			ConfigModel.Frequency.FreqYear => isEndOfYear, // Yearly
+			_ => false // This should never happen.
+		};
+	}
+	public bool UpdateSupplySeason => ShouldSupplyUpdate(ConfigModel.Instance.ChangeFreq); // Seasonal supply change
+	public bool UpdateSupplyYear => ShouldSupplyUpdate(ConfigModel.Instance.SupplyFreq); // Yearly supply change
 }
