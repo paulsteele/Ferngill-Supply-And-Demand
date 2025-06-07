@@ -64,20 +64,18 @@ namespace fse.core.patches
 			}	
 		}
 
-		//random counter to prove the method and calculated amount works and matches the payer money 
-		private static int counter = 0;
 
 		//TODO this method only patches out the Pay to Player shipping amount, leaving the Shipping summary screen showing incorrect values
 		public static int SellShippingBinItem(Item item, long playerId)
 		{
-		//TODO use logger and log something meaning full
-			System.Console.WriteLine("Counter: "+counter + ", Item_name: " + item.BaseName + ", Stack: "+ item.Stack +", playerId: " + playerId);
-
+			int price = item.sellToStorePrice(playerId);
+			//TODO use logger and log something meaning full
+			System.Console.WriteLine(", Item_name: " + item.BaseName + ", Stack: " + item.Stack +  ", Price: "+ price + ", playerId: " + playerId);
 			if (item is Object obj)
 			{
 				EconomyService.AdjustSupply(obj, obj.Stack, true, true);
 			}
-			return (item.sellToStorePrice(playerId) * item.Stack) - counter++;
+			return price * item.Stack;
 		}
 	}
 }
