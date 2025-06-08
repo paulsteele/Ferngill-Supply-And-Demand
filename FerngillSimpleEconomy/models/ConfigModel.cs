@@ -7,8 +7,10 @@ namespace fse.core.models;
 public class ConfigModel
 {
 	public static ConfigModel Instance { get; set; } = new();
-	public const int MinSupply = 0;
-	public const int MaxSupply = int.MaxValue;
+	public int MinSupply = 0;
+
+	public bool EnabledDynamicEcon { get; set; } = false; 
+	public int MaxSupply { get; set; } = int.MaxValue;
 	
 	public int MaxCalculatedSupply { get; set; } = 1000;
 	public int MinDelta { get; set; } = -30;
