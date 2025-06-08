@@ -82,12 +82,28 @@ public class GameLoadedHandler(
 			reset: () => ConfigModel.Instance = new ConfigModel(),
 			save: () => helper.WriteConfig(ConfigModel.Instance)
 		);
-			
+
+
+		configMenu.AddBoolOption(
+			mod: manifest,
+			name: () => helper.Translation.Get("fse.config.EnabledDynamicEcon"),
+			getValue: () => ConfigModel.Instance.EnabledDynamicEcon,
+			setValue: val => ConfigModel.Instance.EnabledDynamicEcon = val
+		);
+
 		configMenu.AddNumberOption(
 			mod: manifest,
 			name: ()=> helper.Translation.Get("fse.config.MaxCalculatedSupply"),
 			getValue: () => ConfigModel.Instance.MaxCalculatedSupply,
 			setValue: val => ConfigModel.Instance.MaxCalculatedSupply = val,
+			min: 0
+		);
+    
+    configMenu.AddNumberOption(
+			mod: manifest,
+			name: () => helper.Translation.Get("fse.config.MaxSupply"),
+			getValue: () => ConfigModel.Instance.MaxSupply,
+			setValue: val => ConfigModel.Instance.MaxSupply = val,
 			min: 0
 		);
 
@@ -98,6 +114,7 @@ public class GameLoadedHandler(
 			setValue: val => ConfigModel.Instance.StdDevSupply = val,
 			min: 0
 	  );
+
 
 		configMenu.AddNumberOption(
 			mod: manifest,
