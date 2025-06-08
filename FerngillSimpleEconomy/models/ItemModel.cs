@@ -20,7 +20,7 @@ namespace fse.core.models
 		public int Supply
 		{
 			get => _supply;
-			set => _supply = BoundsHelper.EnsureBounds(value, ConfigModel.MinSupply, ConfigModel.MaxSupply);
+			set => _supply = BoundsHelper.EnsureBounds(value, ConfigModel.Instance.MinSupply, ConfigModel.Instance.MaxSupply);
 		}
 
 		[JsonInclude]

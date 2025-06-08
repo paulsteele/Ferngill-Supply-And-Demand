@@ -23,7 +23,7 @@ public interface IEconomyService
 	Dictionary<int, string> GetCategories();
 	ItemModel[] GetItemsForCategory(int category);
 	int GetPrice(Object obj, int basePrice);
-	void AdjustSupply(Object? obj, int amount, bool notifyPeers = true);
+	void AdjustSupply(Object? obj, int amount, bool notifyPeers = true, bool updateMultiplier = false);
 	ItemModel? GetItemModelFromSeed(string seed);
 	bool ItemValidForSeason(ItemModel model, Seasons seasonsFilter);
 	int GetPricePerDay(ItemModel model);
@@ -326,7 +326,7 @@ public class EconomyService(
 		return (int)(basePrice * modifier);
 	}
 
-	public void AdjustSupply(Object? obj, int amount, bool notifyPeers = true)
+	public void AdjustSupply(Object? obj, int amount, bool notifyPeers = true, bool updateMultiplierr = false)
 	{
 		obj = GetArtisanBase(obj) ?? obj;
 			
@@ -340,6 +340,11 @@ public class EconomyService(
 		itemModel.Supply += amount;
 
 		// monitor.Log($"Adjusted {obj.name} supply from {prev} to {itemModel.Supply}", LogLevel.Trace);
+
+		if (updateMultiplierr) {
+			//Probably doesn't work for multiplayer
+			itemModel.UpdateMultiplier();
+		}
 
 		if (notifyPeers)
 		{
