@@ -1,6 +1,8 @@
 using System.Text;
+using fse.core.helpers;
 using fse.core.models;
 using fse.core.services;
+using StardewValley;
 
 namespace Tests.services;
 
@@ -166,7 +168,24 @@ public class UpdateFrequencyServiceTests
 		Assert.That(result.ShouldUpdateDelta, Is.EqualTo(expectedShouldUpdate)); 
 	}
 
-	public static IEnumerable<T> GetIndividualFlags<T>(T flags) where T : Enum => 
+	[TestCase(Season.Spring, 27, Seasons.Spring)]
+	[TestCase(Season.Spring, 28, Seasons.Summer)]
+	[TestCase(Season.Summer, 27, Seasons.Summer)]
+	[TestCase(Season.Summer, 28, Seasons.Fall)]
+	[TestCase(Season.Fall, 27, Seasons.Fall)]
+	[TestCase(Season.Fall, 28, Seasons.Winter)]
+	[TestCase(Season.Winter, 27, Seasons.Winter)]
+	[TestCase(Season.Winter, 28, Seasons.Spring)]
+	public void ShouldReturnCorrectSeason(Season inputSeason, int dayOfMonth, Seasons expectedSeason)
+	{
+		Game1.season = inputSeason;
+		
+		var dayModel = new DayModel(1, SeasonHelper.GetCurrentSeason(), dayOfMonth);
+		var result = _service.GetUpdateFrequencyInformation(dayModel);
+		Assert.That(result.UpdateSeason, Is.EqualTo(expectedSeason));
+	}
+
+	private static IEnumerable<T> GetIndividualFlags<T>(T flags) where T : Enum => 
 		from Enum value in Enum.GetValues(flags.GetType()) 
 		where !value.Equals(default(T)) 
 		where flags.HasFlag(value) 
