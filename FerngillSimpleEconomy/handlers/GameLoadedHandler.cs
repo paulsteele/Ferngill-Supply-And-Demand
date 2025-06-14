@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using fse.core.actions;
 using fse.core.extensions;
 using fse.core.helpers;
@@ -14,6 +15,7 @@ using StarControl;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Menus;
+using Object = StardewValley.Object;
 
 namespace fse.core.handlers;
 
@@ -81,6 +83,52 @@ public class GameLoadedHandler(
 			mod: manifest,
 			reset: () => ConfigModel.Instance = new ConfigModel(),
 			save: () => helper.WriteConfig(ConfigModel.Instance)
+		);
+
+		configMenu.AddTextOption(
+			mod: manifest,
+			name: () => helper.Translation.Get("fse.config.SupplyFrequency"),
+			getValue: () => ConfigModel.Instance.SupplyUpdateFrequency.ToString(),
+			setValue: val =>
+			{
+				if (Enum.TryParse<UpdateFrequency>(val, true, out var frequency))
+				{
+					ConfigModel.Instance.SupplyUpdateFrequency = frequency;
+				}
+			},
+			allowedValues: Enum.GetNames(typeof(UpdateFrequency)),
+			formatAllowedValue: val => helper.Translation.Get($"fse.config.frequency.{val}")
+		);
+		
+		configMenu.AddNumberOption(
+			mod: manifest,
+			name: ()=> helper.Translation.Get("fse.config.custom.SupplyFrequency"),
+			getValue: () => ConfigModel.Instance.CustomSupplyUpdateFrequency,
+			setValue: val => ConfigModel.Instance.CustomSupplyUpdateFrequency = val,
+			min: 1
+		);
+
+		configMenu.AddTextOption(
+			mod: manifest,
+			name: () => helper.Translation.Get("fse.config.DeltaFrequency"),
+			getValue: () => ConfigModel.Instance.DeltaUpdateFrequency.ToString(),
+			setValue: val =>
+			{
+				if (Enum.TryParse<UpdateFrequency>(val, true, out var frequency))
+				{
+					ConfigModel.Instance.DeltaUpdateFrequency = frequency;
+				}
+			},
+			allowedValues: Enum.GetNames(typeof(UpdateFrequency)),
+			formatAllowedValue: val => helper.Translation.Get($"fse.config.frequency.{val}")
+		);
+		
+		configMenu.AddNumberOption(
+			mod: manifest,
+			name: ()=> helper.Translation.Get("fse.config.custom.DeltaFrequency"),
+			getValue: () => ConfigModel.Instance.CustomDeltaUpdateFrequency,
+			setValue: val => ConfigModel.Instance.CustomDeltaUpdateFrequency = val,
+			min: 1
 		);
 			
 		configMenu.AddNumberOption(

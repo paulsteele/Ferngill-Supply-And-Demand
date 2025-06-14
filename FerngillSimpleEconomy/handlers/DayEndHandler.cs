@@ -1,5 +1,7 @@
 ﻿using System.Linq;
 using fse.core.actions;
+using fse.core.helpers;
+using fse.core.models;
 using fse.core.services;
 using StardewModdingAPI;
 using StardewValley;
@@ -12,8 +14,6 @@ public class DayEndHandler(
 	IEconomyService economyService)
 	: IHandler
 {
-	private const int LastDayOfMonth = 28;
-
 	public void Register()
 	{
 		helper.Events.GameLoop.DayEnding += (_, _) => 
@@ -33,7 +33,7 @@ public class DayEndHandler(
 
 		if (!Game1.player.team.useSeparateWallets.Value)
 		{
-			farmers = new[] { farmers.First() };
+			farmers = [farmers.First()];
 		}
 			
 		foreach (var farmer in farmers)
@@ -45,23 +45,6 @@ public class DayEndHandler(
 			}
 		}
 
-		HandleEndOfSeason();
-	}
-
-	private void HandleEndOfSeason()
-	{
-		if (Game1.dayOfMonth < LastDayOfMonth)
-		{
-			return;
-		}
-
-		if (Utility.getSeasonNumber(Game1.currentSeason) == 3)
-		{
-			economyService.SetupForNewYear();
-		}
-		else
-		{
-			economyService.SetupForNewSeason();
-		}
+		economyService.HandleDayEnd(new DayModel(Game1.year, SeasonHelper.GetCurrentSeason(), Game1.dayOfMonth));
 	}
 }

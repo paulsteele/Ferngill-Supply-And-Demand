@@ -16,9 +16,8 @@ public interface IEconomyService
 	void OnLoaded();
 	void ReceiveEconomy(EconomyModel economyModel);
 	void SendEconomyMessage();
-	void SetupForNewSeason();
-	void SetupForNewYear();
 	void Reset(bool updateSupply, bool updateDelta, Seasons season);
+	void HandleDayEnd(DayModel dayModel);
 	void AdvanceOneDay();
 	Dictionary<int, string> GetCategories();
 	ItemModel[] GetItemsForCategory(int category);
@@ -39,7 +38,8 @@ public class EconomyService(
 	IFishService fishService,
 	ISeedService seedService,
 	IArtisanService artisanService,
-	INormalDistributionService normalDistributionService
+	INormalDistributionService normalDistributionService,
+	IUpdateFrequencyService updateFrequencyService
 ) : IEconomyService
 {
 	private readonly Dictionary<int, List<int>> _categoryMapping = new();
@@ -155,16 +155,6 @@ public class EconomyService(
 		return new EconomyModel(validItems);
 	}
 
-	public void SetupForNewSeason()
-	{
-		Reset(false, true, SeasonHelper.GetNextSeason());
-	}
-		
-	public void SetupForNewYear()
-	{
-		Reset(true, true, SeasonHelper.GetNextSeason());
-	}
-
 	public void Reset(bool updateSupply, bool updateDelta, Seasons season)
 	{
 		if (IsClient)
@@ -174,6 +164,18 @@ public class EconomyService(
 		RandomizeEconomy(Economy, updateSupply, updateDelta, season);
 		Economy.ForAllItems(model => model.CapSupply());
 		QueueSave();
+	}
+
+	public void HandleDayEnd(DayModel dayModel)
+	{
+		var (shouldUpdateSupply, shouldUpdateDelta, season) = updateFrequencyService.GetUpdateFrequencyInformation(dayModel);
+
+		if (!shouldUpdateSupply && !shouldUpdateDelta)
+		{
+			return;
+		}
+
+		Reset(shouldUpdateSupply, shouldUpdateDelta, season);
 	}
 
 	private void RandomizeEconomy(EconomyModel model, bool updateSupply, bool updateDelta, Seasons season)
