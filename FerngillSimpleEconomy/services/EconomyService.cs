@@ -17,7 +17,7 @@ public interface IEconomyService
 	void ReceiveEconomy(EconomyModel economyModel);
 	void SendEconomyMessage();
 	void Reset(bool updateSupply, bool updateDelta, Seasons season);
-	void HandleDayEnd(int year, int dayOfMonth);
+	void HandleDayEnd(DayModel dayModel);
 	void AdvanceOneDay();
 	Dictionary<int, string> GetCategories();
 	ItemModel[] GetItemsForCategory(int category);
@@ -166,9 +166,9 @@ public class EconomyService(
 		QueueSave();
 	}
 
-	public void HandleDayEnd(int year, int dayOfMonth)
+	public void HandleDayEnd(DayModel dayModel)
 	{
-		var (shouldUpdateSupply, shouldUpdateDelta, season) = updateFrequencyService.GetUpdateFrequencyInformation(year, dayOfMonth);
+		var (shouldUpdateSupply, shouldUpdateDelta, season) = updateFrequencyService.GetUpdateFrequencyInformation(dayModel);
 
 		if (!shouldUpdateSupply && !shouldUpdateDelta)
 		{

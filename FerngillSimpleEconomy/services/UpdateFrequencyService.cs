@@ -5,26 +5,22 @@ namespace fse.core.services;
 
 public interface IUpdateFrequencyService
 {
-	public UpdateFrequencyInformation GetUpdateFrequencyInformation(int year, int dayOfMonth);
+	public UpdateFrequencyModel GetUpdateFrequencyInformation(DayModel dayModel);
 }
-
-public record UpdateFrequencyInformation(bool ShouldUpdateSupply, bool ShouldUpdateDelta, Seasons UpdateSeason);
 
 public class UpdateFrequencyService : IUpdateFrequencyService
 {
-	public UpdateFrequencyInformation GetUpdateFrequencyInformation(int year, int dayOfMonth)
+	public UpdateFrequencyModel GetUpdateFrequencyInformation(DayModel dayModel)
 	{
-		var totalDay = GetTotalDay(year, dayOfMonth);
+		var totalDays = dayModel.GetTotalDayCount();
 		
-		return new UpdateFrequencyInformation
+		return new UpdateFrequencyModel
 		(
-			totalDay % GetSupplyUpdateFrequencyInDays() == 0,
-			totalDay % GetDeltaUpdateFrequencyInDays() == 0,
-			dayOfMonth == (int)UpdateFrequency.Seasonally ? SeasonHelper.GetNextSeason() : SeasonHelper.GetCurrentSeason()
+			totalDays % GetSupplyUpdateFrequencyInDays() == 0,
+			totalDays % GetDeltaUpdateFrequencyInDays() == 0,
+			dayModel.DayOfMonth == (int)UpdateFrequency.Seasonally ? SeasonHelper.GetNextSeason() : SeasonHelper.GetCurrentSeason()
 		);
 	}
-
-	private static int GetTotalDay(int year, int dayOfMonth) => (year - 1) * (int)UpdateFrequency.Yearly + dayOfMonth;
 
 	private static int GetSupplyUpdateFrequencyInDays()
 	{

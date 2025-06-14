@@ -376,9 +376,10 @@ public class EconomyServiceTests : HarmonyTestBase
 		cat2Items[1].Supply = 12;
 		cat2Items[1].DailyDelta = 12;
 
-		_mockUpdateFrequencyService.Setup(m => m.GetUpdateFrequencyInformation(2, 2))
-			.Returns(new UpdateFrequencyInformation(false, true, Seasons.Summer));
-		_economyService.HandleDayEnd(2, 2);
+		var day = new DayModel(2, Seasons.Summer, 2);
+		_mockUpdateFrequencyService.Setup(m => m.GetUpdateFrequencyInformation(day))
+			.Returns(new UpdateFrequencyModel(false, true, Seasons.Summer));
+		_economyService.HandleDayEnd(day);
 
 		Assert.Multiple(() =>
 		{
@@ -424,9 +425,10 @@ public class EconomyServiceTests : HarmonyTestBase
 		_mockSeedService.Setup(m => m.GetSeedModelFromModelId("1")).Returns(seed1);
 		_mockSeedService.Setup(m => m.GetSeedModelFromModelId("2")).Returns(seed2);
 		
-		_mockUpdateFrequencyService.Setup(m => m.GetUpdateFrequencyInformation(2, 2))
-			.Returns(new UpdateFrequencyInformation(false, true, Seasons.Fall));
-		_economyService.HandleDayEnd(2, 2);
+		var day = new DayModel(2, Seasons.Summer, 28);
+		_mockUpdateFrequencyService.Setup(m => m.GetUpdateFrequencyInformation(day))
+			.Returns(new UpdateFrequencyModel(false, true, Seasons.Fall));
+		_economyService.HandleDayEnd(day);
 
 		Assert.Multiple(() =>
 		{
@@ -472,9 +474,10 @@ public class EconomyServiceTests : HarmonyTestBase
 		_mockFishService.Setup(m => m.GetFishModelFromModelId("1")).Returns(fish1);
 		_mockFishService.Setup(m => m.GetFishModelFromModelId("2")).Returns(fish2);
 		
-		_mockUpdateFrequencyService.Setup(m => m.GetUpdateFrequencyInformation(2, 2))
-			.Returns(new UpdateFrequencyInformation(false, true, Seasons.Fall));
-		_economyService.HandleDayEnd(2, 2);
+		var day = new DayModel(4, Seasons.Summer, 28);
+		_mockUpdateFrequencyService.Setup(m => m.GetUpdateFrequencyInformation(day))
+			.Returns(new UpdateFrequencyModel(false, true, Seasons.Fall));
+		_economyService.HandleDayEnd(day);
 
 		Assert.Multiple(() =>
 		{
@@ -512,9 +515,10 @@ public class EconomyServiceTests : HarmonyTestBase
 		cat2Items[1].Supply = 12;
 		cat2Items[1].DailyDelta = 12;
 		
-		_mockUpdateFrequencyService.Setup(m => m.GetUpdateFrequencyInformation(2, 2))
-			.Returns(new UpdateFrequencyInformation(false, true, Seasons.Spring));
-		_economyService.HandleDayEnd(2, 2);
+		var day = new DayModel(6, Seasons.Winter, 28);
+		_mockUpdateFrequencyService.Setup(m => m.GetUpdateFrequencyInformation(day))
+			.Returns(new UpdateFrequencyModel(false, true, Seasons.Spring));
+		_economyService.HandleDayEnd(day);
 		
 		Assert.Multiple(() =>
 		{
@@ -548,9 +552,10 @@ public class EconomyServiceTests : HarmonyTestBase
 		cat2Items[1].Supply = 12;
 		cat2Items[1].DailyDelta = 12;
 
-		_mockUpdateFrequencyService.Setup(m => m.GetUpdateFrequencyInformation(3, 28))
-			.Returns(new UpdateFrequencyInformation(true, true, Seasons.Spring));
-		_economyService.HandleDayEnd(3, 28);
+		var day = new DayModel(6, Seasons.Winter, 28);
+		_mockUpdateFrequencyService.Setup(m => m.GetUpdateFrequencyInformation(day))
+			.Returns(new UpdateFrequencyModel(true, true, Seasons.Spring));
+		_economyService.HandleDayEnd(day);
 
 		Assert.Multiple(() =>
 		{
@@ -597,9 +602,10 @@ public class EconomyServiceTests : HarmonyTestBase
 		_mockSeedService.Setup(m => m.GetSeedModelFromModelId("1")).Returns(seed1);
 		_mockSeedService.Setup(m => m.GetSeedModelFromModelId("2")).Returns(seed2);
 		
-		_mockUpdateFrequencyService.Setup(m => m.GetUpdateFrequencyInformation(3, 28))
-			.Returns(new UpdateFrequencyInformation(true, true, Seasons.Spring));
-		_economyService.HandleDayEnd(3, 28);
+		var day = new DayModel(6, Seasons.Winter, 28);
+		_mockUpdateFrequencyService.Setup(m => m.GetUpdateFrequencyInformation(day))
+			.Returns(new UpdateFrequencyModel(true, true, Seasons.Spring));
+		_economyService.HandleDayEnd(day);
 		
 		Assert.Multiple(() =>
 		{
@@ -645,9 +651,10 @@ public class EconomyServiceTests : HarmonyTestBase
 		_mockFishService.Setup(m => m.GetFishModelFromModelId("1")).Returns(fish1);
 		_mockFishService.Setup(m => m.GetFishModelFromModelId("2")).Returns(fish2);
 		
-		_mockUpdateFrequencyService.Setup(m => m.GetUpdateFrequencyInformation(3, 28))
-			.Returns(new UpdateFrequencyInformation(true, true, Seasons.Spring));
-		_economyService.HandleDayEnd(3, 28);
+		var day = new DayModel(6, Seasons.Winter, 28);
+		_mockUpdateFrequencyService.Setup(m => m.GetUpdateFrequencyInformation(day))
+			.Returns(new UpdateFrequencyModel(true, true, Seasons.Spring));
+		_economyService.HandleDayEnd(day);
 		
 		Assert.Multiple(() =>
 		{
@@ -685,9 +692,10 @@ public class EconomyServiceTests : HarmonyTestBase
 		cat2Items[1].Supply = 12;
 		cat2Items[1].DailyDelta = 12;
 		
-		_mockUpdateFrequencyService.Setup(m => m.GetUpdateFrequencyInformation(3, 28))
-			.Returns(new UpdateFrequencyInformation(true, true, Seasons.Spring));
-		_economyService.HandleDayEnd(3, 28);
+		var day = new DayModel(6, Seasons.Winter, 28);
+		_mockUpdateFrequencyService.Setup(m => m.GetUpdateFrequencyInformation(day))
+			.Returns(new UpdateFrequencyModel(true, true, Seasons.Spring));
+		_economyService.HandleDayEnd(day);
 		
 		Assert.Multiple(() =>
 		{

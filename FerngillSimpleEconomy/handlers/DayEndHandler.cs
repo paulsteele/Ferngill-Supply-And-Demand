@@ -14,8 +14,6 @@ public class DayEndHandler(
 	IEconomyService economyService)
 	: IHandler
 {
-	private const int LastDayOfMonth = 28;
-
 	public void Register()
 	{
 		helper.Events.GameLoop.DayEnding += (_, _) => 
@@ -47,6 +45,6 @@ public class DayEndHandler(
 			}
 		}
 
-		economyService.HandleDayEnd(Game1.year, Game1.dayOfMonth);
+		economyService.HandleDayEnd(new DayModel(Game1.year, SeasonHelper.GetCurrentSeason(), Game1.dayOfMonth));
 	}
 }
