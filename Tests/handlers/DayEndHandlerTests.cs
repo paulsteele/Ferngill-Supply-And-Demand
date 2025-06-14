@@ -167,20 +167,19 @@ public class DayEndHandlerTests : HarmonyTestBase
 		_mockEconomyService.Verify(m => m.AdjustSupply(It.IsAny<Object>(), It.IsAny<int>(), false), Times.Never);
 	}
 	
-	[TestCase(Season.Spring, true, false)]
-	[TestCase(Season.Summer, true, false)]
-	[TestCase(Season.Fall, true, false)]
-	[TestCase(Season.Winter, false, true)]
-	public void ShouldAdvanceToCorrectStateAtEndOfSeason(Season season, bool shouldAdvanceSeason, bool shouldAdvanceYear)
+	[TestCase(1, 1)]
+	[TestCase(2, 15)]
+	[TestCase(3, 28)]
+	[TestCase(5, 10)]
+	public void ShouldSendCorrectInfoToHandleDayEnd(int year, int dayOfMonth)
 	{
 		_farmerTeam.SetUseSeparateWalletsResult(false);
-		Game1.dayOfMonth = 28;
-		Game1.season = season;
-		
+		Game1.year = year;
+		Game1.dayOfMonth = dayOfMonth;
+
 		_mockGameLoopEvents.InvokeDayEnding();
-		
-		_mockEconomyService.Verify(m => m.SetupForNewSeason(), Times.Exactly(shouldAdvanceSeason ? 1 : 0));
-		_mockEconomyService.Verify(m => m.SetupForNewYear(), Times.Exactly(shouldAdvanceYear ? 1 : 0));
+
+		_mockEconomyService.Verify(m => m.HandleDayEnd(year, dayOfMonth), Times.Once);
 	}
 }
 

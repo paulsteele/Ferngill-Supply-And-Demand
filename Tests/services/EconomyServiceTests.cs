@@ -21,6 +21,7 @@ public class EconomyServiceTests : HarmonyTestBase
 	private Mock<ISeedService> _mockSeedService;
 	private Mock<IArtisanService> _mockArtisanService;
 	private Mock<INormalDistributionService> _mockNormalDistributionService;
+	private Mock<IUpdateFrequencyService> _mockUpdateFrequencyService;
 	private Farmer _player;
 
 	private EconomyService _economyService;
@@ -43,6 +44,7 @@ public class EconomyServiceTests : HarmonyTestBase
 		_mockSeedService = new Mock<ISeedService>();
 		_mockArtisanService = new Mock<IArtisanService>();
 		_mockNormalDistributionService = new Mock<INormalDistributionService>();
+		_mockUpdateFrequencyService = new Mock<IUpdateFrequencyService>();
 		_player = new Farmer();
 
 		_mockModHelper.Setup(m => m.Data).Returns(_mockDataHelper.Object);
@@ -78,7 +80,8 @@ public class EconomyServiceTests : HarmonyTestBase
 			_mockFishService.Object,
 			_mockSeedService.Object,
 			_mockArtisanService.Object,
-			_mockNormalDistributionService.Object
+			_mockNormalDistributionService.Object,
+			_mockUpdateFrequencyService.Object
 		);
 	}
 
@@ -372,8 +375,10 @@ public class EconomyServiceTests : HarmonyTestBase
 		cat2Items[0].DailyDelta = 12;
 		cat2Items[1].Supply = 12;
 		cat2Items[1].DailyDelta = 12;
-		
-		_economyService.SetupForNewSeason();
+
+		_mockUpdateFrequencyService.Setup(m => m.GetUpdateFrequencyInformation(2, 2))
+			.Returns(new UpdateFrequencyInformation(false, true, Seasons.Summer));
+		_economyService.HandleDayEnd(2, 2);
 
 		Assert.Multiple(() =>
 		{
@@ -396,8 +401,6 @@ public class EconomyServiceTests : HarmonyTestBase
 	{
 		_economyService.OnLoaded();
 
-		Game1.currentSeason = "Summer";
-		
 		var cat1Items = _economyService.GetItemsForCategory(1);
 		var cat2Items = _economyService.GetItemsForCategory(2);
 
@@ -421,7 +424,9 @@ public class EconomyServiceTests : HarmonyTestBase
 		_mockSeedService.Setup(m => m.GetSeedModelFromModelId("1")).Returns(seed1);
 		_mockSeedService.Setup(m => m.GetSeedModelFromModelId("2")).Returns(seed2);
 		
-		_economyService.SetupForNewSeason();
+		_mockUpdateFrequencyService.Setup(m => m.GetUpdateFrequencyInformation(2, 2))
+			.Returns(new UpdateFrequencyInformation(false, true, Seasons.Fall));
+		_economyService.HandleDayEnd(2, 2);
 
 		Assert.Multiple(() =>
 		{
@@ -444,8 +449,6 @@ public class EconomyServiceTests : HarmonyTestBase
 	{
 		_economyService.OnLoaded();
 
-		Game1.currentSeason = "Summer";
-		
 		var cat1Items = _economyService.GetItemsForCategory(1);
 		var cat2Items = _economyService.GetItemsForCategory(2);
 
@@ -469,7 +472,9 @@ public class EconomyServiceTests : HarmonyTestBase
 		_mockFishService.Setup(m => m.GetFishModelFromModelId("1")).Returns(fish1);
 		_mockFishService.Setup(m => m.GetFishModelFromModelId("2")).Returns(fish2);
 		
-		_economyService.SetupForNewSeason();
+		_mockUpdateFrequencyService.Setup(m => m.GetUpdateFrequencyInformation(2, 2))
+			.Returns(new UpdateFrequencyInformation(false, true, Seasons.Fall));
+		_economyService.HandleDayEnd(2, 2);
 
 		Assert.Multiple(() =>
 		{
@@ -507,7 +512,9 @@ public class EconomyServiceTests : HarmonyTestBase
 		cat2Items[1].Supply = 12;
 		cat2Items[1].DailyDelta = 12;
 		
-		_economyService.SetupForNewSeason();
+		_mockUpdateFrequencyService.Setup(m => m.GetUpdateFrequencyInformation(2, 2))
+			.Returns(new UpdateFrequencyInformation(false, true, Seasons.Spring));
+		_economyService.HandleDayEnd(2, 2);
 		
 		Assert.Multiple(() =>
 		{
@@ -540,9 +547,11 @@ public class EconomyServiceTests : HarmonyTestBase
 		cat2Items[0].DailyDelta = 12;
 		cat2Items[1].Supply = 12;
 		cat2Items[1].DailyDelta = 12;
-		
-		_economyService.SetupForNewYear();
-		
+
+		_mockUpdateFrequencyService.Setup(m => m.GetUpdateFrequencyInformation(3, 28))
+			.Returns(new UpdateFrequencyInformation(true, true, Seasons.Spring));
+		_economyService.HandleDayEnd(3, 28);
+
 		Assert.Multiple(() =>
 		{
 			Assert.That(cat1Items[0].Supply, Is.EqualTo(777)); 
@@ -563,8 +572,6 @@ public class EconomyServiceTests : HarmonyTestBase
 	public void ShouldSetupForNewYearWithNextSeasonsCrops()
 	{
 		_economyService.OnLoaded();
-		
-		Game1.currentSeason = "Winter";
 		
 		var cat1Items = _economyService.GetItemsForCategory(1);
 		var cat2Items = _economyService.GetItemsForCategory(2);
@@ -590,7 +597,9 @@ public class EconomyServiceTests : HarmonyTestBase
 		_mockSeedService.Setup(m => m.GetSeedModelFromModelId("1")).Returns(seed1);
 		_mockSeedService.Setup(m => m.GetSeedModelFromModelId("2")).Returns(seed2);
 		
-		_economyService.SetupForNewYear();
+		_mockUpdateFrequencyService.Setup(m => m.GetUpdateFrequencyInformation(3, 28))
+			.Returns(new UpdateFrequencyInformation(true, true, Seasons.Spring));
+		_economyService.HandleDayEnd(3, 28);
 		
 		Assert.Multiple(() =>
 		{
@@ -612,8 +621,6 @@ public class EconomyServiceTests : HarmonyTestBase
 	public void ShouldSetupForNewYearWithNextSeasonsFish()
 	{
 		_economyService.OnLoaded();
-		
-		Game1.currentSeason = "Winter";
 		
 		var cat1Items = _economyService.GetItemsForCategory(1);
 		var cat2Items = _economyService.GetItemsForCategory(2);
@@ -638,7 +645,9 @@ public class EconomyServiceTests : HarmonyTestBase
 		_mockFishService.Setup(m => m.GetFishModelFromModelId("1")).Returns(fish1);
 		_mockFishService.Setup(m => m.GetFishModelFromModelId("2")).Returns(fish2);
 		
-		_economyService.SetupForNewYear();
+		_mockUpdateFrequencyService.Setup(m => m.GetUpdateFrequencyInformation(3, 28))
+			.Returns(new UpdateFrequencyInformation(true, true, Seasons.Spring));
+		_economyService.HandleDayEnd(3, 28);
 		
 		Assert.Multiple(() =>
 		{
@@ -676,7 +685,9 @@ public class EconomyServiceTests : HarmonyTestBase
 		cat2Items[1].Supply = 12;
 		cat2Items[1].DailyDelta = 12;
 		
-		_economyService.SetupForNewYear();
+		_mockUpdateFrequencyService.Setup(m => m.GetUpdateFrequencyInformation(3, 28))
+			.Returns(new UpdateFrequencyInformation(true, true, Seasons.Spring));
+		_economyService.HandleDayEnd(3, 28);
 		
 		Assert.Multiple(() =>
 		{
@@ -1304,7 +1315,8 @@ public class EconomyServiceTests : HarmonyTestBase
 			_mockFishService.Object,
 			_mockSeedService.Object,
 			_mockArtisanService.Object,
-			_mockNormalDistributionService.Object
+			_mockNormalDistributionService.Object,
+			_mockUpdateFrequencyService.Object
 		);
 		
 		_economyService.OnLoaded();
