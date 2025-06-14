@@ -26,6 +26,10 @@ public class ConfigModel
 	public bool EnableTooltip { get; set; } = true;
 	public bool DisableArtisanMapping { get; set; } = false;
 	public KeybindList ShowMenuHotkey { get; set; } = KeybindList.Parse("H");
+	public UpdateFrequency SupplyUpdateFrequency { get; set; } = UpdateFrequency.Yearly;
+	public UpdateFrequency DeltaUpdateFrequency { get; set; } = UpdateFrequency.Seasonally;
+	public int CustomSupplyUpdateFrequency { get; set; } = 112;
+	public int CustomDeltaUpdateFrequency { get; set; } = 28;
 
 	public List<int> ValidCategories { get; set; } =
 	[
