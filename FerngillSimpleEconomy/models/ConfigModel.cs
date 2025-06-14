@@ -7,12 +7,16 @@ namespace fse.core.models;
 public class ConfigModel
 {
 	public static ConfigModel Instance { get; set; } = new();
-	public const int MinSupply = 0;
-	public const int MaxSupply = int.MaxValue;
+	public int MinSupply = 0;
+
+	public bool EnabledDynamicEcon { get; set; } = false; 
+	public int MaxSupply { get; set; } = int.MaxValue;
 	
 	public int MaxCalculatedSupply { get; set; } = 1000;
+	public int DaysToSupplyChange { get; set; } = 112;
 	public int MinDelta { get; set; } = -30;
 	public int MaxDelta { get; set; } = 30;
+	public int DaysToDeltaChange { get; set; } = 28;
 	public int DeltaArrow { get; set; } = 10;
 	public int StdDevSupply { get; set; } = 150;
 	public int StdDevDelta { get; set; } = 5;

@@ -82,7 +82,15 @@ public class GameLoadedHandler(
 			reset: () => ConfigModel.Instance = new ConfigModel(),
 			save: () => helper.WriteConfig(ConfigModel.Instance)
 		);
-			
+
+
+		configMenu.AddBoolOption(
+			mod: manifest,
+			name: () => helper.Translation.Get("fse.config.EnabledDynamicEcon"),
+			getValue: () => ConfigModel.Instance.EnabledDynamicEcon,
+			setValue: val => ConfigModel.Instance.EnabledDynamicEcon = val
+		);
+
 		configMenu.AddNumberOption(
 			mod: manifest,
 			name: ()=> helper.Translation.Get("fse.config.MaxCalculatedSupply"),
@@ -90,8 +98,34 @@ public class GameLoadedHandler(
 			setValue: val => ConfigModel.Instance.MaxCalculatedSupply = val,
 			min: 0
 		);
-			
+    
+    configMenu.AddNumberOption(
+			mod: manifest,
+			name: () => helper.Translation.Get("fse.config.MaxSupply"),
+			getValue: () => ConfigModel.Instance.MaxSupply,
+			setValue: val => ConfigModel.Instance.MaxSupply = val,
+			min: 0
+		);
+
 		configMenu.AddNumberOption(
+			mod: manifest,
+			name: () => helper.Translation.Get("fse.config.StdDevSupply"),
+			getValue: () => ConfigModel.Instance.StdDevSupply,
+			setValue: val => ConfigModel.Instance.StdDevSupply = val,
+			min: 0
+	  );
+
+
+		configMenu.AddNumberOption(
+			mod: manifest,
+			name: () => helper.Translation.Get("fse.config.DaysToSupplyChange"),
+			getValue: () => ConfigModel.Instance.DaysToSupplyChange,
+			setValue: val => ConfigModel.Instance.DaysToSupplyChange = val,
+			tooltip: () => helper.Translation.Get("fse.config.DaysToSupplyChangeTooltip"),
+			min: 1
+		);
+
+	configMenu.AddNumberOption(
 			mod: manifest,
 			name: ()=> helper.Translation.Get("fse.config.MinDelta"),
 			getValue: () => ConfigModel.Instance.MinDelta,
@@ -104,22 +138,23 @@ public class GameLoadedHandler(
 			getValue: () => ConfigModel.Instance.MaxDelta,
 			setValue: val => ConfigModel.Instance.MaxDelta = val
 		);
-			
+
 		configMenu.AddNumberOption(
 			mod: manifest,
 			name: ()=> helper.Translation.Get("fse.config.DeltaArrow"),
 			getValue: () => ConfigModel.Instance.DeltaArrow,
 			setValue: val => ConfigModel.Instance.DeltaArrow = val
 		);
-			
+
 		configMenu.AddNumberOption(
 			mod: manifest,
-			name: ()=> helper.Translation.Get("fse.config.StdDevSupply"),
-			getValue: () => ConfigModel.Instance.StdDevSupply,
-			setValue: val => ConfigModel.Instance.StdDevSupply = val,
-			min: 0
+			name: () => helper.Translation.Get("fse.config.DaysToDeltaChange"),
+			getValue: () => ConfigModel.Instance.DaysToDeltaChange,
+			setValue: val => ConfigModel.Instance.DaysToDeltaChange = val,
+			tooltip: ()=> helper.Translation.Get("fse.config.DaysToDeltaChangeToolTip"),
+			min: 1
 		);
-			
+
 		configMenu.AddNumberOption(
 			mod: manifest,
 			name: ()=> helper.Translation.Get("fse.config.StdDevDelta"),
