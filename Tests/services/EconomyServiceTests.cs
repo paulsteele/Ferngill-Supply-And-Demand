@@ -2,6 +2,7 @@
 using fse.core.multiplayer;
 using fse.core.services;
 using Moq;
+using NUnit.Framework.Constraints;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.GameData.Crops;
@@ -360,6 +361,64 @@ public class EconomyServiceTests : HarmonyTestBase
 	}
 
 	[Test]
+	public void ShouldHandleEndOfDay([Values] bool shouldUpdateSupply, [Values] bool shouldUpdateDelta, [Values]Seasons updateSeason)
+	{
+		_economyService.OnLoaded();
+		_mockNormalDistributionService.Invocations.Clear();
+		_mockDataHelper.Invocations.Clear();
+		
+		var cat1Items = _economyService.GetItemsForCategory(1);
+		var cat2Items = _economyService.GetItemsForCategory(2);
+		
+		var seed1 = new SeedModel("1", new CropData())
+		{
+			Seasons = updateSeason,
+		};
+		var outOfSeason = updateSeason == Seasons.Spring ? Seasons.Winter : Seasons.Spring;
+		var seed2 = new SeedModel("2", new CropData())
+		{
+			Seasons = outOfSeason,
+		};
+		_mockSeedService.Setup(m => m.GetSeedModelFromModelId("1")).Returns(seed1);
+		_mockSeedService.Setup(m => m.GetSeedModelFromModelId("2")).Returns(seed2);
+
+		cat1Items[0].Supply = 12;
+		cat1Items[0].DailyDelta = 12;
+		cat1Items[1].Supply = 12;
+		cat1Items[1].DailyDelta = 12;
+		cat2Items[0].Supply = 12;
+		cat2Items[0].DailyDelta = 12;
+		cat2Items[1].Supply = 12;
+		cat2Items[1].DailyDelta = 12;
+
+		var day = new DayModel(6, Seasons.Winter, 28);
+		_mockUpdateFrequencyService.Setup(m => m.GetUpdateFrequencyInformation(day))
+			.Returns(new UpdateFrequencyModel(shouldUpdateSupply, shouldUpdateDelta, updateSeason));
+		_economyService.HandleDayEnd(day);
+
+		var expectedSupply = shouldUpdateSupply ? 777 : 12;
+		var expectedSeasonlessDelta = shouldUpdateDelta ? 27 : 12;
+		var expectedOutOfSeasonDelta = shouldUpdateDelta ? 26 : 12;
+		var expectedInSeasonDelta = shouldUpdateDelta ? 25 : 12;
+
+		Assert.Multiple(() =>
+		{
+			Assert.That(cat1Items[0].Supply, Is.EqualTo(expectedSupply)); 
+			Assert.That(cat1Items[1].Supply, Is.EqualTo(expectedSupply)); 
+			Assert.That(cat2Items[0].Supply, Is.EqualTo(expectedSupply)); 
+			Assert.That(cat2Items[1].Supply, Is.EqualTo(expectedSupply));
+			
+			Assert.That(cat1Items[0].DailyDelta, Is.EqualTo(expectedOutOfSeasonDelta)); 
+			Assert.That(cat1Items[1].DailyDelta, Is.EqualTo(expectedInSeasonDelta)); 
+			Assert.That(cat2Items[0].DailyDelta, Is.EqualTo(expectedSeasonlessDelta)); 
+			Assert.That(cat2Items[1].DailyDelta, Is.EqualTo(expectedSeasonlessDelta));
+		});
+
+		_mockNormalDistributionService.Verify(m => m.Reset(), Times.Exactly(shouldUpdateSupply || shouldUpdateDelta ? 1 : 0));
+		_mockDataHelper.Verify(m => m.WriteSaveData(EconomyModel.ModelKey, It.IsAny<EconomyModel>()), Times.Exactly( shouldUpdateSupply || shouldUpdateDelta ? 1 : 0));
+	}
+
+	[Test]
 	public void ShouldSetupForNewSeason()
 	{
 		_economyService.OnLoaded();
@@ -534,7 +593,7 @@ public class EconomyServiceTests : HarmonyTestBase
 
 		_mockDataHelper.Verify(m => m.WriteSaveData(EconomyModel.ModelKey, It.IsAny<EconomyModel>()), Times.Exactly(1));
 	}
-	
+
 	[Test]
 	public void ShouldSetupForNewYear()
 	{
