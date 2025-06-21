@@ -191,20 +191,20 @@ public class GameLoadedHandler(
 			setValue: val => ConfigModel.Instance.StdDevDeltaOutOfSeason = val,
 			min: 0
 		);
-			
+		
 		configMenu.AddNumberOption(
 			mod: manifest,
 			name: ()=> helper.Translation.Get("fse.config.MinPercentage"),
-			getValue: () => ConfigModel.Instance.MinPercentage,
-			setValue: val => ConfigModel.Instance.MinPercentage = val,
+			getValue: () => (float)ConfigModel.Instance.MinPercentage,
+			setValue: val => ConfigModel.Instance.MinPercentage = (decimal)val,
 			min: 0f
 		);
 			
 		configMenu.AddNumberOption(
 			mod: manifest,
 			name: ()=> helper.Translation.Get("fse.config.MaxPercentage"),
-			getValue: () => ConfigModel.Instance.MaxPercentage,
-			setValue: val => ConfigModel.Instance.MaxPercentage = val,
+			getValue: () => (float)ConfigModel.Instance.MaxPercentage,
+			setValue: val => ConfigModel.Instance.MaxPercentage = (decimal)val,
 			min: 0f
 		);
 			

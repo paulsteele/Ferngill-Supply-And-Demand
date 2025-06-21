@@ -18,8 +18,8 @@ public class ConfigModel
 	public int StdDevDelta { get; set; } = 5;
 	public int StdDevDeltaInSeason { get; set; } = 12;
 	public int StdDevDeltaOutOfSeason { get; set; } = 5;
-	public float MinPercentage { get; set; } = 0.2f;
-	public float MaxPercentage { get; set; } = 1.3f;
+	public decimal MinPercentage { get; set; } = 0.2m;
+	public decimal MaxPercentage { get; set; } = 1.3m;
 	public int MenuTabOffset { get; set; } = 0;
 	public bool EnableMenuTab { get; set; } = true;
 	public bool EnableShopDisplay { get; set; } = true;

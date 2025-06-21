@@ -15,8 +15,8 @@ public class ItemModelTests : HarmonyTestBase
 			MaxCalculatedSupply = 200,
 			MinDelta = -100,
 			MaxDelta = 20,
-			MinPercentage = 0.2f,
-			MaxPercentage = 0.8f,
+			MinPercentage = 0.2m,
+			MaxPercentage = 0.8m,
 		};
 
 		_itemModel = new ItemModel("item1")
@@ -64,14 +64,19 @@ public class ItemModelTests : HarmonyTestBase
 		Assert.That(obj.ItemId, Is.EqualTo(_itemModel.ObjectId));
 	}
 
-	[TestCase(.3f, 1.3f, 1000, 750, 100, ExpectedResult = 54d)]
-	[TestCase(.3f, 1.3f, 1000, 250, 100, ExpectedResult = 104d)]
-	[TestCase(.2f, 5f, 1000, 500, 100, ExpectedResult = 260d)]
-	[TestCase(6.5f, 7f, 1000, 1000, 100, ExpectedResult = 650d)]
-	[TestCase(3.5f, 5f, 1000, 0, 100, ExpectedResult = 500d)]
-	public double TestGetPrice(
-		float minMultiplier,
-		float maxMultiplier,
+	private static IEnumerable<TestCaseData> TestGetPriceSource()
+	{
+		yield return new TestCaseData(.3m, 1.3m, 1000, 750, 100).Returns(55m);
+		yield return new TestCaseData(.3m, 1.3m, 1000, 250, 100).Returns(105m);
+		yield return new TestCaseData(.2m, 5m, 1000, 500, 100).Returns(260m);
+		yield return new TestCaseData(6.5m, 7m, 1000, 1000, 100).Returns(650m);
+		yield return new TestCaseData(3.5m, 5m, 1000, 0, 100).Returns(500m);
+	}
+	
+	[TestCaseSource(nameof(TestGetPriceSource))]
+	public decimal TestGetPrice(
+		decimal minMultiplier,
+		decimal maxMultiplier,
 		int maxCalculatedSupply,
 		int supply,
 		int basePrice

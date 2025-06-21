@@ -27,7 +27,7 @@ public interface IEconomyService
 	bool ItemValidForSeason(ItemModel model, Seasons seasonsFilter);
 	int GetPricePerDay(ItemModel model);
 	ItemModel GetConsolidatedItem(ItemModel original);
-	float GetBreakEvenSupply();
+	decimal GetBreakEvenSupply();
 	ItemModel? GetItemModelFromObject(Object obj);
 }
 
@@ -258,31 +258,28 @@ public class EconomyService(
 			var price = GetArtisanGoodPrice(artisanBase, basePrice);
 			if (price > 0)
 			{
-				return price;
+				return RoundDecimal(price);
 			}
 		}
-			
+
 		var itemModel = Economy.GetItem(obj);
 		if (itemModel == null)
 		{
-			// monitor.Log($"Could not find item model for {obj.name}", LogLevel.Trace);
 			return basePrice;
 		}
 		var adjustedPrice = itemModel.GetPrice(basePrice);
-			
-		// monitor.Log($"Altered {obj.name} from {basePrice} to {adjustedPrice}", LogLevel.Trace);
 
-		return adjustedPrice;
+		return RoundDecimal(adjustedPrice);
 	}
 
-	public float GetBreakEvenSupply()
+	public decimal GetBreakEvenSupply()
 	{
-		if (ConfigModel.Instance.MaxPercentage < 1f)
+		if (ConfigModel.Instance.MaxPercentage < 1m)
 		{
 			return -1;
 		}
 
-		if (ConfigModel.Instance.MinPercentage > 1f)
+		if (ConfigModel.Instance.MinPercentage > 1m)
 		{
 			return -1;
 		}
@@ -314,7 +311,7 @@ public class EconomyService(
 		return string.IsNullOrWhiteSpace(preserveId) ? null : new Object(preserveId, 1);
 	}
 
-	private int GetArtisanGoodPrice(Object artisanBase, int price)
+	private decimal GetArtisanGoodPrice(Object artisanBase, int price)
 	{
 		var basePrice = GetPrice(artisanBase, artisanBase.Price);
 
@@ -323,9 +320,9 @@ public class EconomyService(
 			return -1;
 		}
 			
-		var modifier = price / (double)artisanBase.Price;
+		var modifier = price / (decimal)artisanBase.Price;
 
-		return (int)(basePrice * modifier);
+		return basePrice * modifier;
 	}
 
 	public void AdjustSupply(Object? obj, int amount, bool notifyPeers = true)
@@ -436,4 +433,5 @@ public class EconomyService(
 	}
 
 	private static int RoundDouble(double d) => (int)Math.Round(d, 0, MidpointRounding.ToEven);
+	private static int RoundDecimal(decimal d) => (int)Math.Round(d, 0, MidpointRounding.ToEven);
 }

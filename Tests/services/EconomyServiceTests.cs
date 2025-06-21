@@ -1399,18 +1399,23 @@ public class EconomyServiceTests : HarmonyTestBase
 		});
  }
 
-	[TestCase(1000, .2f, 1f, 0)]
-	[TestCase(1000, .2f, .2f, -1)]
-	[TestCase(1000, 1.1f, 2.0f, -1)]
-	[TestCase(1000, .2f, .9f, -1)]
-	[TestCase(1000, .2f, 1.3f, 272.72f)]
-	[TestCase(10000, .2f, 1.3f, 2727.27f)]
-	[TestCase(1000, .1f, 1.8f, 470.58f)]
+	private static IEnumerable<TestCaseData> ShouldGetBreakEvenSupplyTestCases()
+	{
+		yield return new TestCaseData(1000, .2m, 1m, 0f);
+		yield return new TestCaseData(1000, .2m, .2m, -1f);
+		yield return new TestCaseData(1000, 1.1m, 2.0m, -1f);
+		yield return new TestCaseData(1000, .2m, .9m, -1f);
+		yield return new TestCaseData(1000, .2m, 1.3m, 272.72f);
+		yield return new TestCaseData(10000, .2m, 1.3m, 2727.27f);
+		yield return new TestCaseData(1000, .1m, 1.8m, 470.58f);
+	}
+	
+	[Test, TestCaseSource(nameof(ShouldGetBreakEvenSupplyTestCases))]
 	public void ShouldGetBreakEvenSupply
 	(
 		int maxCalculatedSupply,
-		float minPercentage,
-		float maxPercentage,
+		decimal minPercentage,
+		decimal maxPercentage,
 		float expectedSupply
 		)
 	{

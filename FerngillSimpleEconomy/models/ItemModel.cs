@@ -12,7 +12,7 @@ namespace fse.core.models
 		private int _supply;
 
 		//cache the multiplier at the beginning of the day to keep prices consistent throughout the day
-		private double _cachedMultiplier = 1d;
+		private decimal _cachedMultiplier = 1m;
 
 		[JsonInclude] public string ObjectId => objectId;
 
@@ -41,15 +41,15 @@ namespace fse.core.models
 			_cachedMultiplier = GetMultiplier();
 		}
 
-		private double GetMultiplier()
+		private decimal GetMultiplier()
 		{
-			var ratio = 1 - (Math.Min(Supply, ConfigModel.Instance.MaxCalculatedSupply) / (double)ConfigModel.Instance.MaxCalculatedSupply);
+			var ratio = 1 - (Math.Min(Supply, ConfigModel.Instance.MaxCalculatedSupply) / (decimal)ConfigModel.Instance.MaxCalculatedSupply);
 			var percentageRange = ConfigModel.Instance.MaxPercentage - ConfigModel.Instance.MinPercentage;
 
 			return (ratio * percentageRange) + ConfigModel.Instance.MinPercentage;
 		}
 
-		public int GetPrice(int basePrice) => (int)(basePrice * _cachedMultiplier);
+		public decimal GetPrice(int basePrice) => basePrice * _cachedMultiplier;
 
 		public void CapSupply()
 		{
