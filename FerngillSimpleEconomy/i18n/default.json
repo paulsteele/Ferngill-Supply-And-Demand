@@ -45,5 +45,7 @@
 	"fse.config.frequency.Seasonally": "Seasonally",
 	"fse.config.frequency.Weekly": "Weekly",
 	"fse.config.frequency.Daily": "Daily",
-	"fse.config.frequency.Custom": "Custom"
+	"fse.config.frequency.Custom": "Custom",
+	"fse.config.page.advanced": "Advanced",
+	"fse.config.page.categories": "Categories"
 }

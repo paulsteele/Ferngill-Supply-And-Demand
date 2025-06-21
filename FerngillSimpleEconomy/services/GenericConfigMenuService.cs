@@ -26,6 +26,9 @@ public class GenericConfigMenuService(
 	IEconomyService economyService
 ) : IGenericConfigMenuService
 {
+	private const string AdvancedPageId = "advanced";
+	private const string CategoriesPageId = "categories";
+	
 	public void Register(IGenericModConfigMenuApi? configMenu)
 	{
 		if (configMenu is null)
@@ -38,6 +41,9 @@ public class GenericConfigMenuService(
 			reset: () => ConfigModel.Instance = new ConfigModel(),
 			save: () => helper.WriteConfig(ConfigModel.Instance)
 		);
+
+		configMenu.AddPageLink(manifest, AdvancedPageId, () => helper.Translation.Get("fse.config.page.advanced"));
+		configMenu.AddPageLink(manifest, CategoriesPageId, () => helper.Translation.Get("fse.config.page.categories"));
 
 		configMenu.AddTextOption(
 			mod: manifest,
@@ -85,6 +91,13 @@ public class GenericConfigMenuService(
 			min: 1
 		);
 
+		configMenu.AddKeybindList(
+			mod: manifest,
+			name: ()=> helper.Translation.Get("fse.config.hotkey.openMenu"),
+			getValue: () => ConfigModel.Instance.ShowMenuHotkey,
+			setValue: val => ConfigModel.Instance.ShowMenuHotkey = val
+		);
+
 		configMenu.AddNumberOption(
 			mod: manifest,
 			name: ()=> helper.Translation.Get("fse.config.MaxCalculatedSupply"),
@@ -92,6 +105,53 @@ public class GenericConfigMenuService(
 			setValue: val => ConfigModel.Instance.MaxCalculatedSupply = val,
 			min: 0
 		);
+
+		configMenu.AddNumberOption(
+			mod: manifest,
+			name: ()=> helper.Translation.Get("fse.config.MinPercentage"),
+			getValue: () => (float)ConfigModel.Instance.MinPercentage,
+			setValue: val => ConfigModel.Instance.MinPercentage = (decimal)val,
+			min: 0f
+		);
+
+		configMenu.AddNumberOption(
+			mod: manifest,
+			name: ()=> helper.Translation.Get("fse.config.MaxPercentage"),
+			getValue: () => (float)ConfigModel.Instance.MaxPercentage,
+			setValue: val => ConfigModel.Instance.MaxPercentage = (decimal)val,
+			min: 0f
+		);
+
+		configMenu.AddNumberOption(
+			mod: manifest,
+			name: ()=> helper.Translation.Get("fse.config.MenuTabOffset"),
+			getValue: () => ConfigModel.Instance.MenuTabOffset,
+			setValue: val => ConfigModel.Instance.MenuTabOffset = val
+		);
+
+		configMenu.AddBoolOption(
+			mod: manifest,
+			name: ()=> helper.Translation.Get("fse.config.EnableMenuTab"),
+			getValue: () => ConfigModel.Instance.EnableMenuTab,
+			setValue: val => ConfigModel.Instance.EnableMenuTab = val
+		);
+
+		configMenu.AddBoolOption(
+			mod: manifest,
+			name: ()=> helper.Translation.Get("fse.config.EnableTooltip"),
+			getValue: () => ConfigModel.Instance.EnableTooltip,
+			setValue: val => ConfigModel.Instance.EnableTooltip = val
+		);
+
+		configMenu.AddBoolOption(
+			mod: manifest,
+			name: ()=> helper.Translation.Get("fse.config.EnableShopDisplay"),
+			getValue: () => ConfigModel.Instance.EnableShopDisplay,
+			setValue: val => ConfigModel.Instance.EnableShopDisplay = val
+		);
+		
+		
+		configMenu.AddPage(manifest, "advanced", () => helper.Translation.Get("fse.config.page.advanced"));
 
 		configMenu.AddNumberOption(
 			mod: manifest,
@@ -146,50 +206,6 @@ public class GenericConfigMenuService(
 			min: 0
 		);
 
-		configMenu.AddNumberOption(
-			mod: manifest,
-			name: ()=> helper.Translation.Get("fse.config.MinPercentage"),
-			getValue: () => (float)ConfigModel.Instance.MinPercentage,
-			setValue: val => ConfigModel.Instance.MinPercentage = (decimal)val,
-			min: 0f
-		);
-
-		configMenu.AddNumberOption(
-			mod: manifest,
-			name: ()=> helper.Translation.Get("fse.config.MaxPercentage"),
-			getValue: () => (float)ConfigModel.Instance.MaxPercentage,
-			setValue: val => ConfigModel.Instance.MaxPercentage = (decimal)val,
-			min: 0f
-		);
-
-		configMenu.AddNumberOption(
-			mod: manifest,
-			name: ()=> helper.Translation.Get("fse.config.MenuTabOffset"),
-			getValue: () => ConfigModel.Instance.MenuTabOffset,
-			setValue: val => ConfigModel.Instance.MenuTabOffset = val
-		);
-
-		configMenu.AddBoolOption(
-			mod: manifest,
-			name: ()=> helper.Translation.Get("fse.config.EnableMenuTab"),
-			getValue: () => ConfigModel.Instance.EnableMenuTab,
-			setValue: val => ConfigModel.Instance.EnableMenuTab = val
-		);
-
-		configMenu.AddBoolOption(
-			mod: manifest,
-			name: ()=> helper.Translation.Get("fse.config.EnableTooltip"),
-			getValue: () => ConfigModel.Instance.EnableTooltip,
-			setValue: val => ConfigModel.Instance.EnableTooltip = val
-		);
-
-		configMenu.AddBoolOption(
-			mod: manifest,
-			name: ()=> helper.Translation.Get("fse.config.EnableShopDisplay"),
-			getValue: () => ConfigModel.Instance.EnableShopDisplay,
-			setValue: val => ConfigModel.Instance.EnableShopDisplay = val
-		);
-
 		configMenu.AddBoolOption(
 			mod: manifest,
 			name: ()=> helper.Translation.Get("fse.config.DisableArtisanMapping"),
@@ -197,12 +213,40 @@ public class GenericConfigMenuService(
 			setValue: val => ConfigModel.Instance.DisableArtisanMapping = val
 		);
 
-		configMenu.AddKeybindList(
+		var resetButton = new OptionsButton(helper.Translation.Get("fse.config.Reset"), () => { });
+		var resetState = false;
+
+		configMenu.AddComplexOption(
 			mod: manifest,
-			name: ()=> helper.Translation.Get("fse.config.hotkey.openMenu"),
-			getValue: () => ConfigModel.Instance.ShowMenuHotkey,
-			setValue: val => ConfigModel.Instance.ShowMenuHotkey = val
+			name: () => helper.Translation.Get("fse.config.ResetEconomy"),
+			draw: (batch, position) =>
+			{
+				resetButton.bounds = new Rectangle((int)position.X, (int)position.Y, 300, 60);
+				resetButton.draw(batch, 0, 0);
+				if (helper.Input.IsDown(SButton.MouseLeft))
+				{
+					resetState = true;
+				}
+				else
+				{
+					if (resetState && resetButton.bounds.Contains(helper.Input.GetCursorPosition().GetUiScaledPosition()))
+					{
+						if (Game1.player.IsMainPlayer)
+						{
+							if (economyService.Loaded)
+							{
+								economyService.Reset(true, true, SeasonHelper.GetCurrentSeason());
+								economyService.AdvanceOneDay();
+							}
+						}
+					}
+
+					resetState = false;
+				}
+			}
 		);
+
+		configMenu.AddPage(manifest, CategoriesPageId, () => helper.Translation.Get("fse.config.page.categories"));
 
 		configMenu.AddSectionTitle(
 			mod: manifest,
@@ -239,38 +283,5 @@ public class GenericConfigMenuService(
 				}
 			);
 		}
-
-		var resetButton = new OptionsButton(helper.Translation.Get("fse.config.Reset"), () => { });
-		var resetState = false;
-
-		configMenu.AddComplexOption(
-			mod: manifest,
-			name: () => helper.Translation.Get("fse.config.ResetEconomy"),
-			draw: (batch, position) =>
-			{
-				resetButton.bounds = new Rectangle((int)position.X, (int)position.Y, 300, 60);
-				resetButton.draw(batch, 0, 0);
-				if (helper.Input.IsDown(SButton.MouseLeft))
-				{
-					resetState = true;
-				}
-				else
-				{
-					if (resetState && resetButton.bounds.Contains(helper.Input.GetCursorPosition().GetUiScaledPosition()))
-					{
-						if (Game1.player.IsMainPlayer)
-						{
-							if (economyService.Loaded)
-							{
-								economyService.Reset(true, true, SeasonHelper.GetCurrentSeason());
-								economyService.AdvanceOneDay();
-							}
-						}
-					}
-
-					resetState = false;
-				}
-			}
-		);
 	}
 }
