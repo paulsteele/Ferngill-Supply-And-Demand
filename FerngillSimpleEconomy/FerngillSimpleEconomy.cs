@@ -28,9 +28,20 @@ public class FerngillSimpleEconomy : Mod
 		var betterGameMenuService = new BetterGameMenuService(ModManifest, helper, forecastMenuService);
 		var iconicFrameworkService = new IconicFrameworkService(helper, forecastMenuService);
 		var starControlService = new StarControlService(ModManifest, helper, forecastMenuService);
+		var genericConfigMenuService = new GenericConfigMenuService(helper, ModManifest, economyService);
 		var tooltipMenu = new TooltipMenu(helper, economyService, drawSupplyBarHelper, betterGameMenuService);
 		RegisterPatches(economyService, drawSupplyBarHelper);
-		RegisterHandlers(helper, economyService, forecastMenuService, betterGameMenuService, iconicFrameworkService, starControlService, tooltipMenu, multiplayerService);
+		RegisterHandlers(
+			helper, 
+			economyService, 
+			forecastMenuService, 
+			betterGameMenuService, 
+			iconicFrameworkService, 
+			starControlService, 
+			genericConfigMenuService, 
+			tooltipMenu, 
+			multiplayerService
+		);
 		helper.ConsoleCommands.Add("fse_reset", "Fully Resets Ferngill Simple Economy", (_, _) =>
 		{
 			if (!Game1.player.IsMainPlayer)
@@ -74,13 +85,14 @@ public class FerngillSimpleEconomy : Mod
 		BetterGameMenuService betterGameMenuService,
 		IconicFrameworkService iconicFrameworkService,
 		StarControlService starControlService,
+		GenericConfigMenuService genericConfigMenuService,
 		TooltipMenu tooltipMenu, 
 		MultiplayerService multiplayerService
 	)
 	{
 		new DayEndHandler(helper, Monitor, economyService).Register();
 		new SaveLoadedHandler(helper, Monitor, economyService).Register();
-		new GameLoadedHandler(helper, Monitor, ModManifest, economyService, betterGameMenuService, iconicFrameworkService, starControlService).Register();
+		new GameLoadedHandler(helper, Monitor, ModManifest, betterGameMenuService, iconicFrameworkService, starControlService, genericConfigMenuService).Register();
 		new GameMenuLoadedHandler(helper, Monitor, forecastMenuService, tooltipMenu).Register();
 		new MultiplayerHandler(helper, economyService, multiplayerService).Register();
 		new HotkeyHandler(helper, forecastMenuService).Register();
