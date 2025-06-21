@@ -47,5 +47,7 @@
 	"fse.config.frequency.Daily": "Daily",
 	"fse.config.frequency.Custom": "Custom",
 	"fse.config.page.advanced": "Advanced",
-	"fse.config.page.categories": "Categories"
+	"fse.config.page.categories": "Categories",
+	"fse.config.page.menu": "Menu",
+	"fse.config.page.frequency": "Frequency"
 }

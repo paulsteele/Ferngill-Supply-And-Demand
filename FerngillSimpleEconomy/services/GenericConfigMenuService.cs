@@ -28,6 +28,8 @@ public class GenericConfigMenuService(
 {
 	private const string AdvancedPageId = "advanced";
 	private const string CategoriesPageId = "categories";
+	private const string MenuPageId = "menu";
+	private const string FrequencyPageId = "frequency";
 	
 	public void Register(IGenericModConfigMenuApi? configMenu)
 	{
@@ -40,62 +42,6 @@ public class GenericConfigMenuService(
 			mod: manifest,
 			reset: () => ConfigModel.Instance = new ConfigModel(),
 			save: () => helper.WriteConfig(ConfigModel.Instance)
-		);
-
-		configMenu.AddPageLink(manifest, AdvancedPageId, () => helper.Translation.Get("fse.config.page.advanced"));
-		configMenu.AddPageLink(manifest, CategoriesPageId, () => helper.Translation.Get("fse.config.page.categories"));
-
-		configMenu.AddTextOption(
-			mod: manifest,
-			name: () => helper.Translation.Get("fse.config.SupplyFrequency"),
-			getValue: () => ConfigModel.Instance.SupplyUpdateFrequency.ToString(),
-			setValue: val =>
-			{
-				if (Enum.TryParse<UpdateFrequency>(val, true, out var frequency))
-				{
-					ConfigModel.Instance.SupplyUpdateFrequency = frequency;
-				}
-			},
-			allowedValues: Enum.GetNames(typeof(UpdateFrequency)),
-			formatAllowedValue: val => helper.Translation.Get($"fse.config.frequency.{val}")
-		);
-
-		configMenu.AddNumberOption(
-			mod: manifest,
-			name: ()=> helper.Translation.Get("fse.config.custom.SupplyFrequency"),
-			getValue: () => ConfigModel.Instance.CustomSupplyUpdateFrequency,
-			setValue: val => ConfigModel.Instance.CustomSupplyUpdateFrequency = val,
-			min: 1
-		);
-
-		configMenu.AddTextOption(
-			mod: manifest,
-			name: () => helper.Translation.Get("fse.config.DeltaFrequency"),
-			getValue: () => ConfigModel.Instance.DeltaUpdateFrequency.ToString(),
-			setValue: val =>
-			{
-				if (Enum.TryParse<UpdateFrequency>(val, true, out var frequency))
-				{
-					ConfigModel.Instance.DeltaUpdateFrequency = frequency;
-				}
-			},
-			allowedValues: Enum.GetNames(typeof(UpdateFrequency)),
-			formatAllowedValue: val => helper.Translation.Get($"fse.config.frequency.{val}")
-		);
-
-		configMenu.AddNumberOption(
-			mod: manifest,
-			name: ()=> helper.Translation.Get("fse.config.custom.DeltaFrequency"),
-			getValue: () => ConfigModel.Instance.CustomDeltaUpdateFrequency,
-			setValue: val => ConfigModel.Instance.CustomDeltaUpdateFrequency = val,
-			min: 1
-		);
-
-		configMenu.AddKeybindList(
-			mod: manifest,
-			name: ()=> helper.Translation.Get("fse.config.hotkey.openMenu"),
-			getValue: () => ConfigModel.Instance.ShowMenuHotkey,
-			setValue: val => ConfigModel.Instance.ShowMenuHotkey = val
 		);
 
 		configMenu.AddNumberOption(
@@ -122,35 +68,19 @@ public class GenericConfigMenuService(
 			min: 0f
 		);
 
-		configMenu.AddNumberOption(
-			mod: manifest,
-			name: ()=> helper.Translation.Get("fse.config.MenuTabOffset"),
-			getValue: () => ConfigModel.Instance.MenuTabOffset,
-			setValue: val => ConfigModel.Instance.MenuTabOffset = val
-		);
+		configMenu.AddPageLink(manifest, FrequencyPageId, () => helper.Translation.Get("fse.config.page.frequency"));
+		configMenu.AddPageLink(manifest, MenuPageId, () => helper.Translation.Get("fse.config.page.menu"));
+		configMenu.AddPageLink(manifest, CategoriesPageId, () => helper.Translation.Get("fse.config.page.categories"));
+		configMenu.AddPageLink(manifest, AdvancedPageId, () => helper.Translation.Get("fse.config.page.advanced"));
 
-		configMenu.AddBoolOption(
-			mod: manifest,
-			name: ()=> helper.Translation.Get("fse.config.EnableMenuTab"),
-			getValue: () => ConfigModel.Instance.EnableMenuTab,
-			setValue: val => ConfigModel.Instance.EnableMenuTab = val
-		);
+		PopulateFrequencyPage(configMenu);
+		PopulateMenuPage(configMenu);
+		PopulateCategoriesPage(configMenu);
+		PopulateAdvancedPage(configMenu);
+	}
 
-		configMenu.AddBoolOption(
-			mod: manifest,
-			name: ()=> helper.Translation.Get("fse.config.EnableTooltip"),
-			getValue: () => ConfigModel.Instance.EnableTooltip,
-			setValue: val => ConfigModel.Instance.EnableTooltip = val
-		);
-
-		configMenu.AddBoolOption(
-			mod: manifest,
-			name: ()=> helper.Translation.Get("fse.config.EnableShopDisplay"),
-			getValue: () => ConfigModel.Instance.EnableShopDisplay,
-			setValue: val => ConfigModel.Instance.EnableShopDisplay = val
-		);
-		
-		
+	private void PopulateAdvancedPage(IGenericModConfigMenuApi configMenu)
+	{
 		configMenu.AddPage(manifest, "advanced", () => helper.Translation.Get("fse.config.page.advanced"));
 
 		configMenu.AddNumberOption(
@@ -245,7 +175,10 @@ public class GenericConfigMenuService(
 				}
 			}
 		);
-
+	}
+	
+	private void PopulateCategoriesPage(IGenericModConfigMenuApi configMenu)
+	{
 		configMenu.AddPage(manifest, CategoriesPageId, () => helper.Translation.Get("fse.config.page.categories"));
 
 		configMenu.AddSectionTitle(
@@ -283,5 +216,96 @@ public class GenericConfigMenuService(
 				}
 			);
 		}
+	}
+
+	private void PopulateFrequencyPage(IGenericModConfigMenuApi configMenu)
+	{
+		configMenu.AddPage(manifest, FrequencyPageId, () => helper.Translation.Get("fse.config.page.frequency"));
+		
+		configMenu.AddTextOption(
+			mod: manifest,
+			name: () => helper.Translation.Get("fse.config.SupplyFrequency"),
+			getValue: () => ConfigModel.Instance.SupplyUpdateFrequency.ToString(),
+			setValue: val =>
+			{
+				if (Enum.TryParse<UpdateFrequency>(val, true, out var frequency))
+				{
+					ConfigModel.Instance.SupplyUpdateFrequency = frequency;
+				}
+			},
+			allowedValues: Enum.GetNames(typeof(UpdateFrequency)),
+			formatAllowedValue: val => helper.Translation.Get($"fse.config.frequency.{val}")
+		);
+
+		configMenu.AddNumberOption(
+			mod: manifest,
+			name: ()=> helper.Translation.Get("fse.config.custom.SupplyFrequency"),
+			getValue: () => ConfigModel.Instance.CustomSupplyUpdateFrequency,
+			setValue: val => ConfigModel.Instance.CustomSupplyUpdateFrequency = val,
+			min: 1
+		);
+
+		configMenu.AddTextOption(
+			mod: manifest,
+			name: () => helper.Translation.Get("fse.config.DeltaFrequency"),
+			getValue: () => ConfigModel.Instance.DeltaUpdateFrequency.ToString(),
+			setValue: val =>
+			{
+				if (Enum.TryParse<UpdateFrequency>(val, true, out var frequency))
+				{
+					ConfigModel.Instance.DeltaUpdateFrequency = frequency;
+				}
+			},
+			allowedValues: Enum.GetNames(typeof(UpdateFrequency)),
+			formatAllowedValue: val => helper.Translation.Get($"fse.config.frequency.{val}")
+		);
+
+		configMenu.AddNumberOption(
+			mod: manifest,
+			name: ()=> helper.Translation.Get("fse.config.custom.DeltaFrequency"),
+			getValue: () => ConfigModel.Instance.CustomDeltaUpdateFrequency,
+			setValue: val => ConfigModel.Instance.CustomDeltaUpdateFrequency = val,
+			min: 1
+		);
+	}
+
+	private void PopulateMenuPage(IGenericModConfigMenuApi configMenu)
+	{
+		configMenu.AddPage(manifest, MenuPageId, () => helper.Translation.Get("fse.config.page.menu"));
+		
+		configMenu.AddKeybindList(
+			mod: manifest,
+			name: ()=> helper.Translation.Get("fse.config.hotkey.openMenu"),
+			getValue: () => ConfigModel.Instance.ShowMenuHotkey,
+			setValue: val => ConfigModel.Instance.ShowMenuHotkey = val
+		);
+		
+		configMenu.AddBoolOption(
+			mod: manifest,
+			name: ()=> helper.Translation.Get("fse.config.EnableMenuTab"),
+			getValue: () => ConfigModel.Instance.EnableMenuTab,
+			setValue: val => ConfigModel.Instance.EnableMenuTab = val
+		);
+
+		configMenu.AddBoolOption(
+			mod: manifest,
+			name: ()=> helper.Translation.Get("fse.config.EnableTooltip"),
+			getValue: () => ConfigModel.Instance.EnableTooltip,
+			setValue: val => ConfigModel.Instance.EnableTooltip = val
+		);
+
+		configMenu.AddBoolOption(
+			mod: manifest,
+			name: ()=> helper.Translation.Get("fse.config.EnableShopDisplay"),
+			getValue: () => ConfigModel.Instance.EnableShopDisplay,
+			setValue: val => ConfigModel.Instance.EnableShopDisplay = val
+		);
+		
+		configMenu.AddNumberOption(
+			mod: manifest,
+			name: ()=> helper.Translation.Get("fse.config.MenuTabOffset"),
+			getValue: () => ConfigModel.Instance.MenuTabOffset,
+			setValue: val => ConfigModel.Instance.MenuTabOffset = val
+		);
 	}
 }
