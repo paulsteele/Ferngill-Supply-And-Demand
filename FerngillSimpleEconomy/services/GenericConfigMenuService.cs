@@ -222,9 +222,11 @@ public class GenericConfigMenuService(
 	{
 		configMenu.AddPage(manifest, FrequencyPageId, () => helper.Translation.Get("fse.config.page.frequency"));
 		
+		configMenu.AddSectionTitle(mod: manifest, text: () => helper.Translation.Get("fse.forecast.menu.sort.supply"));
+		
 		configMenu.AddTextOption(
 			mod: manifest,
-			name: () => helper.Translation.Get("fse.config.SupplyFrequency"),
+			name: () => helper.Translation.Get("fse.config.frequency.description"),
 			getValue: () => ConfigModel.Instance.SupplyUpdateFrequency.ToString(),
 			setValue: val =>
 			{
@@ -239,15 +241,17 @@ public class GenericConfigMenuService(
 
 		configMenu.AddNumberOption(
 			mod: manifest,
-			name: ()=> helper.Translation.Get("fse.config.custom.SupplyFrequency"),
+			name: ()=> helper.Translation.Get("fse.config.frequency.description.custom"),
 			getValue: () => ConfigModel.Instance.CustomSupplyUpdateFrequency,
 			setValue: val => ConfigModel.Instance.CustomSupplyUpdateFrequency = val,
 			min: 1
 		);
 
+		configMenu.AddSectionTitle(mod: manifest, text: () => helper.Translation.Get("fse.forecast.menu.sort.delta"));
+
 		configMenu.AddTextOption(
 			mod: manifest,
-			name: () => helper.Translation.Get("fse.config.DeltaFrequency"),
+			name: () => helper.Translation.Get("fse.config.frequency.description"),
 			getValue: () => ConfigModel.Instance.DeltaUpdateFrequency.ToString(),
 			setValue: val =>
 			{
@@ -262,7 +266,7 @@ public class GenericConfigMenuService(
 
 		configMenu.AddNumberOption(
 			mod: manifest,
-			name: ()=> helper.Translation.Get("fse.config.custom.DeltaFrequency"),
+			name: ()=> helper.Translation.Get("fse.config.frequency.description.custom"),
 			getValue: () => ConfigModel.Instance.CustomDeltaUpdateFrequency,
 			setValue: val => ConfigModel.Instance.CustomDeltaUpdateFrequency = val,
 			min: 1
