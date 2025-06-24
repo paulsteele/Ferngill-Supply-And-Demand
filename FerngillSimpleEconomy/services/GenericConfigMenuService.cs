@@ -83,16 +83,28 @@ public class GenericConfigMenuService(
 	{
 		configMenu.AddPage(manifest, "advanced", () => helper.Translation.Get("fse.config.page.advanced"));
 
+		configMenu.AddSectionTitle(mod: manifest, text: () => helper.Translation.Get("fse.forecast.menu.sort.supply"));
+
 		configMenu.AddNumberOption(
 			mod: manifest,
-			name: ()=> helper.Translation.Get("fse.config.MinDelta"),
+			name: ()=> helper.Translation.Get("fse.config.standard.deviation"),
+			getValue: () => ConfigModel.Instance.StdDevSupply,
+			setValue: val => ConfigModel.Instance.StdDevSupply = val,
+			min: 0
+		);
+		
+		configMenu.AddSectionTitle(mod: manifest, text: () => helper.Translation.Get("fse.forecast.menu.sort.delta"));
+
+		configMenu.AddNumberOption(
+			mod: manifest,
+			name: ()=> helper.Translation.Get("fse.config.minimum"),
 			getValue: () => ConfigModel.Instance.MinDelta,
 			setValue: val => ConfigModel.Instance.MinDelta = val
 		);
 
 		configMenu.AddNumberOption(
 			mod: manifest,
-			name: ()=> helper.Translation.Get("fse.config.MaxDelta"),
+			name: ()=> helper.Translation.Get("fse.config.maximum"),
 			getValue: () => ConfigModel.Instance.MaxDelta,
 			setValue: val => ConfigModel.Instance.MaxDelta = val
 		);
@@ -104,17 +116,11 @@ public class GenericConfigMenuService(
 			setValue: val => ConfigModel.Instance.DeltaArrow = val
 		);
 
-		configMenu.AddNumberOption(
-			mod: manifest,
-			name: ()=> helper.Translation.Get("fse.config.StdDevSupply"),
-			getValue: () => ConfigModel.Instance.StdDevSupply,
-			setValue: val => ConfigModel.Instance.StdDevSupply = val,
-			min: 0
-		);
+		configMenu.AddSectionTitle(mod: manifest, text: () => helper.Translation.Get("fse.config.standard.deviation.delta"));
 
 		configMenu.AddNumberOption(
 			mod: manifest,
-			name: ()=> helper.Translation.Get("fse.config.StdDevDelta"),
+			name: ()=> helper.Translation.Get("fse.config.non.seasonal"),
 			getValue: () => ConfigModel.Instance.StdDevDelta,
 			setValue: val => ConfigModel.Instance.StdDevDelta = val,
 			min: 0
@@ -122,7 +128,7 @@ public class GenericConfigMenuService(
 
 		configMenu.AddNumberOption(
 			mod: manifest,
-			name: ()=> helper.Translation.Get("fse.config.StdDevDeltaInSeason"),
+			name: ()=> helper.Translation.Get("fse.config.in.season"),
 			getValue: () => ConfigModel.Instance.StdDevDeltaInSeason,
 			setValue: val => ConfigModel.Instance.StdDevDeltaInSeason = val,
 			min: 0
@@ -130,11 +136,13 @@ public class GenericConfigMenuService(
 
 		configMenu.AddNumberOption(
 			mod: manifest,
-			name: ()=> helper.Translation.Get("fse.config.StdDevDeltaOutOfSeason"),
+			name: ()=> helper.Translation.Get("fse.config.out.of.season"),
 			getValue: () => ConfigModel.Instance.StdDevDeltaOutOfSeason,
 			setValue: val => ConfigModel.Instance.StdDevDeltaOutOfSeason = val,
 			min: 0
 		);
+		
+		configMenu.AddSectionTitle(mod: manifest, text: () => helper.Translation.Get("fse.config.other"));
 
 		configMenu.AddBoolOption(
 			mod: manifest,
