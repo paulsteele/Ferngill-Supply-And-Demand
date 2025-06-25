@@ -41,6 +41,8 @@
 	"fse.config.frequency.Custom": "Custom",
 	"fse.config.frequency.description": "Update Frequency",
 	"fse.config.frequency.description.custom": "Custom Update Frequency",
+	"fse.config.frequency.description.paragraph": "\"Update Frequency\" must be set to \"Custom\" for \"Custom Update Frequency\" to be used.",
+	"fse.config.page.advanced.paragraph": "These settings are for advanced use. Don't worry if you don't understand what they do. Customizing them is not required for the mod to work.",
 	"fse.config.page.advanced": "Advanced",
 	"fse.config.page.categories": "Categories",
 	"fse.config.page.menu": "Menu",

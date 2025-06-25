@@ -83,6 +83,7 @@ public class GenericConfigMenuService(
 	{
 		configMenu.AddPage(manifest, "advanced", () => helper.Translation.Get("fse.config.page.advanced"));
 
+		configMenu.AddParagraph(mod: manifest, text: () => helper.Translation.Get("fse.config.page.advanced.paragraph"));
 		configMenu.AddSectionTitle(mod: manifest, text: () => helper.Translation.Get("fse.forecast.menu.sort.supply"));
 
 		configMenu.AddNumberOption(
@@ -230,6 +231,7 @@ public class GenericConfigMenuService(
 	{
 		configMenu.AddPage(manifest, FrequencyPageId, () => helper.Translation.Get("fse.config.page.frequency"));
 		
+		configMenu.AddParagraph(mod: manifest, text: () => helper.Translation.Get("fse.config.frequency.description.paragraph"));
 		configMenu.AddSectionTitle(mod: manifest, text: () => helper.Translation.Get("fse.forecast.menu.sort.supply"));
 		
 		configMenu.AddTextOption(
